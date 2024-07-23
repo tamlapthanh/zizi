@@ -3,9 +3,9 @@
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>AdminLTE v4 | Dashboard</title><!--begin::Primary Meta Tags-->
+    <title>Zizi Web App</title><!--begin::Primary Meta Tags-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="title" content="AdminLTE v4 | Dashboard">
+    <meta name="title" content="Zizi Web App | Dashboard">
     <meta name="author" content="ColorlibHQ">
     <meta name="description" content="AdminLTE is a Free Bootstrap 5 Admin Dashboard, 30 example pages using Vanilla JS.">
     <meta name="keywords" content="bootstrap 5, bootstrap, bootstrap 5 admin dashboard, bootstrap 5 dashboard, bootstrap 5 charts, bootstrap 5 calendar, bootstrap 5 datepicker, bootstrap 5 tables, bootstrap 5 datatable, vanilla js datatable, colorlibhq, colorlibhq dashboard, colorlibhq admin dashboard"><!--end::Primary Meta Tags--><!--begin::Fonts-->
@@ -25,7 +25,7 @@
                 <ul class="navbar-nav">
                     <li class="nav-item"> <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button"> <i class="bi bi-list"></i> </a> </li>
                     <li class="nav-item d-none d-md-block"> <a href="#" class="nav-link">Home</a> </li>
-                    <li class="nav-item d-none d-md-block"> <a href="#" class="nav-link">Contact</a> </li>
+                    <li class="nav-item d-none d-md-block"> <a href="#" class="nav-link">Bài học</a> </li>
                 </ul> <!--end::Start Navbar Links--> <!--begin::End Navbar Links-->
                 <ul class="navbar-nav ms-auto"> <!--begin::Navbar Search-->
                     <li class="nav-item"> <a class="nav-link" data-widget="navbar-search" href="#" role="button"> <i class="bi bi-search"></i> </a> </li> <!--end::Navbar Search--> <!--begin::Messages Dropdown Menu-->
@@ -117,7 +117,7 @@
                     <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="menu" data-accordion="false">
                         <li class="nav-item menu-open"> <a href="#" class="nav-link active"> <i class="nav-icon bi bi-speedometer"></i>
                                 <p>
-                                    Dashboard
+                                    W2 Class
                                     <i class="nav-arrow bi bi-chevron-right"></i>
                                 </p>
                             </a>
@@ -144,37 +144,45 @@
                         <div class="col-sm-6">
                             <h3 class="mb-0">Vianne</h3>
                         </div>
-                        <div class="col-sm-6">
-                            <ol class="breadcrumb float-sm-end">
-                                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">
-                                    Dashboard
-                                </li>
-                            </ol>
-                        </div>
                     </div> <!--end::Row-->
                 </div> <!--end::Container-->
             </div> <!--end::App Content Header--> <!--begin::App Content-->
             <div class="app-content"> <!--begin::Container-->
                 <div class="container-fluid"> <!--begin::Row-->
-                    <div class="row"> <!--begin::Col-->
+                    <div class="row"  id="row_data_id"> <!--begin::Col-->
+
                         <div  type=button class="col-lg-2 col-6 video"  data-video="https://drive.google.com/file/d/1CGcrrrJKsvzjQxYgtTrDuM_MDWbKXRPn/preview" data-toggle="modal" data-target="#videoModal"> <!--begin::Small Box Widget 1-->
                             <div class="small-box text-bg-primary" style="background-image: url('https://drive.google.com/thumbnail?id=1hAQyNPPUy77App-LFgoH4aR_0oIj3Ewo'); background-size: cover;">
                                 <div class="inner">
                                     <h3>Thứ 3</h3>
-                                    <p>2024/06/08</p>
+                                    <p>16/07/2024</p>
                                 </div> 
                             </div> <!--end::Small Box Widget 1-->
                         </div> <!--end::Col-->
+
                         <div type=button class="col-lg-2 col-6 video"  data-video="https://drive.google.com/file/d/1bGm7CgakrI64zkY4PqE6yIvt2JeTw-68/preview" data-toggle="modal" data-target="#videoModal"> <!--begin::Small Box Widget 2-->
                             <div class="small-box text-bg-success" style="background-image: url('https://drive.google.com/thumbnail?id=16SyYDJOYqryZq1Dz0FTBS8fAEbu8o_GW'); background-size: cover;">
                                 <div class="inner">
                                     <h3>Thứ 5</h3>
-                                    <p>Bounce Rate</p>
+                                    <p>18/07/2024</p>
                                 </div> 
-                            </div> <!--end::Small Box Widget 2-->
+                            </div> <!--end::Small Box Widget 2 -->
                         </div> <!--end::Col-->
                         
+                        <!--
+                        https://drive.google.com/file/d/1c1_FdIfPnKArFW-Xw-7Nyb9OV6RihIG8/view?usp=sharing
+                        https://drive.google.com/file/d/1o8YVkCHONOQPp7SY2f-d4dxlj4omWpbq/view?usp=sharing -->
+
+                        <div type=button class="col-lg-2 col-6 video"  data-video="https://drive.google.com/file/d/1o8YVkCHONOQPp7SY2f-d4dxlj4omWpbq/preview" data-toggle="modal" data-target="#videoModal"> <!--begin::Small Box Widget 2-->
+                            <div class="small-box text-bg-success" style="background-image: url('https://drive.google.com/thumbnail?id=1c1_FdIfPnKArFW-Xw-7Nyb9OV6RihIG8'); background-size: cover;">
+                                <div class="inner">
+                                    <h3>Thứ 3</h3>
+                                    <p>23/07/2024</p>
+                                </div> 
+                            </div> <!--end::Small Box Widget 2 -->
+                        </div> <!--end::Col-->
+
+
                     </div> <!--end::Row--> <!--begin::Row-->
                     <div class="row"> <!-- Start col -->
      
@@ -219,7 +227,12 @@
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-    <script>
+<script src="https://code.jquery.com/jquery-3.6.3.min.js"
+integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-csv/1.0.21/jquery.csv.min.js"
+integrity="sha512-Y8iWYJDo6HiTo5xtml1g4QqHtl/PO1w+dmUpQfQSOTqKNsMhExfyPN2ncNAe9JuJUSKzwK/b6oaNPop4MXzkwg=="
+crossorigin="anonymous" referrerpolicy="no-referrer"></script> 
+<script>
         const SELECTOR_SIDEBAR_WRAPPER = ".sidebar-wrapper";
         const Default = {
             scrollbarTheme: "os-theme-light",
@@ -243,15 +256,17 @@
         });
 
          $(function() {
-            $(".video").click(function () {
-              var theModal = $(this).data("target"),
-              videoSRC = $(this).attr("data-video"),
-              videoSRCauto = videoSRC 
-              $(theModal + ' iframe').attr('src', videoSRCauto);
-              $(theModal + ' button.close').click(function () {
-                $(theModal + ' iframe').attr('src', videoSRC);
-              });
-            });
+
+                $(".video").click(function () {
+                var theModal = $(this).data("target"),
+                videoSRC = $(this).attr("data-video"),
+                videoSRCauto = videoSRC 
+                $(theModal + ' iframe').attr('src', videoSRCauto);
+                $(theModal + ' button.close').click(function () {
+                    $(theModal + ' iframe').attr('src', videoSRC);
+                });
+                });
+
           });
 
     </script> <!--end::OverlayScrollbars Configure--> <!-- OPTIONAL SCRIPTS --> 
