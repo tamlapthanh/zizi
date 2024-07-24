@@ -179,7 +179,7 @@ integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="ano
 integrity="sha512-Y8iWYJDo6HiTo5xtml1g4QqHtl/PO1w+dmUpQfQSOTqKNsMhExfyPN2ncNAe9JuJUSKzwK/b6oaNPop4MXzkwg=="
 crossorigin="anonymous" referrerpolicy="no-referrer"></script> 
 <script>
-    $(function() {
+
 
                 const SELECTOR_SIDEBAR_WRAPPER = ".sidebar-wrapper";
                 const Default = {
@@ -202,7 +202,8 @@ crossorigin="anonymous" referrerpolicy="no-referrer"></script>
                         });
                     }
                 });
-
+                
+     $(function() {
                 $(".video").click(function () {
                     var theModal = $(this).data("target"),
                     videoSRC = $(this).attr("data-video"),
