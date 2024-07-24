@@ -149,16 +149,7 @@
                     <div class="row"  id="row_data_id"> <!--begin::Col -->
 
 
-                      <div class="modal fade" id="videoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                          <div class="modal-content">
-                            <div class="modal-body">
-                              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                              <iframe width="100%" height="450" src="" frameborder="0"  allow="autoplay"  allowfullscreen></iframe>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+
 
                     </div> <!-- /.row (main row) -->
                 </div> <!--end::Container-->
@@ -239,6 +230,19 @@ crossorigin="anonymous" referrerpolicy="no-referrer"></script>
                         </div> <!--end::Col-->`;
                         $("#row_data_id").append(appendTag);
 
+
+                        var modalTag = `<div class="modal fade" id="videoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-body">
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                                        <iframe width="100%" height="450" src="" frameborder="0"  allow="autoplay"  allowfullscreen></iframe>
+                                                        </div>
+                                                    </div>
+                                                    </div>
+                                                </div>`;
+                       $("#row_data_id").append(modalTag);
+                       
                     }); // end of   $.getJSON
 
 
