@@ -7,8 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="title" content="Zizi Web App | Dashboard">
     <meta name="author" content="ColorlibHQ">
-    <meta name="description" content="AdminLTE is a Free Bootstrap 5 Admin Dashboard, 30 example pages using Vanilla JS.">
-    <meta name="keywords" content="bootstrap 5, bootstrap, bootstrap 5 admin dashboard, bootstrap 5 dashboard, bootstrap 5 charts, bootstrap 5 calendar, bootstrap 5 datepicker, bootstrap 5 tables, bootstrap 5 datatable, vanilla js datatable, colorlibhq, colorlibhq dashboard, colorlibhq admin dashboard"><!--end::Primary Meta Tags--><!--begin::Fonts-->
+    <meta name="description" content="Zizi Web App">
+    <meta name="keywords" content="Zizi Web App"><!--end::Primary Meta Tags--><!--begin::Fonts-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css" integrity="sha256-tXJfXfp6Ewt1ilPzLDtQnJV4hclT9XuaZUKyUvmyr+Q=" crossorigin="anonymous"><!--end::Fonts--><!--begin::Third Party Plugin(OverlayScrollbars)-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.3.0/styles/overlayscrollbars.min.css" integrity="sha256-dSokZseQNT08wYEWiz5iLI8QPlKxG+TswNRD8k35cpg=" crossorigin="anonymous"><!--end::Third Party Plugin(OverlayScrollbars)--><!--begin::Third Party Plugin(Bootstrap Icons)-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.min.css" integrity="sha256-Qsx5lrStHZyR9REqhUF8iQt73X06c8LGIUPzpOhwRrI=" crossorigin="anonymous"><!--end::Third Party Plugin(Bootstrap Icons)--><!--begin::Required Plugin(AdminLTE)-->
@@ -22,10 +22,11 @@
     <div class="app-wrapper"> <!--begin::Header-->
         <nav class="app-header navbar navbar-expand bg-body"> <!--begin::Container-->
             <div class="container-fluid"> <!--begin::Start Navbar Links-->
+                
                 <ul class="navbar-nav">
                     <li class="nav-item"> <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button"> <i class="bi bi-list"></i> </a> </li>
-                    <li class="nav-item d-none d-md-block"> <a href="#" class="nav-link">Home</a> </li>
                     <li class="nav-item d-none d-md-block"> <a href="#" class="nav-link">Bài học</a> </li>
+                    <li class="nav-item d-none d-md-block"> <a href="#" class="nav-link">Nộp bài</a> </li>
                 </ul> <!--end::Start Navbar Links--> <!--begin::End Navbar Links-->
                 <ul class="navbar-nav ms-auto"> <!--begin::Navbar Search-->
                     <li class="nav-item"> <a class="nav-link" data-widget="navbar-search" href="#" role="button"> <i class="bi bi-search"></i> </a> </li> <!--end::Navbar Search--> <!--begin::Messages Dropdown Menu-->
@@ -140,79 +141,12 @@
         <main class="app-main"> <!--begin::App Content Header-->
             <div class="app-content-header"> <!--begin::Container-->
                 <div class="container-fluid"> <!--begin::Row-->
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <h3 class="mb-0">Vianne</h3>
-                        </div>
-                    </div> <!--end::Row-->
+                  
                 </div> <!--end::Container-->
             </div> <!--end::App Content Header--> <!--begin::App Content-->
             <div class="app-content"> <!--begin::Container-->
                 <div class="container-fluid"> <!--begin::Row-->
                     <div class="row"  id="row_data_id"> <!--begin::Col -->
-<!--
-                        https://drive.google.com/file/d/1Q3gmM4kqrYfSK3nJIN3on1-yetnegYhn/view?usp=sharing
-                        https://drive.google.com/file/d/1Vb2_GuMBrGL-QbpQmjNkCQeK7OpPUgMk/view?usp=sharing -->
-                        <div  type=button class="col-lg-2 col-6 video"  data-video="https://drive.google.com/file/d/1Vb2_GuMBrGL-QbpQmjNkCQeK7OpPUgMk/preview" data-toggle="modal" data-target="#videoModal"> <!--begin::Small Box Widget 1-->
-                            <div class="small-box text-bg-primary" style="background-image: url('https://drive.google.com/thumbnail?id=1Q3gmM4kqrYfSK3nJIN3on1-yetnegYhn'); background-size: cover;">
-                                <div class="inner">
-                                    <h3>Thứ 3</h3>
-                                    <p>09/07/2024</p>
-                                </div> 
-                            </div> <!--end::Small Box Widget 1-->
-                        </div> <!--end::Col-->
-
-                        <!--
-                        https://drive.google.com/file/d/1f6fruwJ0EyKrWr5J6CRHV0i1e0zkjJCx/view?usp=sharing
-                        https://drive.google.com/file/d/1TsTOxS7vwipI1upBB1oPhvBK1uZSIlWH/view?usp=sharing -->
-                        <div  type=button class="col-lg-2 col-6 video"  data-video="https://drive.google.com/file/d/1TsTOxS7vwipI1upBB1oPhvBK1uZSIlWH/preview" data-toggle="modal" data-target="#videoModal"> <!--begin::Small Box Widget 1-->
-                            <div class="small-box text-bg-primary" style="background-image: url('https://drive.google.com/thumbnail?id=1f6fruwJ0EyKrWr5J6CRHV0i1e0zkjJCx'); background-size: cover;">
-                                <div class="inner">
-                                    <h3>Thứ 5</h3>
-                                    <p>11/07/2024</p>
-                                </div> 
-                            </div> <!--end::Small Box Widget 1-->
-                        </div> <!--end::Col-->
-                        
-                        
-                        <div  type=button class="col-lg-2 col-6 video"  data-video="https://drive.google.com/file/d/1CGcrrrJKsvzjQxYgtTrDuM_MDWbKXRPn/preview" data-toggle="modal" data-target="#videoModal"> <!--begin::Small Box Widget 1-->
-                            <div class="small-box text-bg-primary" style="background-image: url('https://drive.google.com/thumbnail?id=1hAQyNPPUy77App-LFgoH4aR_0oIj3Ewo'); background-size: cover;">
-                                <div class="inner">
-                                    <h3>Thứ 3</h3>
-                                    <p>16/07/2024</p>
-                                </div> 
-                            </div> <!--end::Small Box Widget 1-->
-                        </div> <!--end::Col-->
-
-                        <div type=button class="col-lg-2 col-6 video"  data-video="https://drive.google.com/file/d/1bGm7CgakrI64zkY4PqE6yIvt2JeTw-68/preview" data-toggle="modal" data-target="#videoModal"> <!--begin::Small Box Widget 2-->
-                            <div class="small-box text-bg-success" style="background-image: url('https://drive.google.com/thumbnail?id=16SyYDJOYqryZq1Dz0FTBS8fAEbu8o_GW'); background-size: cover;">
-                                <div class="inner">
-                                    <h3>Thứ 5</h3>
-                                    <p>18/07/2024</p>
-                                </div> 
-                            </div> <!--end::Small Box Widget 2 -->
-                        </div> <!--end::Col-->
-                        
-                        <!--
-                        https://drive.google.com/file/d/1c1_FdIfPnKArFW-Xw-7Nyb9OV6RihIG8/view?usp=sharing
-                        https://drive.google.com/file/d/1o8YVkCHONOQPp7SY2f-d4dxlj4omWpbq/view?usp=sharing -->
-
-                        <div type=button class="col-lg-2 col-6 video"  data-video="https://drive.google.com/file/d/1o8YVkCHONOQPp7SY2f-d4dxlj4omWpbq/preview" data-toggle="modal" data-target="#videoModal"> <!--begin::Small Box Widget 2-->
-                            <div class="small-box text-bg-success" style="background-image: url('https://drive.google.com/thumbnail?id=1c1_FdIfPnKArFW-Xw-7Nyb9OV6RihIG8'); background-size: cover;">
-                                <div class="inner">
-                                    <h3>Thứ 3</h3>
-                                    <p>23/07/2024</p>
-                                </div> 
-                            </div> <!--end::Small Box Widget 2 -->
-                        </div> <!--end::Col-->
-
-
-                    </div> <!--end::Row--> <!--begin::Row-->
-                    <div class="row"> <!-- Start col -->
-     
-
-
-
 
                       <div class="modal fade" id="videoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
@@ -225,24 +159,12 @@
                         </div>
                       </div>
 
-
-
                     </div> <!-- /.row (main row) -->
                 </div> <!--end::Container-->
             </div> <!--end::App Content-->
         </main> <!--end::App Main--> <!--begin::Footer-->
-        <footer class="app-footer"> <!--begin::To the end-->
-            <div class="float-end d-none d-sm-inline">Anything you want</div> <!--end::To the end--> <!--begin::Copyright--> <strong>
-                Copyright &copy; 2014-2024&nbsp;
-                <a href="https://adminlte.io" class="text-decoration-none">AdminLTE.io</a>.
-            </strong>
-            All rights reserved.
-            <!--end::Copyright-->
-        </footer> <!--end::Footer-->
 
-
-
-    
+        
     </div> <!--end::App Wrapper--> <!--begin::Script--> <!--begin::Third Party Plugin(OverlayScrollbars)-->
     <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.3.0/browser/overlayscrollbars.browser.es6.min.js" integrity="sha256-H2VM7BKda+v2Z4+DRy69uknwxjyDRhszjXFhsL4gD3w=" crossorigin="anonymous"></script> <!--end::Third Party Plugin(OverlayScrollbars)--><!--begin::Required Plugin(popperjs for Bootstrap 5)-->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha256-whL0tQWoY1Ku1iskqPFvmZ+CHsvmRWx/PIoEvIeWh4I=" crossorigin="anonymous"></script> <!--end::Required Plugin(popperjs for Bootstrap 5)--><!--begin::Required Plugin(Bootstrap 5)-->
@@ -257,41 +179,66 @@ integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="ano
 integrity="sha512-Y8iWYJDo6HiTo5xtml1g4QqHtl/PO1w+dmUpQfQSOTqKNsMhExfyPN2ncNAe9JuJUSKzwK/b6oaNPop4MXzkwg=="
 crossorigin="anonymous" referrerpolicy="no-referrer"></script> 
 <script>
-        const SELECTOR_SIDEBAR_WRAPPER = ".sidebar-wrapper";
-        const Default = {
-            scrollbarTheme: "os-theme-light",
-            scrollbarAutoHide: "leave",
-            scrollbarClickScroll: true,
-        };
-        document.addEventListener("DOMContentLoaded", function() {
-            const sidebarWrapper = document.querySelector(SELECTOR_SIDEBAR_WRAPPER);
-            if (
-                sidebarWrapper &&
-                typeof OverlayScrollbarsGlobal?.OverlayScrollbars !== "undefined"
-            ) {
-                OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
-                    scrollbars: {
-                        theme: Default.scrollbarTheme,
-                        autoHide: Default.scrollbarAutoHide,
-                        clickScroll: Default.scrollbarClickScroll,
-                    },
-                });
-            }
-        });
+    $(function() {
 
-         $(function() {
+                const SELECTOR_SIDEBAR_WRAPPER = ".sidebar-wrapper";
+                const Default = {
+                    scrollbarTheme: "os-theme-light",
+                    scrollbarAutoHide: "leave",
+                    scrollbarClickScroll: true,
+                };
+                document.addEventListener("DOMContentLoaded", function() {
+                    const sidebarWrapper = document.querySelector(SELECTOR_SIDEBAR_WRAPPER);
+                    if (
+                        sidebarWrapper &&
+                        typeof OverlayScrollbarsGlobal?.OverlayScrollbars !== "undefined"
+                    ) {
+                        OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
+                            scrollbars: {
+                                theme: Default.scrollbarTheme,
+                                autoHide: Default.scrollbarAutoHide,
+                                clickScroll: Default.scrollbarClickScroll,
+                            },
+                        });
+                    }
+                });
 
                 $(".video").click(function () {
-                var theModal = $(this).data("target"),
-                videoSRC = $(this).attr("data-video"),
-                videoSRCauto = videoSRC 
-                $(theModal + ' iframe').attr('src', videoSRCauto);
-                $(theModal + ' button.close').click(function () {
-                    $(theModal + ' iframe').attr('src', videoSRC);
-                });
+                    var theModal = $(this).data("target"),
+                    videoSRC = $(this).attr("data-video"),
+                    videoSRCauto = videoSRC 
+                    $(theModal + ' iframe').attr('src', videoSRCauto);
+                    $(theModal + ' button.close').click(function () {
+                        $(theModal + ' iframe').attr('src', videoSRC);
+                    });
                 });
 
-          });
+                $.getJSON("data/lession.json", function(json_data) {
+
+                    jQuery(json_data).each(function(index, item){
+                        var video_id = `https://drive.google.com/file/d/${item.video_id}/preview`;
+                        var thumbnail_id  =`https://drive.google.com/thumbnail?id=${item.thumbnail_id}`;
+                        var learn_day = item.learn_day;
+                        var learn_date =  item.learn_date;
+                        var tooltip = item.tooltip;
+    
+                        var appendTag = `<div  type=button class="col-lg-2 col-6 video"  data-video="${video_id}" data-toggle="modal" data-target="#videoModal" title="${tooltip}"> <!--begin::Small Box Widget 1-->
+                            <div class="small-box text-bg-primary" style="background-image: url('${thumbnail_id}'); background-size: cover;">
+                                <div class="inner">
+                                    <h3>${learn_day}</h3>
+                                    <p>${learn_date}</p>
+                                </div> 
+                            </div> <!--end::Small Box Widget 1-->
+                        </div> <!--end::Col-->`;
+                        $("#row_data_id").append(appendTag);
+
+                    }); // end of   $.getJSON
+
+
+
+                  }); // end of   $.getJSON
+
+          }); // end of $(function() {
 
     </script> <!--end::OverlayScrollbars Configure--> <!-- OPTIONAL SCRIPTS --> 
 
