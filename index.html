@@ -148,6 +148,7 @@
                 <div class="container-fluid"> <!--begin::Row-->
                     <div class="row"  id="row_data_id"> <!--begin::Col -->
 
+
                       <div class="modal fade" id="videoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                           <div class="modal-content">
@@ -202,7 +203,6 @@ crossorigin="anonymous" referrerpolicy="no-referrer"></script>
                         });
                     }
                 });
-                
      $(function() {
                 $(".video").click(function () {
                     var theModal = $(this).data("target"),
@@ -225,7 +225,6 @@ crossorigin="anonymous" referrerpolicy="no-referrer"></script>
                         var content =  item.content;
     
                         var appendTag = `<div  type=button class="col-lg-2 col-6 video"  data-video="${video_id}" data-toggle="modal" data-target="#videoModal" title="${tooltip}"> <!--begin::Small Box Widget 1-->
-                            <h4>${content}</h4>
                             <div class="small-box text-bg-primary" style="background-image: url('${thumbnail_id}'); background-size: cover;">
                                 <div class="inner">
                                     <h3>${learn_day}</h3>
