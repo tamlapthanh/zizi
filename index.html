@@ -25,8 +25,9 @@
                 
                 <ul class="navbar-nav">
                     <li class="nav-item"> <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button"> <i class="bi bi-list"></i> </a> </li>
-                    <li class="nav-item "> <a href="#" class="nav-link">Bài học</a> </li>
-                    <li class="nav-item "> <a href="#" class="nav-link">Nộp bài</a> </li>
+                    <li class="nav-item "> <a href="#" class="nav-link text-primary" id="menu_lession_id">Bài học</a> </li>
+                    <li class="nav-item "> <a href="#" class="nav-link" id="menu_class_id">Lớp học</a> </li>
+                    <li class="nav-item "> <a href="#" class="nav-link" id="menu_student_id">Nộp bài</a> </li>
                 </ul> <!--end::Start Navbar Links--> <!--begin::End Navbar Links-->
                 <ul class="navbar-nav ms-auto"> <!--begin::Navbar Search-->
                     <li class="nav-item"> <a class="nav-link" href="#" data-lte-toggle="fullscreen"> <i data-lte-icon="maximize" class="bi bi-arrows-fullscreen"></i> <i data-lte-icon="minimize" class="bi bi-fullscreen-exit" style="display: none;"></i> </a> </li> <!--end::Fullscreen Toggle--> <!--begin::User Menu Dropdown-->
@@ -56,11 +57,14 @@
                                 </p>
                             </a>
                             <ul class="nav nav-treeview">
-                                <li class="nav-item"> <a href="./index.html" class="nav-link active"> <i class="nav-icon bi bi-table"></i>
+                                <li class="nav-item"> <a href="#" class="nav-link active" id="menu_lession_id"> <i class="nav-icon bi bi-table"></i>
                                         <p>Bài Học</p>
-                                    </a> </li>
-                                    <li class="nav-item"> <a href="./index.html" class="nav-link"> <i class="nav-icon bi bi-box-seam-fill"></i>
+                                    </a> </li> 
+                                    <li class="nav-item"> <a href="#" class="nav-link" id="menu_class_id"> <i class="nav-icon bi bi-box-seam-fill"></i>
                                         <p>Lớp học</p>
+                                    </a> </li>
+                                    <li class="nav-item"> <a href="#" class="nav-link" id="menu_student_id"> <i class="nav-icon bi bi-pencil-square"></i>
+                                        <p>Nộp bài</p>
                                     </a> </li>
                             </ul>
                         </li>
@@ -76,22 +80,26 @@
             </div> <!--end::App Content Header--> <!--begin::App Content-->
             <div class="app-content"> <!--begin::Container-->
                 <div class="container-fluid"> <!--begin::Row-->
-                    <div class="row"  id="row_data_id"> <!--begin::Col -->
 
+                    <div class="row"  id="row_data_student_id"> 
+                    </div> 
+                    <div class="row"  id="row_data_class_id"> 
+                    </div> 
 
-                        
-                        <div class="modal fade" id="videoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                            <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-body">
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                <iframe width="100%" height="450" src="" frameborder="0"  allow="autoplay"  allowfullscreen></iframe>
-                                </div>
-                            </div>
+                    <div class="row"  id="row_data_lessions_id"> 
+                    </div> 
+
+                    <div class="modal fade" id="videoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-body">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <iframe width="100%" height="450" src="" frameborder="0"  allow="autoplay"  allowfullscreen></iframe>
                             </div>
                         </div>
-
-                    </div> <!-- /.row (main row) -->
+                        </div>
+                    </div>
+                    
                 </div> <!--end::Container-->
             </div> <!--end::App Content-->
         </main> <!--end::App Main--> <!--begin::Footer-->
@@ -135,10 +143,76 @@ crossorigin="anonymous" referrerpolicy="no-referrer"></script>
                     }
                 });
 
+                function loadData(fileName, tagName) {
+                    $.getJSON(fileName, function(json_data) {
+
+                        jQuery(json_data).each(function(index, item){
+                            var video_id = `https://drive.google.com/file/d/${item.video_id}/preview`;
+                            var thumbnail_id  =`https://drive.google.com/thumbnail?id=${item.video_id}`;
+                            var learn_day = item.learn_day;
+                            var learn_date =  item.learn_date;
+                            var tooltip = item.tooltip;
+                            var content =  item.content;
+        
+                            var appendTag = `<div id="video_id" type=button class="col-lg-2 col-6 video"   data-video="${video_id}" data-toggle="modal" data-target="#videoModal" > <!--begin::Small Box Widget 1-->
+                                <h5 class="d-none d-lg-block d-xl-block">${content}</h5>
+                                <div class="small-box text-bg-primary" style="background-image: url('${thumbnail_id}'); background-size: cover;">
+                                    <div class="inner">
+                                        <h3>${learn_day}</h3>
+                                        <p>${learn_date}</p>
+                                    </div> 
+                                </div> <!--end::Small Box Widget 1-->
+                            </div> <!--end::Col-->`;
+                            $(tagName).append(appendTag);
+                            //$("#row_data_lessions_id").append(appendTag);
+    
+                        }); // end of   jQuery
+                      }); // end of   $.getJSON
+                  } // end of function loadData
+
      $(function() {
 
-                $(document).on("click", ".video", function(){
+                $("#row_data_lessions_id").show();
+                $("#row_data_class_id").hide();
+                $("#row_data_student_id").hide();
 
+                $("#menu_lession_id").click(function(){
+                    $("#row_data_lessions_id").show();
+                    $("#row_data_class_id").hide();
+                    $("#row_data_student_id").hide();
+
+                    $("#menu_lession_id").addClass("text-primary");
+                    $("#menu_class_id").removeClass("text-primary");
+                    $("#menu_student_id").removeClass("text-primary");
+
+                });
+
+                $("#menu_class_id").click(function(){
+                    $("#row_data_lessions_id").hide();
+                    $("#row_data_class_id").show();
+                    $("#row_data_student_id").hide();
+
+                    $("#menu_lession_id").removeClass("text-primary");
+                    $("#menu_class_id").addClass("text-primary");
+                    $("#menu_student_id").removeClass("text-primary");
+                });
+
+                $("#menu_student_id").click(function(){
+                    $("#row_data_lessions_id").hide();
+                    $("#row_data_class_id").hide();
+                    $("#row_data_student_id").show();
+
+                    $("#menu_lession_id").removeClass("text-primary");
+                    $("#menu_class_id").removeClass("text-primary");
+                    $("#menu_student_id").addClass("text-primary");
+                });
+
+                loadData("data/lession.json",  "#row_data_lessions_id");
+                loadData("data/class.json",  "#row_data_class_id");
+                loadData("data/student.json",  "#row_data_student_id");
+                
+
+                $(document).on("click", ".video", function(){
                     console.log(this);
                     var theModal = $(this).data("target"),
                     videoSRC = $(this).attr("data-video"),
@@ -147,35 +221,9 @@ crossorigin="anonymous" referrerpolicy="no-referrer"></script>
                     $(theModal + ' button.close').click(function () {
                         $(theModal + ' iframe').attr('src', videoSRC);
                     });
-
-                    console.log(videoSRC);
                 });
 
 
-                $.getJSON("data/lession.json", function(json_data) {
-
-                    jQuery(json_data).each(function(index, item){
-                        var video_id = `https://drive.google.com/file/d/${item.video_id}/preview`;
-                        var thumbnail_id  =`https://drive.google.com/thumbnail?id=${item.video_id}`;
-                        var learn_day = item.learn_day;
-                        var learn_date =  item.learn_date;
-                        var tooltip = item.tooltip;
-                        var content =  item.content;
-    
-                        var appendTag = `<div id="video_id" type=button class="col-lg-2 col-6 video"   data-video="${video_id}" data-toggle="modal" data-target="#videoModal" > <!--begin::Small Box Widget 1-->
-                            <h5 class="d-none d-lg-block d-xl-block">${content}</h5>
-                            <div class="small-box text-bg-primary" style="background-image: url('${thumbnail_id}'); background-size: cover;">
-                                <div class="inner">
-                                    <h3>${learn_day}</h3>
-                                    <p>${learn_date}</p>
-                                </div> 
-                            </div> <!--end::Small Box Widget 1-->
-                        </div> <!--end::Col-->`;
-                        $("#row_data_id").append(appendTag);
-
-                    }); // end of   jQuery
-
-                  }); // end of   $.getJSON
 
           }); // end of $(function() {
 
