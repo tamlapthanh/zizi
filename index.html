@@ -203,8 +203,11 @@ crossorigin="anonymous" referrerpolicy="no-referrer"></script>
                         });
                     }
                 });
+
      $(function() {
+
                 $(".video").click(function () {
+                    console.log(this);
                     var theModal = $(this).data("target"),
                     videoSRC = $(this).attr("data-video"),
                     videoSRCauto = videoSRC 
@@ -224,7 +227,7 @@ crossorigin="anonymous" referrerpolicy="no-referrer"></script>
                         var tooltip = item.tooltip;
                         var content =  item.content;
     
-                        var appendTag = `<div  type=button class="col-lg-2 col-6 video"  data-video="${video_id}" data-toggle="modal" data-target="#videoModal" title="${tooltip}"> <!--begin::Small Box Widget 1-->
+                        var appendTag = `<div  type=button class="col-lg-2 col-6 video"  data-video="${video_id}" data-toggle="modal" data-target="#videoModal" > <!--begin::Small Box Widget 1-->
                             <div class="small-box text-bg-primary" style="background-image: url('${thumbnail_id}'); background-size: cover;">
                                 <div class="inner">
                                     <h3>${learn_day}</h3>
