@@ -215,6 +215,8 @@ crossorigin="anonymous" referrerpolicy="no-referrer"></script>
                     $(theModal + ' button.close').click(function () {
                         $(theModal + ' iframe').attr('src', videoSRC);
                     });
+
+                    console.log(videoSRC);
                 });
 
                 $.getJSON("data/lession.json", function(json_data) {
