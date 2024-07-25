@@ -206,10 +206,24 @@ crossorigin="anonymous" referrerpolicy="no-referrer"></script>
                     });
                 });
 
-
-
+// AKfycbx0y0kL8voc84qsWtbx5TJs2Bc0OBEV1ttPdEfN4onHau6MFTn7iIckFzepuUxUoNid4Q
+// https://script.google.com/macros/s/AKfycbx0y0kL8voc84qsWtbx5TJs2Bc0OBEV1ttPdEfN4onHau6MFTn7iIckFzepuUxUoNid4Q/exec
+// https://script.google.com/macros/s/AKfycbx0y0kL8voc84qsWtbx5TJs2Bc0OBEV1ttPdEfN4onHau6MFTn7iIckFzepuUxUoNid4Q/exec
+// https://script.google.com/macros/s/AKfycbx0y0kL8voc84qsWtbx5TJs2Bc0OBEV1ttPdEfN4onHau6MFTn7iIckFzepuUxUoNid4Q/exec
+load();
           }); // end of $(function() {
 
+
+          async function load() {
+            const response = await fetch(
+              "https://script.google.com/macros/s/AKfycbx0y0kL8voc84qsWtbx5TJs2Bc0OBEV1ttPdEfN4onHau6MFTn7iIckFzepuUxUoNid4Q/exec?name=Sheet3"
+            );
+            //   console.log(response);
+            const events = await response.json();
+            console.log({ events });
+          }
+
+          
     </script> <!--end::OverlayScrollbars Configure--> <!-- OPTIONAL SCRIPTS --> 
 
 </body><!--end::Body-->
