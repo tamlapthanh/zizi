@@ -118,6 +118,7 @@ integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="ano
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-csv/1.0.21/jquery.csv.min.js"
 integrity="sha512-Y8iWYJDo6HiTo5xtml1g4QqHtl/PO1w+dmUpQfQSOTqKNsMhExfyPN2ncNAe9JuJUSKzwK/b6oaNPop4MXzkwg=="
 crossorigin="anonymous" referrerpolicy="no-referrer"></script> 
+<script src="js/moment-with-locales.min.js"></script>
 <script>
 
 
@@ -143,30 +144,29 @@ crossorigin="anonymous" referrerpolicy="no-referrer"></script>
                     }
                 });
 
-                function loadData(fileName, tagName) {
-                    $.getJSON(fileName, function(json_data) {
+                function loadDataToDiv(json_data, tagName, data_type) {
+                      moment.locale("vi");  
 
                         jQuery(json_data).each(function(index, item){
-                            var video_id = `https://drive.google.com/file/d/${item.video_id}/preview`;
-                            var thumbnail_id  =`https://drive.google.com/thumbnail?id=${item.video_id}`;
-                            var learn_day = item.learn_day;
-                            var learn_date =  item.learn_date;
-                            var tooltip = item.tooltip;
-                            var content =  item.content;
-
-                            var appendTag = `<div class="col-6 col-sm-6 col-md-2 video"   data-video="${video_id}" data-toggle="modal" data-target="#videoModal" >
-                                                        <h4>${content}</h4>
-                                                        <div class="info-box text-bg-primary" style="background-image: url('${thumbnail_id}'); background-size: cover; cursor: pointer;"> 
-                                                            <div class="info-box-content"> 
-                                                                <span class="info-box-text">${learn_date}</span> 
-
-                                                            </div> <!-- /.info-box-content -->
-                                                        </div> <!-- /.info-box -->
-                                                    </div> <!-- /.col -->`;
-
-                            $(tagName).append(appendTag);
+                            if ( item.Full_Path.includes(data_type) &&  item.Type.includes("mp4")) {
+                                var video_id = `https://drive.google.com/file/d/${item.ID}/preview`;
+                                var thumbnail_id  =`https://drive.google.com/thumbnail?id=${item.ID}`;
+                                var learn_day = moment(item.Date).format('llll'); 
+                                var tooltip = item.Description;
+                                var content =  item.Description != "NULL" ? item.Description : learn_day; 
+    
+                                var appendTag = `<div class="col-6 col-sm-6 col-md-2 video"   data-video="${video_id}" data-toggle="modal" data-target="#videoModal" >
+                                                            <span class="d-none d-lg-block">${content}</span>
+                                                            <div class="info-box text-bg-primary" style="background-image: url('${thumbnail_id}'); background-size: cover; cursor: pointer;"> 
+                                                                <div class="info-box-content"> 
+                                                                    <span class="info-box-text d-block d-lg-none">${content}</span> 
+                                                                </div> <!-- /.info-box-content -->
+                                                            </div> <!-- /.info-box -->
+                                                        </div> <!-- /.col -->`;
+    
+                                $(tagName).append(appendTag);
+                            } // end of if
                         }); // end of   jQuery
-                      }); // end of   $.getJSON
                   } // end of function loadData
 
      $(function() {
@@ -190,11 +190,9 @@ crossorigin="anonymous" referrerpolicy="no-referrer"></script>
                 });
 
 
-                loadData("data/lession.json",  "#row_data_lessions_id");
-                loadData("data/class.json",  "#row_data_class_id");
-                loadData("data/student.json",  "#row_data_student_id");
                 
 
+            
                 $(document).on("click", ".video", function(){
                     console.log(this);
                     var theModal = $(this).data("target"),
@@ -206,21 +204,23 @@ crossorigin="anonymous" referrerpolicy="no-referrer"></script>
                     });
                 });
 
-// AKfycbx0y0kL8voc84qsWtbx5TJs2Bc0OBEV1ttPdEfN4onHau6MFTn7iIckFzepuUxUoNid4Q
-// https://script.google.com/macros/s/AKfycbx0y0kL8voc84qsWtbx5TJs2Bc0OBEV1ttPdEfN4onHau6MFTn7iIckFzepuUxUoNid4Q/exec
-// https://script.google.com/macros/s/AKfycbx0y0kL8voc84qsWtbx5TJs2Bc0OBEV1ttPdEfN4onHau6MFTn7iIckFzepuUxUoNid4Q/exec
-// https://script.google.com/macros/s/AKfycbx0y0kL8voc84qsWtbx5TJs2Bc0OBEV1ttPdEfN4onHau6MFTn7iIckFzepuUxUoNid4Q/exec
-load();
+                getDataFromGoogleSheet();
           }); // end of $(function() {
 
 
-          async function load() {
+          async function getDataFromGoogleSheet() {
+            var url = "https://script.google.com/macros/s/AKfycbw6wLxFkPaRkuiiMykkNXnbha8caeXgCpFSUdpKDzfupkuWVE8qJrazbosQckpSm2Ctiw/exec";
             const response = await fetch(
-              "https://script.google.com/macros/s/AKfycbx0y0kL8voc84qsWtbx5TJs2Bc0OBEV1ttPdEfN4onHau6MFTn7iIckFzepuUxUoNid4Q/exec?name=Sheet3"
+              url + "?name=Sheet1"
             );
             //   console.log(response);
-            const events = await response.json();
-            console.log({ events });
+            const json_data = await response.json();
+            console.log({ json_data });
+
+            loadDataToDiv(json_data,  "#row_data_lessions_id", "bai_hoc");
+            loadDataToDiv(json_data,  "#row_data_student_id", "nop_bai");
+            loadDataToDiv(json_data,  "#row_data_class_id", "lop_hoc");
+
           }
 
           
