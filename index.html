@@ -25,9 +25,9 @@
                 
                 <ul class="navbar-nav">
                     <li class="nav-item"> <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button"> <i class="bi bi-list"></i> </a> </li>
-                    <li class="nav-item "> <a href="#" class="nav-link text-primary menu_class" id_ref="#row_data_lessions_id">Bài học</a> </li>
-                    <li class="nav-item "> <a href="#" class="nav-link menu_class" id_ref="#row_data_class_id">Lớp học</a> </li>
-                    <li class="nav-item "> <a href="#" class="nav-link menu_class" id_ref="#row_data_student_id">Nộp bài</a> </li>
+                    <li class="nav-item "> <a href="#" class="nav-link text-primary item_menu_class d-none d-lg-block" ref_data="bai_hoc">Bài học</a> </li>
+                    <li class="nav-item "> <a href="#" class="nav-link item_menu_class d-none d-lg-block" ref_data="lop_hoc">Lớp học</a> </li>
+                    <li class="nav-item "> <a href="#" class="nav-link item_menu_class d-none d-lg-block" ref_data="nop_bai">Nộp bài</a> </li>
                 </ul> <!--end::Start Navbar Links--> <!--begin::End Navbar Links-->
                 <ul class="navbar-nav ms-auto"> <!--begin::Navbar Search-->
                     <li class="nav-item"> <a class="nav-link" href="#" data-lte-toggle="fullscreen"> <i data-lte-icon="maximize" class="bi bi-arrows-fullscreen"></i> <i data-lte-icon="minimize" class="bi bi-fullscreen-exit" style="display: none;"></i> </a> </li> <!--end::Fullscreen Toggle--> <!--begin::User Menu Dropdown-->
@@ -57,17 +57,31 @@
                                 </p>
                             </a>
                             <ul class="nav nav-treeview">
-                                <li class="nav-item"> <a href="#" class="nav-link menu_class active" id_ref="#row_data_lessions_id"> <i class="nav-icon bi bi-table"></i>
+                                <li class="nav-item"> <a href="#" class="nav-link menu_class active" ref_data="bai_hoc"> <i class="nav-icon bi bi-table"></i>
                                         <p>Bài Học</p>
                                     </a> </li> 
-                                    <li class="nav-item"> <a href="#" class="nav-link menu_class " id_ref="#row_data_class_id"> <i class="nav-icon bi bi-box-seam-fill"></i>
+                                    <li class="nav-item"> <a href="#" class="nav-link menu_class " ref_data="lop_hoc"> <i class="nav-icon bi bi-box-seam-fill"></i>
                                         <p>Lớp học</p>
                                     </a> </li>
-                                    <li class="nav-item"> <a href="#" class="nav-link menu_class" id_ref="#row_data_student_id"> <i class="nav-icon bi bi-pencil-square"></i>
+                                    <li class="nav-item"> <a href="#" class="nav-link menu_class" ref_data="nop_bai"> <i class="nav-icon bi bi-pencil-square"></i>
                                         <p>Nộp bài</p>
                                     </a> </li>
                             </ul>
                         </li>
+
+                        <li class="nav-item"> <a href="#" class="nav-link"> <i class="nav-icon bi bi-ui-checks-grid"></i>
+                            <p>
+                                Book
+                                <i class="nav-arrow bi bi-chevron-right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item"> <a href="#" class="nav-link menu_class" ref_data="Oxford_phonics_world"> <i class="nav-icon bi bi-filetype-js"></i>
+                                    <p>Oxford phonics world 1</p>
+                                </a> </li> 
+                        </ul>
+                    </li>
+
                     </ul> <!--end::Sidebar Menu-->
                 </nav>
             </div> <!--end::Sidebar Wrapper-->
@@ -80,14 +94,12 @@
             </div> <!--end::App Content Header--> <!--begin::App Content-->
             <div class="app-content"> <!--begin::Container-->
                 <div class="container-fluid"> <!--begin::Row-->
+                    <div class="spinner-grow text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                      </div>
+                    <div class="row data_class" id="#data_class"> 
+                    </div> 
 
-                    <div class="row data_class"  id="row_data_student_id"> 
-                    </div> 
-                    <div class="row data_class"  id="row_data_class_id"> 
-                    </div> 
-
-                    <div class="row data_class"  id="row_data_lessions_id"> 
-                    </div> 
 
                     <div class="modal fade" id="videoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
@@ -111,17 +123,14 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha256-YMa+wAM6QkVyz999odX7lPRxkoYAan8suedu4k2Zur8=" crossorigin="anonymous"></script> <!--end::Required Plugin(Bootstrap 5)--><!--begin::Required Plugin(AdminLTE)-->
     <script src="js/adminlte.js"></script> <!--end::Required Plugin(AdminLTE)--><!--begin::OverlayScrollbars Configure-->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-<script src="https://code.jquery.com/jquery-3.6.3.min.js"
-integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-csv/1.0.21/jquery.csv.min.js"
-integrity="sha512-Y8iWYJDo6HiTo5xtml1g4QqHtl/PO1w+dmUpQfQSOTqKNsMhExfyPN2ncNAe9JuJUSKzwK/b6oaNPop4MXzkwg=="
-crossorigin="anonymous" referrerpolicy="no-referrer"></script> 
-<script src="js/moment-with-locales.min.js"></script>
-<script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-csv/1.0.21/jquery.csv.min.js" integrity="sha512-Y8iWYJDo6HiTo5xtml1g4QqHtl/PO1w+dmUpQfQSOTqKNsMhExfyPN2ncNAe9JuJUSKzwK/b6oaNPop4MXzkwg=="  crossorigin="anonymous" referrerpolicy="no-referrer"></script> 
+    <script src="js/moment-with-locales.min.js"></script>
+    <script>
 
-
+                var JSON_DATA ;
                 const SELECTOR_SIDEBAR_WRAPPER = ".sidebar-wrapper";
                 const Default = {
                     scrollbarTheme: "os-theme-light",
@@ -146,8 +155,10 @@ crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
                 function loadDataToDiv(json_data, tagName, data_type) {
                       moment.locale("vi");  
-
+                      $(tagName).empty();
+                      $( ".spinner-grow" ).show();
                         jQuery(json_data).each(function(index, item){
+
                             if ( item.Full_Path.includes(data_type) &&  item.Type.includes("mp4")) {
                                 var video_id = `https://drive.google.com/file/d/${item.ID}/preview`;
                                 var thumbnail_id  =`https://drive.google.com/thumbnail?id=${item.ID}`;
@@ -163,36 +174,34 @@ crossorigin="anonymous" referrerpolicy="no-referrer"></script>
                                                                 </div> <!-- /.info-box-content -->
                                                             </div> <!-- /.info-box -->
                                                         </div> <!-- /.col -->`;
-    
+
                                 $(tagName).append(appendTag);
                             } // end of if
                         }); // end of   jQuery
+
+                        $( ".spinner-grow" ).hide();
                   } // end of function loadData
 
      $(function() {
 
-                 $('.data_class').hide();
-                $("#row_data_lessions_id").show();
+                $('.menu_class, .item_menu_class').click(function() {
 
-                $('.menu_class').click(function() {
+                    $('.item_menu_class').removeClass("active");
+                    $('.menu_class').removeClass("active");
+                    $(this).addClass("active");
+
+                    if ($(this).hasClass('item_menu_class')) {
                         // Disable all buttons
-                        $('.menu_class').removeClass("text-primary");
-                        $('.menu_class').removeClass("active");
+                        $('.item_menu_class').removeClass("text-primary");
                         // Enable the clicked button
                         $(this).addClass("text-primary");
-                        $(this).addClass("active");
+                    } 
 
 
-                        // hide all
-                        $('.data_class').hide();
-                        var id_ref = $(this).attr('id_ref');
-                        $(id_ref).show();
+                        var ref_data = $(this).attr('ref_data');
+                        loadDataToDiv(JSON_DATA, ".data_class",  ref_data);
                 });
 
-
-                
-
-            
                 $(document).on("click", ".video", function(){
                     console.log(this);
                     var theModal = $(this).data("target"),
@@ -204,23 +213,21 @@ crossorigin="anonymous" referrerpolicy="no-referrer"></script>
                     });
                 });
 
-                getDataFromGoogleSheet();
+               getDataFromGoogleSheet();
+               
           }); // end of $(function() {
 
 
           async function getDataFromGoogleSheet() {
+            $( ".spinner-grow" ).show();
             var url = "https://script.google.com/macros/s/AKfycbw6wLxFkPaRkuiiMykkNXnbha8caeXgCpFSUdpKDzfupkuWVE8qJrazbosQckpSm2Ctiw/exec";
             const response = await fetch(
               url + "?name=Sheet1"
             );
             //   console.log(response);
-            const json_data = await response.json();
-            console.log({ json_data });
-
-            loadDataToDiv(json_data,  "#row_data_lessions_id", "bai_hoc");
-            loadDataToDiv(json_data,  "#row_data_student_id", "nop_bai");
-            loadDataToDiv(json_data,  "#row_data_class_id", "lop_hoc");
-
+            JSON_DATA  = await response.json();
+            $( ".spinner-grow" ).hide();
+            loadDataToDiv(JSON_DATA, ".data_class",  "bai_hoc");
           }
 
           
