@@ -93,14 +93,22 @@
             </div> <!--end::App Content Header--> <!--begin::App Content-->
             <div class="app-content"> <!--begin::Container-->
                 <div class="container-fluid"> <!--begin::Row-->
-                    <div class="spinner-grow text-primary" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                      </div>
                     <div class="row data_class" id="#data_class"> 
-                   
-
-
-
+                    </div> 
+                    <div class="row "> 
+                        <div class="spinner-grow text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                          </div>
+                        <div class="modal fade" id="videoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-body">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <iframe width="100%" height="450" src="" frameborder="0"  allow="autoplay"  allowfullscreen></iframe>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
                     </div> 
                     
                 </div> <!--end::Container-->
@@ -169,18 +177,6 @@
                                 $(tagName).append(appendTag);
                             } // end of if
                         }); // end of   jQuery
-
-                        $(tagName).append(`<div class="modal fade" id="videoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                            <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-body">
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                <iframe width="100%" height="450" src="" frameborder="0"  allow="autoplay"  allowfullscreen></iframe>
-                                </div>
-                            </div>
-                            </div>
-                        </div>
-                        `);
 
                         $( ".spinner-grow" ).hide();
                   } // end of function loadData
