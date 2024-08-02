@@ -105,7 +105,7 @@
                             <span class="visually-hidden">Loading...</span>
                           </div>
                         <div class="modal fade" id="videoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="width:85%">
-                            <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-dialog">
                             <div class="modal-content" >
                                 <div class="modal-body"  >
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -171,7 +171,7 @@
                                 var content =  item.Description != "NULL" ? item.Description : learn_day; 
     
                                 var appendTag = `<div class="col-6 col-sm-6 col-md-2 video"   data-video="${video_id}" data-toggle="modal" data-target="#videoModal" >
-                                                            <span class=" d-none d-lg-block bg-warning">${content}</span>
+                                                            <span class="d-none d-lg-block bg-warning">${content}</span>
                                                             <div class="info-box text-bg-primary" style="background-image: url('${thumbnail_id}'); background-size: cover; cursor: pointer;"> 
                                                                 <div class="info-box-content" style="min-height: 215px;"> 
                                                                     <span class="info-box-text d-block d-lg-none label  label-primary">${content}</span> 
