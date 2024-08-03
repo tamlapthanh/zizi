@@ -159,7 +159,7 @@
 
                 function loadDataToDiv(json_data, tagName, data_type) {
                       moment.locale("vi");  
-                      $("div").removeClass("video");
+                      $("div").remove(".video");
                       $( ".spinner-grow" ).show();
                         jQuery(json_data).each(function(index, item){
 
