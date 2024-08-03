@@ -98,14 +98,12 @@
             <div class="app-content"> <!--begin::Container-->
                 <div class="container-fluid"> <!--begin::Row-->
                     <div class="row  data_class" id="#data_class"> 
-                    </div> 
 
-                    <div class="row "> 
                         <div class="spinner-grow text-primary" role="status">
                             <span class="visually-hidden">Loading...</span>
                           </div>
-                        <div class="modal fade" id="videoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="width:85%">
-                            <div class="modal-dialog">
+                        <div class="modal fade" id="videoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="width:95%">
+                            <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content" >
                                 <div class="modal-body"  >
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -115,6 +113,8 @@
                             </div>
                         </div>
                     </div> 
+
+     
                     
                 </div> <!--end::Container-->
             </div> <!--end::App Content-->
@@ -159,7 +159,7 @@
 
                 function loadDataToDiv(json_data, tagName, data_type) {
                       moment.locale("vi");  
-                      $(tagName).empty();
+                      $("div").removeClass("video");
                       $( ".spinner-grow" ).show();
                         jQuery(json_data).each(function(index, item){
 
