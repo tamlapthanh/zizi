@@ -53,6 +53,17 @@
       { word: 'Penguin', meaning: 'Chim cánh cụt', lang: 'en' }
     ];
 
+    const getFontSize = () => {
+      const width = window.innerWidth;
+      if (width < 600) {
+        // Mobile devices
+        return 24; // Larger font size for mobile
+      } else {
+        // Desktop devices
+        return 20; // Default font size
+      }
+    };
+
     // Function to get random elements from an array
     const getRandomElements = (arr, count) => {
       const shuffled = arr.slice(0);
@@ -103,11 +114,13 @@
     };
 
     const createText = (text, x, y) => {
+      const fontSize = getFontSize();
+
       const txt = new Konva.Text({
         x: x,
         y: y,
         text: text,
-        fontSize: 20 * (stage.width() / 800), // Responsive font size
+        fontSize:  fontSize * (stage.width() / 800), // Responsive font size
         fontFamily: 'Calibri',
         fill: 'black',
         padding: 10,
@@ -136,6 +149,11 @@
         playTextSound(txt.text()); // Play sound from Web Speech API
       });
 
+      txt.on('tap', () => {
+        handleTextClick(txt);
+        playTextSound(txt.text()); // Play sound from Web Speech API
+      });
+
       return txt;
     };
 
@@ -145,7 +163,8 @@
       getRandomWordsAndMeanings();
 
       words.forEach(word => {
-        const size = { width: 100 * (stage.width() / 800), height: 30 * (stage.width() / 800) }; // Responsive size
+        const fontSize = getFontSize();
+        const size = { width: 100 * (stage.width() / 800), height: fontSize }; // Responsive size
         const pos = getRandomPosition(size);
         const text = createText(word, pos.x, pos.y);
         texts.push(text);
@@ -153,7 +172,8 @@
       });
 
       meanings.forEach(meaning => {
-        const size = { width: 100 * (stage.width() / 800), height: 30 * (stage.width() / 800) }; // Responsive size
+        const fontSize = getFontSize();
+        const size = { width: 100 * (stage.width() / 800), height: fontSize }; // Responsive size
         const pos = getRandomPosition(size);
         const text = createText(meaning, pos.x, pos.y);
         texts.push(text);
@@ -215,7 +235,7 @@
         if (correctMatches[word] === meaning || correctMatches[meaning] === word) {
           const matchedWord = selectedWord;
           const matchedMeaning = text;
-          
+
           const tween1 = new Konva.Tween({
             node: matchedWord,
             duration: 0.5,
@@ -227,7 +247,7 @@
               texts.splice(texts.indexOf(matchedWord), 1);
             },
           });
-          
+
           const tween2 = new Konva.Tween({
             node: matchedMeaning,
             duration: 0.5,
