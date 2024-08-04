@@ -79,7 +79,7 @@
 
     // Function to get random words and meanings
     const getRandomWordsAndMeanings = () => {
-      const pairs = getRandomElements(vocab, 10); // Choose 10 pairs
+      const pairs = getRandomElements(vocab, 5); // Choose 10 pairs
       words = pairs.map(pair => pair.word);
       meanings = pairs.map(pair => pair.meaning);
       correctMatches = {};
