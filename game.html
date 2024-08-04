@@ -30,10 +30,22 @@
     .modal-footer button {
       margin: 0 5px;
     }
+
+    #settingsButton {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 100;
+    }
+
   </style>
 </head>
 <body>
-  <div id="container"></div>
+  
+  <div id="container">
+   
+  </div>
+  <button id="settingsButton" class="btn btn-primary" >Game Settings</button>
   
   <!-- Modal -->
   <div class="modal fade" id="vocabModal" tabindex="-1" role="dialog" aria-labelledby="vocabModalLabel" aria-hidden="true">
@@ -50,6 +62,22 @@
             <option value="animals">Tên con vật</option>
             <option value="householdItems">Vật dụng trong nhà</option>
           </select>
+         <select id="vocabNum" class="form-control">
+            <option value="5">5 câu</option>
+            <option value="10">10 câu</option>
+            <option value="15">15 câu</option>
+            <option value="20">20 câu</option>
+            <option value="100">Thôi chơi tất</option>
+          </select>
+          <select id="voiceSelect" class="form-control">
+          </select>
+
+          <select id="rateSelect" class="form-control">
+            <option value="1">Đọc bình thường</option>
+            <option value="0.85">Đọc chậm 0.85</option>
+            <option value="0.75">Đọc chậm 0.75</option>
+          </select>
+
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-primary" id="startButton">Chơi thôi, bệnh gì cữ</button>
@@ -69,6 +97,11 @@
     let correctMatches = {};
     let selectedWord = null;
     let texts = [];
+
+   
+    let voices = [];
+    let selectedVoiceIndex = null;
+    let rate = 1.0;
 
     const vocab = {
       animals: [
@@ -114,7 +147,6 @@
       { "word": "Gorilla", "meaning": "Gorilla", "lang": "en" },
       { "word": "Baboon", "meaning": "Khỉ đầu chó", "lang": "en" },
       { "word": "Chimpanzee", "meaning": "Tinh tinh", "lang": "en" },
-      { "word": "Mandrill", "meaning": "Mandrill", "lang": "en" },
       { "word": "Puma", "meaning": "Puma", "lang": "en" },
       { "word": "Cougar", "meaning": "Cougar", "lang": "en" },
       { "word": "Jaguar", "meaning": "Jaguar", "lang": "en" },
@@ -168,6 +200,9 @@
     };
 
     const getRandomElements = (arr, count) => {
+      if (count == 100) {
+        count = arr.length - 1  ;
+      }
       const shuffled = arr.slice(0);
       let i = shuffled.length, temp, index;
       while (i--) {
@@ -179,9 +214,9 @@
       return shuffled.slice(0, count);
     };
 
-    const getRandomWordsAndMeanings = (vocabCategory) => {
+    const getRandomWordsAndMeanings = (vocabCategory, selectedNum) => {
       const vocabList = vocab[vocabCategory];
-      const pairs = getRandomElements(vocabList, 5); // Choose 5 pairs
+      const pairs = getRandomElements(vocabList, selectedNum); // Choose 5 pairs
       words = pairs.map(pair => pair.word);
       meanings = pairs.map(pair => pair.meaning);
       correctMatches = {};
@@ -213,7 +248,7 @@
       return pos;
     };
 
-    const createText = (text, x, y) => {
+    const createText = (text, x, y, color) => {
       const fontSize = getFontSize();
 
       const txt = new Konva.Text({
@@ -222,7 +257,7 @@
         text: text,
         fontSize:  fontSize * (stage.width() / 800), // Responsive font size
         fontFamily: 'Calibri',
-        fill: 'black',
+        fill: color,
         padding: 10,
         align: 'center',
         verticalAlign: 'middle',
@@ -257,16 +292,16 @@
       return txt;
     };
 
-    const createObjects = (vocabCategory) => {
+    const createObjects = (vocabCategory, selectedNum) => {
       layer.destroyChildren();
       texts = [];
-      getRandomWordsAndMeanings(vocabCategory);
+      getRandomWordsAndMeanings(vocabCategory, selectedNum);
 
       words.forEach(word => {
         const fontSize = getFontSize();
         const size = { width: 100 * (stage.width() / 800), height: fontSize }; // Responsive size
         const pos = getRandomPosition(size);
-        const text = createText(word, pos.x, pos.y);
+        const text = createText(word, pos.x, pos.y, 'black');
         texts.push(text);
         layer.add(text);
       });
@@ -275,7 +310,7 @@
         const fontSize = getFontSize();
         const size = { width: 100 * (stage.width() / 800), height: fontSize }; // Responsive size
         const pos = getRandomPosition(size);
-        const text = createText(meaning, pos.x, pos.y);
+        const text = createText(meaning, pos.x, pos.y, 'blue');
         texts.push(text);
         layer.add(text);
       });
@@ -318,14 +353,27 @@
       // Reset the game after the fireworks effect
       setTimeout(() => {
         const selectedCategory = document.getElementById('vocabSelect').value;
-        createObjects(selectedCategory); // Reset with the same category
+        const selectedNum = document.getElementById('vocabNum').value;
+        createObjects(selectedCategory, selectedNum); // Reset with the same category
       }, 2000); // Wait for fireworks to finish before resetting
     };
 
     const playTextSound = (text) => {
-      const utterance = new SpeechSynthesisUtterance(text);
+      let utterance = new SpeechSynthesisUtterance(text);
       const isVietnamese = vocab.animals.some(pair => pair.meaning === text) || vocab.householdItems.some(pair => pair.meaning === text);
-      utterance.lang = isVietnamese ? 'vi-VN' : 'en-US';
+      if (isVietnamese) {
+        utterance.lang = 'vi-VN' ;
+      }
+      else {
+        utterance.lang =  'en-US';
+        const selectedVoice = voices[selectedVoiceIndex];
+        if (selectedVoice) {
+          utterance.voice = selectedVoice;
+        }
+        utterance.rate = rate;
+      }
+
+      
       speechSynthesis.speak(utterance);
     };
 
@@ -406,17 +454,64 @@
         stage.width(window.innerWidth);
         stage.height(window.innerHeight);
         if ($('.modal').hasClass('show') === false) {
-          createObjects(document.getElementById('vocabSelect').value); // Initialize with selected category
+          const selectedCategory = document.getElementById('vocabSelect').value;
+          const selectedNum = document.getElementById('vocabNum').value;
+          createObjects(selectedCategory, selectedNum); // Initialize with selected category
         }
       });
 
       $('#startButton').on('click', () => {
         const selectedCategory = document.getElementById('vocabSelect').value;
-        createObjects(selectedCategory);
+        const selectedNum = document.getElementById('vocabNum').value;
+        createObjects(selectedCategory, selectedNum);
         $('#vocabModal').modal('hide'); // Close modal
       });
 
       $('#vocabModal').modal('show'); // Show modal on page load
+
+      
+
+        // Populate the dropdown with voices
+        const populateVoiceList = () => {
+          voices = speechSynthesis.getVoices();
+          //voiceSelect.innerHTML = ''; // Reset the dropdown
+  
+          voices.forEach((voice, index) => {
+            if (voice.name.includes('English')) {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = "Giọng " + voice.name;
+                voiceSelect.appendChild(option);
+
+                // Set default to US English
+                if (voice.name.includes('US English')) {
+                  voiceSelect.value = index;
+                  selectedVoiceIndex = index;
+                }
+
+            }
+          });
+
+        };
+
+         // Wait for voices to be loaded
+      speechSynthesis.onvoiceschanged = populateVoiceList;
+
+       // Handle voice selection change
+       voiceSelect.addEventListener('change', () => {
+          selectedVoiceIndex = voiceSelect.value;
+      });
+
+      // Handle voice selection change
+      rateSelect.addEventListener('change', () => {
+          rate = rateSelect.value;
+      });
+
+      settingsButton.addEventListener('click', () => {
+        
+        $('#vocabModal').modal('show'); 
+      });
+
     };
 
     init();
