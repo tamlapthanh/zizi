@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Matching Game</title>
+  <script src="https://cdn.jsdelivr.net/npm/konva@8.3.5/konva.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      overflow: hidden;
+    }
+    #container {
+      width: 100vw;
+      height: 100vh;
+      border: 1px solid black;
+      position: relative;
+    }
+  </style>
+</head>
+<body>
+  <div id="container"></div>
+  <script>
+    let stage, layer;
+    let words = [];
+    let meanings = [];
+    let correctMatches = {};
+    let selectedWord = null;
+    let texts = [];
+
+    const vocab = [
+      { word: 'Dog', meaning: 'Con chó', lang: 'en' },
+      { word: 'Cat', meaning: 'Con mèo', lang: 'en' },
+      { word: 'Bird', meaning: 'Con chim', lang: 'en' },
+      { word: 'Fish', meaning: 'Con cá', lang: 'en' },
+      { word: 'Horse', meaning: 'Con ngựa', lang: 'en' },
+      { word: 'Cow', meaning: 'Con bò', lang: 'en' },
+      { word: 'Sheep', meaning: 'Con cừu', lang: 'en' },
+      { word: 'Duck', meaning: 'Con vịt', lang: 'en' },
+      { word: 'Goat', meaning: 'Con dê', lang: 'en' },
+      { word: 'Pig', meaning: 'Con lợn', lang: 'en' },
+      { word: 'Elephant', meaning: 'Con voi', lang: 'en' },
+      { word: 'Lion', meaning: 'Sư tử', lang: 'en' },
+      { word: 'Tiger', meaning: 'Hổ', lang: 'en' },
+      { word: 'Bear', meaning: 'Gấu', lang: 'en' },
+      { word: 'Wolf', meaning: 'Sóc', lang: 'en' },
+      { word: 'Rabbit', meaning: 'Thỏ', lang: 'en' },
+      { word: 'Monkey', meaning: 'Khỉ', lang: 'en' },
+      { word: 'Giraffe', meaning: 'Hươu cao cổ', lang: 'en' },
+      { word: 'Kangaroo', meaning: 'Kangaroo', lang: 'en' },
+      { word: 'Zebra', meaning: 'Ngựa vằn', lang: 'en' },
+      { word: 'Penguin', meaning: 'Chim cánh cụt', lang: 'en' }
+    ];
+
+    // Function to get random elements from an array
+    const getRandomElements = (arr, count) => {
+      const shuffled = arr.slice(0);
+      let i = shuffled.length, temp, index;
+      while (i--) {
+        index = Math.floor(Math.random() * (i + 1));
+        temp = shuffled[i];
+        shuffled[i] = shuffled[index];
+        shuffled[index] = temp;
+      }
+      return shuffled.slice(0, count);
+    };
+
+    // Function to get random words and meanings
+    const getRandomWordsAndMeanings = () => {
+      const pairs = getRandomElements(vocab, 10); // Choose 10 pairs
+      words = pairs.map(pair => pair.word);
+      meanings = pairs.map(pair => pair.meaning);
+      correctMatches = {};
+      pairs.forEach(pair => {
+        correctMatches[pair.word] = pair.meaning;
+        correctMatches[pair.meaning] = pair.word; // Add reverse mapping
+      });
+    };
+
+    // Function to check if a position overlaps with existing texts
+    const isOverlapping = (pos, size) => {
+      const padding = 20;
+      return texts.some(txt => {
+        const txtPos = txt.getClientRect();
+        return !(pos.x + size.width < txtPos.x ||
+                 pos.x > txtPos.x + txtPos.width ||
+                 pos.y + size.height < txtPos.y ||
+                 pos.y > txtPos.y + txtPos.height);
+      });
+    };
+
+    // Function to get a random position ensuring no overlap
+    const getRandomPosition = (size) => {
+      let pos;
+      do {
+        pos = {
+          x: Math.random() * (stage.width() - size.width),
+          y: Math.random() * (stage.height() - size.height),
+        };
+      } while (isOverlapping(pos, size));
+      return pos;
+    };
+
+    const createText = (text, x, y) => {
+      const txt = new Konva.Text({
+        x: x,
+        y: y,
+        text: text,
+        fontSize: 20 * (stage.width() / 800), // Responsive font size
+        fontFamily: 'Calibri',
+        fill: 'black',
+        padding: 10,
+        align: 'center',
+        verticalAlign: 'middle',
+        draggable: true,
+        isSelected: false
+      });
+
+      txt.on('mouseover', () => {
+        document.body.style.cursor = 'pointer';
+        txt.fill('green');
+        layer.draw();
+      });
+
+      txt.on('mouseout', () => {
+        document.body.style.cursor = 'default';
+        if (!txt.isSelected) {
+          txt.fill('black');
+        }
+        layer.draw();
+      });
+
+      txt.on('click', () => {
+        handleTextClick(txt);
+        playTextSound(txt.text()); // Play sound from Web Speech API
+      });
+
+      return txt;
+    };
+
+    const createObjects = () => {
+      layer.destroyChildren();
+      texts = [];
+      getRandomWordsAndMeanings();
+
+      words.forEach(word => {
+        const size = { width: 100 * (stage.width() / 800), height: 30 * (stage.width() / 800) }; // Responsive size
+        const pos = getRandomPosition(size);
+        const text = createText(word, pos.x, pos.y);
+        texts.push(text);
+        layer.add(text);
+      });
+
+      meanings.forEach(meaning => {
+        const size = { width: 100 * (stage.width() / 800), height: 30 * (stage.width() / 800) }; // Responsive size
+        const pos = getRandomPosition(size);
+        const text = createText(meaning, pos.x, pos.y);
+        texts.push(text);
+        layer.add(text);
+      });
+
+      layer.draw();
+    };
+
+    const createFireworks = () => {
+      const fireworksLayer = new Konva.Layer();
+      stage.add(fireworksLayer);
+
+      const fireworks = [];
+      for (let i = 0; i < 30; i++) {
+        const firework = new Konva.Circle({
+          x: Math.random() * stage.width(),
+          y: Math.random() * stage.height(),
+          radius: Math.random() * 5 + 5,
+          fill: `hsl(${Math.random() * 360}, 100%, 50%)`,
+          opacity: 1,
+        });
+        fireworksLayer.add(firework);
+        fireworks.push(firework);
+
+        const tween = new Konva.Tween({
+          node: firework,
+          duration: 1,
+          scaleX: 0.5,
+          scaleY: 0.5,
+          opacity: 0,
+          onFinish: () => {
+            firework.destroy();
+            fireworksLayer.draw();
+          }
+        });
+        tween.play();
+      }
+
+      fireworksLayer.draw();
+
+      // Reset the game after the fireworks effect
+      setTimeout(createObjects, 2000); // Wait for fireworks to finish before resetting
+    };
+
+    const playTextSound = (text) => {
+      const utterance = new SpeechSynthesisUtterance(text);
+      const isVietnamese = vocab.some(pair => pair.meaning === text);
+      utterance.lang = isVietnamese ? 'vi-VN' : 'en-US';
+      speechSynthesis.speak(utterance);
+    };
+
+    const handleTextClick = (text) => {
+      if (text.isSelected) return;
+
+      if (selectedWord) {
+        const word = selectedWord.text();
+        const meaning = text.text();
+        if (correctMatches[word] === meaning || correctMatches[meaning] === word) {
+          const matchedWord = selectedWord;
+          const matchedMeaning = text;
+          
+          const tween1 = new Konva.Tween({
+            node: matchedWord,
+            duration: 0.5,
+            scaleX: 0,
+            scaleY: 0,
+            opacity: 0,
+            onFinish: () => {
+              matchedWord.destroy();
+              texts.splice(texts.indexOf(matchedWord), 1);
+            },
+          });
+          
+          const tween2 = new Konva.Tween({
+            node: matchedMeaning,
+            duration: 0.5,
+            scaleX: 0,
+            scaleY: 0,
+            opacity: 0,
+            onFinish: () => {
+              matchedMeaning.destroy();
+              texts.splice(texts.indexOf(matchedMeaning), 1);
+              if (texts.length === 0) {
+                createFireworks(); // Create fireworks effect when the game is completed
+              }
+            },
+          });
+
+          tween1.play();
+          tween2.play();
+          selectedWord = null;
+          layer.draw();
+        } else {
+          // Remove color of the selected words if they do not match
+          selectedWord.fill('black');
+          text.fill('black');
+          selectedWord.isSelected = false;
+          text.isSelected = false;
+          selectedWord = null;
+          layer.draw();
+        }
+      } else {
+        // Reset the previously selected word if needed
+        if (selectedWord) {
+          selectedWord.fill('black');
+        }
+
+        selectedWord = text;
+        selectedWord.fill('red');
+        selectedWord.isSelected = true;
+      }
+      layer.draw();
+    };
+
+    const init = () => {
+      stage = new Konva.Stage({
+        container: 'container',
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+
+      layer = new Konva.Layer();
+      stage.add(layer);
+
+      window.addEventListener('resize', () => {
+        stage.width(window.innerWidth);
+        stage.height(window.innerHeight);
+        createObjects(); // Recreate objects to fit new dimensions
+      });
+
+      createObjects(); // Initialize the game objects
+    };
+
+    init();
+  </script>
+</body>
+</html>
