@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Matching Game</title>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/konva@8.3.5/konva.min.js"></script>
   <style>
     body {
@@ -17,10 +18,50 @@
       border: 1px solid black;
       position: relative;
     }
+    .modal-content {
+      text-align: center;
+    }
+    .modal-header, .modal-body, .modal-footer {
+      border: none;
+    }
+    .modal-body select {
+      margin: 10px 0;
+    }
+    .modal-footer button {
+      margin: 0 5px;
+    }
   </style>
 </head>
 <body>
   <div id="container"></div>
+  
+  <!-- Modal -->
+  <div class="modal fade" id="vocabModal" tabindex="-1" role="dialog" aria-labelledby="vocabModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="vocabModalLabel">Chọn bộ từ vựng</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <select id="vocabSelect" class="form-control">
+            <option value="animals">Tên con vật</option>
+            <option value="householdItems">Vật dụng trong nhà</option>
+          </select>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" id="startButton">Chơi thôi, bệnh gì cữ</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Bỏ đi 8</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script>
     let stage, layer;
     let words = [];
@@ -29,42 +70,63 @@
     let selectedWord = null;
     let texts = [];
 
-    const vocab = [
-      { word: 'Dog', meaning: 'Con chó', lang: 'en' },
-      { word: 'Cat', meaning: 'Con mèo', lang: 'en' },
-      { word: 'Bird', meaning: 'Con chim', lang: 'en' },
-      { word: 'Fish', meaning: 'Con cá', lang: 'en' },
-      { word: 'Horse', meaning: 'Con ngựa', lang: 'en' },
-      { word: 'Cow', meaning: 'Con bò', lang: 'en' },
-      { word: 'Sheep', meaning: 'Con cừu', lang: 'en' },
-      { word: 'Duck', meaning: 'Con vịt', lang: 'en' },
-      { word: 'Goat', meaning: 'Con dê', lang: 'en' },
-      { word: 'Pig', meaning: 'Con lợn', lang: 'en' },
-      { word: 'Elephant', meaning: 'Con voi', lang: 'en' },
-      { word: 'Lion', meaning: 'Sư tử', lang: 'en' },
-      { word: 'Tiger', meaning: 'Hổ', lang: 'en' },
-      { word: 'Bear', meaning: 'Gấu', lang: 'en' },
-      { word: 'Wolf', meaning: 'Sóc', lang: 'en' },
-      { word: 'Rabbit', meaning: 'Thỏ', lang: 'en' },
-      { word: 'Monkey', meaning: 'Khỉ', lang: 'en' },
-      { word: 'Giraffe', meaning: 'Hươu cao cổ', lang: 'en' },
-      { word: 'Kangaroo', meaning: 'Kangaroo', lang: 'en' },
-      { word: 'Zebra', meaning: 'Ngựa vằn', lang: 'en' },
-      { word: 'Penguin', meaning: 'Chim cánh cụt', lang: 'en' }
-    ];
+    const vocab = {
+      animals: [
+        { word: 'Dog', meaning: 'Con chó', lang: 'en' },
+        { word: 'Cat', meaning: 'Con mèo', lang: 'en' },
+        { word: 'Bird', meaning: 'Con chim', lang: 'en' },
+        { word: 'Fish', meaning: 'Con cá', lang: 'en' },
+        { word: 'Horse', meaning: 'Con ngựa', lang: 'en' },
+        { word: 'Cow', meaning: 'Con bò', lang: 'en' },
+        { word: 'Sheep', meaning: 'Con cừu', lang: 'en' },
+        { word: 'Duck', meaning: 'Con vịt', lang: 'en' },
+        { word: 'Goat', meaning: 'Con dê', lang: 'en' },
+        { word: 'Pig', meaning: 'Con lợn', lang: 'en' },
+        { word: 'Elephant', meaning: 'Con voi', lang: 'en' },
+        { word: 'Lion', meaning: 'Sư tử', lang: 'en' },
+        { word: 'Tiger', meaning: 'Hổ', lang: 'en' },
+        { word: 'Bear', meaning: 'Gấu', lang: 'en' },
+        { word: 'Wolf', meaning: 'Sóc', lang: 'en' },
+        { word: 'Rabbit', meaning: 'Thỏ', lang: 'en' },
+        { word: 'Monkey', meaning: 'Khỉ', lang: 'en' },
+        { word: 'Giraffe', meaning: 'Hươu cao cổ', lang: 'en' },
+        { word: 'Kangaroo', meaning: 'Kangaroo', lang: 'en' },
+        { word: 'Zebra', meaning: 'Ngựa vằn', lang: 'en' },
+        { word: 'Penguin', meaning: 'Chim cánh cụt', lang: 'en' }
+      ],
+      householdItems: [
+        { word: 'Table', meaning: 'Bàn', lang: 'en' },
+        { word: 'Chair', meaning: 'Ghế', lang: 'en' },
+        { word: 'Lamp', meaning: 'Đèn', lang: 'en' },
+        { word: 'Sofa', meaning: 'Sofa', lang: 'en' },
+        { word: 'Bed', meaning: 'Giường', lang: 'en' },
+        { word: 'Refrigerator', meaning: 'Tủ lạnh', lang: 'en' },
+        { word: 'Oven', meaning: 'Lò nướng', lang: 'en' },
+        { word: 'Microwave', meaning: 'Lò vi sóng', lang: 'en' },
+        { word: 'Washing Machine', meaning: 'Máy giặt', lang: 'en' },
+        { word: 'Toaster', meaning: 'Máy nướng bánh', lang: 'en' },
+        { word: 'Cabinet', meaning: 'Tủ đựng đồ', lang: 'en' },
+        { word: 'Shelf', meaning: 'Kệ', lang: 'en' },
+        { word: 'Curtain', meaning: 'Rèm cửa', lang: 'en' },
+        { word: 'Mirror', meaning: 'Gương', lang: 'en' },
+        { word: 'Clock', meaning: 'Đồng hồ', lang: 'en' },
+        { word: 'Painting', meaning: 'Tranh', lang: 'en' },
+        { word: 'Carpet', meaning: 'Thảm', lang: 'en' },
+        { word: 'Pillow', meaning: 'Gối', lang: 'en' },
+        { word: 'Blanket', meaning: 'Chăn', lang: 'en' },
+        { word: 'Drawer', meaning: 'Ngăn kéo', lang: 'en' }
+      ]
+    };
 
     const getFontSize = () => {
       const width = window.innerWidth;
       if (width < 800) {
-        // Mobile devices
         return 32; // Larger font size for mobile
       } else {
-        // Desktop devices
         return 24; // Default font size
       }
     };
 
-    // Function to get random elements from an array
     const getRandomElements = (arr, count) => {
       const shuffled = arr.slice(0);
       let i = shuffled.length, temp, index;
@@ -77,9 +139,9 @@
       return shuffled.slice(0, count);
     };
 
-    // Function to get random words and meanings
-    const getRandomWordsAndMeanings = () => {
-      const pairs = getRandomElements(vocab, 5); // Choose 10 pairs
+    const getRandomWordsAndMeanings = (vocabCategory) => {
+      const vocabList = vocab[vocabCategory];
+      const pairs = getRandomElements(vocabList, 5); // Choose 5 pairs
       words = pairs.map(pair => pair.word);
       meanings = pairs.map(pair => pair.meaning);
       correctMatches = {};
@@ -89,7 +151,6 @@
       });
     };
 
-    // Function to check if a position overlaps with existing texts
     const isOverlapping = (pos, size) => {
       const padding = 20;
       return texts.some(txt => {
@@ -101,7 +162,6 @@
       });
     };
 
-    // Function to get a random position ensuring no overlap
     const getRandomPosition = (size) => {
       let pos;
       do {
@@ -146,21 +206,21 @@
 
       txt.on('click', () => {
         handleTextClick(txt);
-        playTextSound(txt.text()); // Play sound from Web Speech API
+        playTextSound(txt.text());
       });
 
       txt.on('tap', () => {
         handleTextClick(txt);
-        playTextSound(txt.text()); // Play sound from Web Speech API
+        playTextSound(txt.text());
       });
 
       return txt;
     };
 
-    const createObjects = () => {
+    const createObjects = (vocabCategory) => {
       layer.destroyChildren();
       texts = [];
-      getRandomWordsAndMeanings();
+      getRandomWordsAndMeanings(vocabCategory);
 
       words.forEach(word => {
         const fontSize = getFontSize();
@@ -216,12 +276,15 @@
       fireworksLayer.draw();
 
       // Reset the game after the fireworks effect
-      setTimeout(createObjects, 2000); // Wait for fireworks to finish before resetting
+      setTimeout(() => {
+        const selectedCategory = document.getElementById('vocabSelect').value;
+        createObjects(selectedCategory); // Reset with the same category
+      }, 2000); // Wait for fireworks to finish before resetting
     };
 
     const playTextSound = (text) => {
       const utterance = new SpeechSynthesisUtterance(text);
-      const isVietnamese = vocab.some(pair => pair.meaning === text);
+      const isVietnamese = vocab.animals.some(pair => pair.meaning === text) || vocab.householdItems.some(pair => pair.meaning === text);
       utterance.lang = isVietnamese ? 'vi-VN' : 'en-US';
       speechSynthesis.speak(utterance);
     };
@@ -302,10 +365,18 @@
       window.addEventListener('resize', () => {
         stage.width(window.innerWidth);
         stage.height(window.innerHeight);
-        createObjects(); // Recreate objects to fit new dimensions
+        if ($('.modal').hasClass('show') === false) {
+          createObjects(document.getElementById('vocabSelect').value); // Initialize with selected category
+        }
       });
 
-      createObjects(); // Initialize the game objects
+      $('#startButton').on('click', () => {
+        const selectedCategory = document.getElementById('vocabSelect').value;
+        createObjects(selectedCategory);
+        $('#vocabModal').modal('hide'); // Close modal
+      });
+
+      $('#vocabModal').modal('show'); // Show modal on page load
     };
 
     init();
