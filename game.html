@@ -521,6 +521,7 @@
         console.log(voices);
           voices.forEach((voice, index) => {
             if (voice.name.includes('English')) {
+              alert(voice.name);
                 const option = document.createElement('option');
                 option.value = index;
                 option.textContent = "Giọng " + voice.name;
