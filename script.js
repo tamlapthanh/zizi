@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.body.style.cursor = 'default';
       });
 
-      text.on('click', () => {
+      function handleWordClick() {
         if (currentWord === word) {
           createCorrectMessage(text.x() + text.width() / 2, text.y() + text.height() / 2);
           createExplosion(text.x() + text.width() / 2, text.y() + text.height() / 2);
@@ -84,7 +84,11 @@ document.addEventListener('DOMContentLoaded', function () {
         } else {
           createWrongMessage(text.x() + text.width() / 2, text.y() + text.height() / 2);
         }
-      });
+      }
+
+
+      text.on('click', handleWordClick);
+      text.on('tap', handleWordClick);
 
       layer.add(text);
     });
