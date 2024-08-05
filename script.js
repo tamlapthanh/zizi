@@ -17,8 +17,8 @@ document.addEventListener('DOMContentLoaded', function () {
   // Thiết lập Konva stage và layer
   const stage = new Konva.Stage({
     container: 'container',
-    width: document.getElementById('canvasContainer').clientWidth,
-    height: window.innerHeight / 2
+    width: window.innerWidth,
+    height: window.innerHeight,
   });
 
   const layer = new Konva.Layer();
