@@ -295,7 +295,11 @@
             return txt;
           };
 
-          const createObjects = (vocabCategory, selectedNum) => {
+          const createObjects = () => {
+
+             var vocabCategory = document.getElementById('vocabSelect').value;
+            var selectedNum = document.getElementById('vocabNum').value;
+
             layer.destroyChildren();
             texts = [];
             getRandomWordsAndMeanings(vocabCategory, selectedNum);
@@ -357,7 +361,8 @@
             setTimeout(() => {
               const selectedCategory = document.getElementById('vocabSelect').value;
               const selectedNum = document.getElementById('vocabNum').value;
-              createObjects(selectedCategory, selectedNum); // Reset with the same category
+
+              createObjects(); // Reset with the same category
             }, 2000); // Wait for fireworks to finish before resetting
           };
 
@@ -461,14 +466,14 @@
               if ($('.modal').hasClass('show') === false) {
                 const selectedCategory = document.getElementById('vocabSelect').value;
                 const selectedNum = document.getElementById('vocabNum').value;
-                createObjects(selectedCategory, selectedNum); // Initialize with selected category
+                createObjects(); // Initialize with selected category
               }
             });
 
             $('#startButton').on('click', () => {
               const selectedCategory = document.getElementById('vocabSelect').value;
               const selectedNum = document.getElementById('vocabNum').value;
-              createObjects(selectedCategory, selectedNum);
+              createObjects();
               $('#vocabModal').modal('hide'); // Close modal
             });
 
@@ -490,7 +495,6 @@
                   // Populate the dropdown with voices
                   const populateVoiceList = () => {
                     voices = speechSynthesis.getVoices();
-                    alert(voices);
                     voices.forEach((voice, index) => {
                       if (voice.name.includes('English')) {
                           const option = document.createElement('option');
@@ -513,9 +517,9 @@
     // Wait for voices to be loaded
     speechSynthesis.onvoiceschanged = populateVoiceList;
 
-    $('#vocabModal').modal('show'); // Show modal on page load
-
     init();
+    createObjects();
+
   }); // end of $(function() {
     
   </script>
