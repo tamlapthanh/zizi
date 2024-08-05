@@ -122,6 +122,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (femaleVoice) {
       utterance.voice = femaleVoice;
     }
+    utterance.rate = 0.75;
     speechSynthesis.speak(utterance);
   }
 
@@ -133,6 +134,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (femaleVoice) {
       utterance.voice = femaleVoice;
     }
+    utterance.rate = 0.75;
     speechSynthesis.speak(utterance);
   }
 
