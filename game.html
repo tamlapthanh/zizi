@@ -521,14 +521,13 @@
         console.log(voices);
           voices.forEach((voice, index) => {
             if (voice.name.includes('English')) {
-              alert(voice.name);
                 const option = document.createElement('option');
                 option.value = index;
                 option.textContent = "Giọng " + voice.name;
                 voiceSelect.appendChild(option);
 
                 // Set default to US English
-                if (voice.name.includes('US English')) {
+                if (voice.name.includes('US English') || voice.name.includes('Female')  || voice.name.includes('States') ) {
                   voiceSelect.value = index;
                   selectedVoiceIndex = index;
                 }
