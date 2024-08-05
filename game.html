@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Matching Game</title>
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/konva@8.3.5/konva.min.js"></script>
   <style>
     body {
@@ -91,430 +92,434 @@
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script>
-    let stage, layer;
-    let words = [];
-    let meanings = [];
-    let correctMatches = {};
-    let selectedWord = null;
-    let texts = [];
+    
 
-   
-    let voices = [];
-    let selectedVoiceIndex = null;
-    let rate = 1.0;
+          let stage, layer;
+          let words = [];
+          let meanings = [];
+          let correctMatches = {};
+          let selectedWord = null;
+          let texts = [];
 
-    const vocab = {
-      animals: [
-      { "word": "Dog", "meaning": "Chó", "lang": "en" },
-      { "word": "Cat", "meaning": "Mèo", "lang": "en" },
-      { "word": "Bird", "meaning": "Chim", "lang": "en" },
-      { "word": "Fish", "meaning": "Cá", "lang": "en" },
-      { "word": "Elephant", "meaning": "Voi", "lang": "en" },
-      { "word": "Horse", "meaning": "Ngựa", "lang": "en" },
-      { "word": "Rabbit", "meaning": "Thỏ", "lang": "en" },
-      { "word": "Lion", "meaning": "Sư tử", "lang": "en" },
-      { "word": "Tiger", "meaning": "Hổ", "lang": "en" },
-      { "word": "Bear", "meaning": "Gấu", "lang": "en" },
-      { "word": "Giraffe", "meaning": "Hươu cao cổ", "lang": "en" },
-      { "word": "Kangaroo", "meaning": "Kangaroo", "lang": "en" },
-      { "word": "Zebra", "meaning": "Ngựa vằn", "lang": "en" },
-      { "word": "Penguin", "meaning": "Chim cánh cụt", "lang": "en" },
-      { "word": "Dolphin", "meaning": "Cá heo", "lang": "en" },
-      { "word": "Whale", "meaning": "Cá voi", "lang": "en" },
-      { "word": "Shark", "meaning": "Cá mập", "lang": "en" },
-      { "word": "Eagle", "meaning": "Đại bàng", "lang": "en" },
-      { "word": "Owl", "meaning": "Cú", "lang": "en" },
-      { "word": "Snake", "meaning": "Rắn", "lang": "en" },
-      { "word": "Frog", "meaning": "Ếch", "lang": "en" },
-      { "word": "Turtle", "meaning": "Rùa", "lang": "en" },
-      { "word": "Panda", "meaning": "Gấu trúc", "lang": "en" },
-      { "word": "Wolf", "meaning": "Sói", "lang": "en" },
-      { "word": "Fox", "meaning": "Cáo", "lang": "en" },
-      { "word": "Hippopotamus", "meaning": "Hà mã", "lang": "en" },
-      { "word": "Rhinoceros", "meaning": "Tê giác", "lang": "en" },
-      { "word": "Cheetah", "meaning": "Báo gấm", "lang": "en" },
-      { "word": "Leopard", "meaning": "Báo", "lang": "en" },
-      { "word": "Hyena", "meaning": "Linh cẩu", "lang": "en" },
-      { "word": "Koala", "meaning": "Koala", "lang": "en" },
-      { "word": "Sloth", "meaning": "Lười", "lang": "en" },
-      { "word": "Armadillo", "meaning": "Lợn biển", "lang": "en" },
-      { "word": "Bat", "meaning": "Dơi", "lang": "en" },
-      { "word": "Otter", "meaning": "Rái cá", "lang": "en" },
-      { "word": "Porcupine", "meaning": "Nhím", "lang": "en" },
-      { "word": "Meerkat", "meaning": "Chồn mangut", "lang": "en" },
-      { "word": "Kangaroo Rat", "meaning": "Chuột kangaroo", "lang": "en" },
-      { "word": "Bison", "meaning": "Bò rừng", "lang": "en" },
-      { "word": "Gorilla", "meaning": "Gorilla", "lang": "en" },
-      { "word": "Baboon", "meaning": "Khỉ đầu chó", "lang": "en" },
-      { "word": "Chimpanzee", "meaning": "Tinh tinh", "lang": "en" },
-      { "word": "Puma", "meaning": "Puma", "lang": "en" },
-      { "word": "Cougar", "meaning": "Cougar", "lang": "en" },
-      { "word": "Jaguar", "meaning": "Jaguar", "lang": "en" },
-      { "word": "Okapi", "meaning": "Okapi", "lang": "en" },
-      { "word": "Tapir", "meaning": "Tapir", "lang": "en" },
-      { "word": "Warthog", "meaning": "Lợn rừng", "lang": "en" },
-      { "word": "Pangolin", "meaning": "Tê tê", "lang": "en" },
-      { "word": "Anteater", "meaning": "Thú ăn kiến", "lang": "en" },
-      { "word": "Aardvark", "meaning": "Aardvark", "lang": "en" },
-      { "word": "Squirrel", "meaning": "Sóc", "lang": "en" },
-      { "word": "Hedgehog", "meaning": "Nhím", "lang": "en" },
-      { "word": "Mole", "meaning": "Chuột chũi", "lang": "en" },
-      { "word": "Weasel", "meaning": "Chồn", "lang": "en" },
-      { "word": "Skunk", "meaning": "Chồn hôi", "lang": "en" },
-      { "word": "Opossum", "meaning": "Opossum", "lang": "en" },
-      { "word": "Wombat", "meaning": "Wombat", "lang": "en" },
-      { "word": "Tasmanian Devil", "meaning": "Quỷ Tasmania", "lang": "en" },
-      { "word": "Dingo", "meaning": "Chó rừng Úc", "lang": "en" }
-      ],
-      householdItems: [
-        { word: 'Table', meaning: 'Bàn', lang: 'en' },
-        { word: 'Chair', meaning: 'Ghế', lang: 'en' },
-        { word: 'Lamp', meaning: 'Đèn', lang: 'en' },
-        { word: 'Sofa', meaning: 'Sofa', lang: 'en' },
-        { word: 'Bed', meaning: 'Giường', lang: 'en' },
-        { word: 'Refrigerator', meaning: 'Tủ lạnh', lang: 'en' },
-        { word: 'Oven', meaning: 'Lò nướng', lang: 'en' },
-        { word: 'Microwave', meaning: 'Lò vi sóng', lang: 'en' },
-        { word: 'Washing Machine', meaning: 'Máy giặt', lang: 'en' },
-        { word: 'Toaster', meaning: 'Máy nướng bánh', lang: 'en' },
-        { word: 'Cabinet', meaning: 'Tủ đựng đồ', lang: 'en' },
-        { word: 'Shelf', meaning: 'Kệ', lang: 'en' },
-        { word: 'Curtain', meaning: 'Rèm cửa', lang: 'en' },
-        { word: 'Mirror', meaning: 'Gương', lang: 'en' },
-        { word: 'Clock', meaning: 'Đồng hồ', lang: 'en' },
-        { word: 'Painting', meaning: 'Tranh', lang: 'en' },
-        { word: 'Carpet', meaning: 'Thảm', lang: 'en' },
-        { word: 'Pillow', meaning: 'Gối', lang: 'en' },
-        { word: 'Blanket', meaning: 'Chăn', lang: 'en' },
-        { word: 'Drawer', meaning: 'Ngăn kéo', lang: 'en' }
-      ]
-    };
-
-    const getFontSize = () => {
-      const width = window.innerWidth;
-      if (width < 800) {
-        return 32; // Larger font size for mobile
-      } else {
-        return 24; // Default font size
-      }
-    };
-
-    const getRandomElements = (arr, count) => {
-      if (count == 100) {
-        count = arr.length - 1  ;
-      }
-      const shuffled = arr.slice(0);
-      let i = shuffled.length, temp, index;
-      while (i--) {
-        index = Math.floor(Math.random() * (i + 1));
-        temp = shuffled[i];
-        shuffled[i] = shuffled[index];
-        shuffled[index] = temp;
-      }
-      return shuffled.slice(0, count);
-    };
-
-    const getRandomWordsAndMeanings = (vocabCategory, selectedNum) => {
-      const vocabList = vocab[vocabCategory];
-      const pairs = getRandomElements(vocabList, selectedNum); // Choose 5 pairs
-      words = pairs.map(pair => pair.word);
-      meanings = pairs.map(pair => pair.meaning);
-      correctMatches = {};
-      pairs.forEach(pair => {
-        correctMatches[pair.word] = pair.meaning;
-        correctMatches[pair.meaning] = pair.word; // Add reverse mapping
-      });
-    };
-
-    const isOverlapping = (pos, size) => {
-      const padding = 20;
-      return texts.some(txt => {
-        const txtPos = txt.getClientRect();
-        return !(pos.x + size.width < txtPos.x ||
-                 pos.x > txtPos.x + txtPos.width ||
-                 pos.y + size.height < txtPos.y ||
-                 pos.y > txtPos.y + txtPos.height);
-      });
-    };
-
-    const getRandomPosition = (size) => {
-      let pos;
-      do {
-        pos = {
-          x: Math.random() * (stage.width() - size.width),
-          y: Math.random() * (stage.height() - size.height),
-        };
-      } while (isOverlapping(pos, size));
-      return pos;
-    };
-
-    const createText = (text, x, y, color) => {
-      const fontSize = getFontSize();
-
-      const txt = new Konva.Text({
-        x: x,
-        y: y,
-        text: text,
-        fontSize:  fontSize * (stage.width() / 800), // Responsive font size
-        fontFamily: 'Calibri',
-        fill: color,
-        padding: 10,
-        align: 'center',
-        verticalAlign: 'middle',
-        draggable: true,
-        isSelected: false
-      });
-
-      txt.on('mouseover', () => {
-        document.body.style.cursor = 'pointer';
-        txt.fill('green');
-        layer.draw();
-      });
-
-      txt.on('mouseout', () => {
-        document.body.style.cursor = 'default';
-        if (!txt.isSelected) {
-          txt.fill('black');
-        }
-        layer.draw();
-      });
-
-      txt.on('click', () => {
-        handleTextClick(txt);
-        playTextSound(txt.text());
-      });
-
-      txt.on('tap', () => {
-        handleTextClick(txt);
-        playTextSound(txt.text());
-      });
-
-      return txt;
-    };
-
-    const createObjects = (vocabCategory, selectedNum) => {
-      layer.destroyChildren();
-      texts = [];
-      getRandomWordsAndMeanings(vocabCategory, selectedNum);
-
-      words.forEach(word => {
-        const fontSize = getFontSize();
-        const size = { width: 100 * (stage.width() / 800), height: fontSize }; // Responsive size
-        const pos = getRandomPosition(size);
-        const text = createText(word, pos.x, pos.y, 'black');
-        texts.push(text);
-        layer.add(text);
-      });
-
-      meanings.forEach(meaning => {
-        const fontSize = getFontSize();
-        const size = { width: 100 * (stage.width() / 800), height: fontSize }; // Responsive size
-        const pos = getRandomPosition(size);
-        const text = createText(meaning, pos.x, pos.y, 'blue');
-        texts.push(text);
-        layer.add(text);
-      });
-
-      layer.draw();
-    };
-
-    const createFireworks = () => {
-      const fireworksLayer = new Konva.Layer();
-      stage.add(fireworksLayer);
-
-      const fireworks = [];
-      for (let i = 0; i < 30; i++) {
-        const firework = new Konva.Circle({
-          x: Math.random() * stage.width(),
-          y: Math.random() * stage.height(),
-          radius: Math.random() * 5 + 5,
-          fill: `hsl(${Math.random() * 360}, 100%, 50%)`,
-          opacity: 1,
-        });
-        fireworksLayer.add(firework);
-        fireworks.push(firework);
-
-        const tween = new Konva.Tween({
-          node: firework,
-          duration: 1,
-          scaleX: 0.5,
-          scaleY: 0.5,
-          opacity: 0,
-          onFinish: () => {
-            firework.destroy();
-            fireworksLayer.draw();
-          }
-        });
-        tween.play();
-      }
-
-      fireworksLayer.draw();
-
-      // Reset the game after the fireworks effect
-      setTimeout(() => {
-        const selectedCategory = document.getElementById('vocabSelect').value;
-        const selectedNum = document.getElementById('vocabNum').value;
-        createObjects(selectedCategory, selectedNum); // Reset with the same category
-      }, 2000); // Wait for fireworks to finish before resetting
-    };
-
-    const playTextSound = (text) => {
-      let utterance = new SpeechSynthesisUtterance(text);
-      const isVietnamese = vocab.animals.some(pair => pair.meaning === text) || vocab.householdItems.some(pair => pair.meaning === text);
-      if (isVietnamese) {
-        utterance.lang = 'vi-VN' ;
-      }
-      else {
-        utterance.lang =  'en-US';
-        const selectedVoice = voices[selectedVoiceIndex];
-        if (selectedVoice) {
-          utterance.voice = selectedVoice;
-        }
-        utterance.rate = rate;
-      }
-
-      
-      speechSynthesis.speak(utterance);
-    };
-
-    const handleTextClick = (text) => {
-      if (text.isSelected) return;
-
-      if (selectedWord) {
-        const word = selectedWord.text();
-        const meaning = text.text();
-        if (correctMatches[word] === meaning || correctMatches[meaning] === word) {
-          const matchedWord = selectedWord;
-          const matchedMeaning = text;
-
-          const tween1 = new Konva.Tween({
-            node: matchedWord,
-            duration: 0.5,
-            scaleX: 0,
-            scaleY: 0,
-            opacity: 0,
-            onFinish: () => {
-              matchedWord.destroy();
-              texts.splice(texts.indexOf(matchedWord), 1);
-            },
-          });
-
-          const tween2 = new Konva.Tween({
-            node: matchedMeaning,
-            duration: 0.5,
-            scaleX: 0,
-            scaleY: 0,
-            opacity: 0,
-            onFinish: () => {
-              matchedMeaning.destroy();
-              texts.splice(texts.indexOf(matchedMeaning), 1);
-              if (texts.length === 0) {
-                createFireworks(); // Create fireworks effect when the game is completed
-              }
-            },
-          });
-
-          tween1.play();
-          tween2.play();
-          selectedWord = null;
-          layer.draw();
-        } else {
-          // Remove color of the selected words if they do not match
-          selectedWord.fill('black');
-          text.fill('black');
-          selectedWord.isSelected = false;
-          text.isSelected = false;
-          selectedWord = null;
-          layer.draw();
-        }
-      } else {
-        // Reset the previously selected word if needed
-        if (selectedWord) {
-          selectedWord.fill('black');
-        }
-
-        selectedWord = text;
-        selectedWord.fill('red');
-        selectedWord.isSelected = true;
-      }
-      layer.draw();
-    };
-
-    const init = () => {
-      stage = new Konva.Stage({
-        container: 'container',
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
-
-      layer = new Konva.Layer();
-      stage.add(layer);
-
-      window.addEventListener('resize', () => {
-        stage.width(window.innerWidth);
-        stage.height(window.innerHeight);
-        if ($('.modal').hasClass('show') === false) {
-          const selectedCategory = document.getElementById('vocabSelect').value;
-          const selectedNum = document.getElementById('vocabNum').value;
-          createObjects(selectedCategory, selectedNum); // Initialize with selected category
-        }
-      });
-
-      $('#startButton').on('click', () => {
-        const selectedCategory = document.getElementById('vocabSelect').value;
-        const selectedNum = document.getElementById('vocabNum').value;
-        createObjects(selectedCategory, selectedNum);
-        $('#vocabModal').modal('hide'); // Close modal
-      });
-
-      $('#vocabModal').modal('show'); // Show modal on page load
-
-      
-
-        // Populate the dropdown with voices
-        const populateVoiceList = () => {
-          voices = speechSynthesis.getVoices();
-          //voiceSelect.innerHTML = ''; // Reset the dropdown
-  
-          voices.forEach((voice, index) => {
-            if (voice.name.includes('English')) {
-                const option = document.createElement('option');
-                option.value = index;
-                option.textContent = "Giọng " + voice.name;
-                voiceSelect.appendChild(option);
-
-                // Set default to US English
-                if (voice.name.includes('US English')) {
-                  voiceSelect.value = index;
-                  selectedVoiceIndex = index;
-                }
-
-            }
-          });
-
-        };
-
-         // Wait for voices to be loaded
-      speechSynthesis.onvoiceschanged = populateVoiceList;
-
-       // Handle voice selection change
-       voiceSelect.addEventListener('change', () => {
-          selectedVoiceIndex = voiceSelect.value;
-      });
-
-      // Handle voice selection change
-      rateSelect.addEventListener('change', () => {
-          rate = rateSelect.value;
-      });
-
-      settingsButton.addEventListener('click', () => {
         
-        $('#vocabModal').modal('show'); 
-      });
+          let voices = [];
+          let selectedVoiceIndex = null;
+          let rate = 1.0;
 
-    };
+          const vocab = {
+            animals: [
+            { "word": "Dog", "meaning": "Chó", "lang": "en" },
+            { "word": "Cat", "meaning": "Mèo", "lang": "en" },
+            { "word": "Bird", "meaning": "Chim", "lang": "en" },
+            { "word": "Fish", "meaning": "Cá", "lang": "en" },
+            { "word": "Elephant", "meaning": "Voi", "lang": "en" },
+            { "word": "Horse", "meaning": "Ngựa", "lang": "en" },
+            { "word": "Rabbit", "meaning": "Thỏ", "lang": "en" },
+            { "word": "Lion", "meaning": "Sư tử", "lang": "en" },
+            { "word": "Tiger", "meaning": "Hổ", "lang": "en" },
+            { "word": "Bear", "meaning": "Gấu", "lang": "en" },
+            { "word": "Giraffe", "meaning": "Hươu cao cổ", "lang": "en" },
+            { "word": "Kangaroo", "meaning": "Kangaroo", "lang": "en" },
+            { "word": "Zebra", "meaning": "Ngựa vằn", "lang": "en" },
+            { "word": "Penguin", "meaning": "Chim cánh cụt", "lang": "en" },
+            { "word": "Dolphin", "meaning": "Cá heo", "lang": "en" },
+            { "word": "Whale", "meaning": "Cá voi", "lang": "en" },
+            { "word": "Shark", "meaning": "Cá mập", "lang": "en" },
+            { "word": "Eagle", "meaning": "Đại bàng", "lang": "en" },
+            { "word": "Owl", "meaning": "Cú", "lang": "en" },
+            { "word": "Snake", "meaning": "Rắn", "lang": "en" },
+            { "word": "Frog", "meaning": "Ếch", "lang": "en" },
+            { "word": "Turtle", "meaning": "Rùa", "lang": "en" },
+            { "word": "Panda", "meaning": "Gấu trúc", "lang": "en" },
+            { "word": "Wolf", "meaning": "Sói", "lang": "en" },
+            { "word": "Fox", "meaning": "Cáo", "lang": "en" },
+            { "word": "Hippopotamus", "meaning": "Hà mã", "lang": "en" },
+            { "word": "Rhinoceros", "meaning": "Tê giác", "lang": "en" },
+            { "word": "Cheetah", "meaning": "Báo gấm", "lang": "en" },
+            { "word": "Leopard", "meaning": "Báo", "lang": "en" },
+            { "word": "Hyena", "meaning": "Linh cẩu", "lang": "en" },
+            { "word": "Koala", "meaning": "Koala", "lang": "en" },
+            { "word": "Sloth", "meaning": "Lười", "lang": "en" },
+            { "word": "Armadillo", "meaning": "Lợn biển", "lang": "en" },
+            { "word": "Bat", "meaning": "Dơi", "lang": "en" },
+            { "word": "Otter", "meaning": "Rái cá", "lang": "en" },
+            { "word": "Porcupine", "meaning": "Nhím", "lang": "en" },
+            { "word": "Meerkat", "meaning": "Chồn mangut", "lang": "en" },
+            { "word": "Kangaroo Rat", "meaning": "Chuột kangaroo", "lang": "en" },
+            { "word": "Bison", "meaning": "Bò rừng", "lang": "en" },
+            { "word": "Gorilla", "meaning": "Gorilla", "lang": "en" },
+            { "word": "Baboon", "meaning": "Khỉ đầu chó", "lang": "en" },
+            { "word": "Chimpanzee", "meaning": "Tinh tinh", "lang": "en" },
+            { "word": "Puma", "meaning": "Puma", "lang": "en" },
+            { "word": "Cougar", "meaning": "Cougar", "lang": "en" },
+            { "word": "Jaguar", "meaning": "Jaguar", "lang": "en" },
+            { "word": "Okapi", "meaning": "Okapi", "lang": "en" },
+            { "word": "Tapir", "meaning": "Tapir", "lang": "en" },
+            { "word": "Warthog", "meaning": "Lợn rừng", "lang": "en" },
+            { "word": "Pangolin", "meaning": "Tê tê", "lang": "en" },
+            { "word": "Anteater", "meaning": "Thú ăn kiến", "lang": "en" },
+            { "word": "Aardvark", "meaning": "Aardvark", "lang": "en" },
+            { "word": "Squirrel", "meaning": "Sóc", "lang": "en" },
+            { "word": "Hedgehog", "meaning": "Nhím", "lang": "en" },
+            { "word": "Mole", "meaning": "Chuột chũi", "lang": "en" },
+            { "word": "Weasel", "meaning": "Chồn", "lang": "en" },
+            { "word": "Skunk", "meaning": "Chồn hôi", "lang": "en" },
+            { "word": "Opossum", "meaning": "Opossum", "lang": "en" },
+            { "word": "Wombat", "meaning": "Wombat", "lang": "en" },
+            { "word": "Tasmanian Devil", "meaning": "Quỷ Tasmania", "lang": "en" },
+            { "word": "Dingo", "meaning": "Chó rừng Úc", "lang": "en" }
+            ],
+            householdItems: [
+              { word: 'Table', meaning: 'Bàn', lang: 'en' },
+              { word: 'Chair', meaning: 'Ghế', lang: 'en' },
+              { word: 'Lamp', meaning: 'Đèn', lang: 'en' },
+              { word: 'Sofa', meaning: 'Sofa', lang: 'en' },
+              { word: 'Bed', meaning: 'Giường', lang: 'en' },
+              { word: 'Refrigerator', meaning: 'Tủ lạnh', lang: 'en' },
+              { word: 'Oven', meaning: 'Lò nướng', lang: 'en' },
+              { word: 'Microwave', meaning: 'Lò vi sóng', lang: 'en' },
+              { word: 'Washing Machine', meaning: 'Máy giặt', lang: 'en' },
+              { word: 'Toaster', meaning: 'Máy nướng bánh', lang: 'en' },
+              { word: 'Cabinet', meaning: 'Tủ đựng đồ', lang: 'en' },
+              { word: 'Shelf', meaning: 'Kệ', lang: 'en' },
+              { word: 'Curtain', meaning: 'Rèm cửa', lang: 'en' },
+              { word: 'Mirror', meaning: 'Gương', lang: 'en' },
+              { word: 'Clock', meaning: 'Đồng hồ', lang: 'en' },
+              { word: 'Painting', meaning: 'Tranh', lang: 'en' },
+              { word: 'Carpet', meaning: 'Thảm', lang: 'en' },
+              { word: 'Pillow', meaning: 'Gối', lang: 'en' },
+              { word: 'Blanket', meaning: 'Chăn', lang: 'en' },
+              { word: 'Drawer', meaning: 'Ngăn kéo', lang: 'en' }
+            ]
+          };
+
+    
+          const getFontSize = () => {
+            const width = window.innerWidth;
+            if (width < 800) {
+              return 32; // Larger font size for mobile
+            } else {
+              return 24; // Default font size
+            }
+          };
+
+          const getRandomElements = (arr, count) => {
+            if (count == 100) {
+              count = arr.length - 1  ;
+            }
+            const shuffled = arr.slice(0);
+            let i = shuffled.length, temp, index;
+            while (i--) {
+              index = Math.floor(Math.random() * (i + 1));
+              temp = shuffled[i];
+              shuffled[i] = shuffled[index];
+              shuffled[index] = temp;
+            }
+            return shuffled.slice(0, count);
+          };
+
+          const getRandomWordsAndMeanings = (vocabCategory, selectedNum) => {
+            const vocabList = vocab[vocabCategory];
+            const pairs = getRandomElements(vocabList, selectedNum); // Choose 5 pairs
+            words = pairs.map(pair => pair.word);
+            meanings = pairs.map(pair => pair.meaning);
+            correctMatches = {};
+            pairs.forEach(pair => {
+              correctMatches[pair.word] = pair.meaning;
+              correctMatches[pair.meaning] = pair.word; // Add reverse mapping
+            });
+          };
+
+          const isOverlapping = (pos, size) => {
+            const padding = 20;
+            return texts.some(txt => {
+              const txtPos = txt.getClientRect();
+              return !(pos.x + size.width < txtPos.x ||
+                      pos.x > txtPos.x + txtPos.width ||
+                      pos.y + size.height < txtPos.y ||
+                      pos.y > txtPos.y + txtPos.height);
+            });
+          };
+
+          const getRandomPosition = (size) => {
+            let pos;
+            do {
+              pos = {
+                x: Math.random() * (stage.width() - size.width),
+                y: Math.random() * (stage.height() - size.height),
+              };
+            } while (isOverlapping(pos, size));
+            return pos;
+          };
+
+          const createText = (text, x, y, color) => {
+            const fontSize = getFontSize();
+
+            const txt = new Konva.Text({
+              x: x,
+              y: y,
+              text: text,
+              fontSize:  fontSize * (stage.width() / 800), // Responsive font size
+              fontFamily: 'Calibri',
+              fill: color,
+              padding: 10,
+              align: 'center',
+              verticalAlign: 'middle',
+              draggable: true,
+              isSelected: false
+            });
+
+            txt.on('mouseover', () => {
+              document.body.style.cursor = 'pointer';
+              txt.fill('green');
+              layer.draw();
+            });
+
+            txt.on('mouseout', () => {
+              document.body.style.cursor = 'default';
+              if (!txt.isSelected) {
+                txt.fill('black');
+              }
+              layer.draw();
+            });
+
+            txt.on('click', () => {
+              handleTextClick(txt);
+              playTextSound(txt.text());
+            });
+
+            txt.on('tap', () => {
+              handleTextClick(txt);
+              playTextSound(txt.text());
+            });
+
+            return txt;
+          };
+
+          const createObjects = (vocabCategory, selectedNum) => {
+            layer.destroyChildren();
+            texts = [];
+            getRandomWordsAndMeanings(vocabCategory, selectedNum);
+
+            words.forEach(word => {
+              const fontSize = getFontSize();
+              const size = { width: 100 * (stage.width() / 800), height: fontSize }; // Responsive size
+              const pos = getRandomPosition(size);
+              const text = createText(word, pos.x, pos.y, 'black');
+              texts.push(text);
+              layer.add(text);
+            });
+
+            meanings.forEach(meaning => {
+              const fontSize = getFontSize();
+              const size = { width: 100 * (stage.width() / 800), height: fontSize }; // Responsive size
+              const pos = getRandomPosition(size);
+              const text = createText(meaning, pos.x, pos.y, 'blue');
+              texts.push(text);
+              layer.add(text);
+            });
+
+            layer.draw();
+          };
+
+          const createFireworks = () => {
+            const fireworksLayer = new Konva.Layer();
+            stage.add(fireworksLayer);
+
+            const fireworks = [];
+            for (let i = 0; i < 30; i++) {
+              const firework = new Konva.Circle({
+                x: Math.random() * stage.width(),
+                y: Math.random() * stage.height(),
+                radius: Math.random() * 5 + 5,
+                fill: `hsl(${Math.random() * 360}, 100%, 50%)`,
+                opacity: 1,
+              });
+              fireworksLayer.add(firework);
+              fireworks.push(firework);
+
+              const tween = new Konva.Tween({
+                node: firework,
+                duration: 1,
+                scaleX: 0.5,
+                scaleY: 0.5,
+                opacity: 0,
+                onFinish: () => {
+                  firework.destroy();
+                  fireworksLayer.draw();
+                }
+              });
+              tween.play();
+            }
+
+            fireworksLayer.draw();
+
+            // Reset the game after the fireworks effect
+            setTimeout(() => {
+              const selectedCategory = document.getElementById('vocabSelect').value;
+              const selectedNum = document.getElementById('vocabNum').value;
+              createObjects(selectedCategory, selectedNum); // Reset with the same category
+            }, 2000); // Wait for fireworks to finish before resetting
+          };
+
+          const playTextSound = (text) => {
+            let utterance = new SpeechSynthesisUtterance(text);
+            const isVietnamese = vocab.animals.some(pair => pair.meaning === text) || vocab.householdItems.some(pair => pair.meaning === text);
+            if (isVietnamese) {
+              utterance.lang = 'vi-VN' ;
+            }
+            else {
+              utterance.lang =  'en-US';
+              const selectedVoice = voices[selectedVoiceIndex];
+              if (selectedVoice) {
+                utterance.voice = selectedVoice;
+              }
+              utterance.rate = rate;
+            }
+
+            
+            speechSynthesis.speak(utterance);
+          };
+
+          const handleTextClick = (text) => {
+            if (text.isSelected) return;
+
+            if (selectedWord) {
+              const word = selectedWord.text();
+              const meaning = text.text();
+              if (correctMatches[word] === meaning || correctMatches[meaning] === word) {
+                const matchedWord = selectedWord;
+                const matchedMeaning = text;
+
+                const tween1 = new Konva.Tween({
+                  node: matchedWord,
+                  duration: 0.5,
+                  scaleX: 0,
+                  scaleY: 0,
+                  opacity: 0,
+                  onFinish: () => {
+                    matchedWord.destroy();
+                    texts.splice(texts.indexOf(matchedWord), 1);
+                  },
+                });
+
+                const tween2 = new Konva.Tween({
+                  node: matchedMeaning,
+                  duration: 0.5,
+                  scaleX: 0,
+                  scaleY: 0,
+                  opacity: 0,
+                  onFinish: () => {
+                    matchedMeaning.destroy();
+                    texts.splice(texts.indexOf(matchedMeaning), 1);
+                    if (texts.length === 0) {
+                      createFireworks(); // Create fireworks effect when the game is completed
+                    }
+                  },
+                });
+
+                tween1.play();
+                tween2.play();
+                selectedWord = null;
+                layer.draw();
+              } else {
+                // Remove color of the selected words if they do not match
+                selectedWord.fill('black');
+                text.fill('black');
+                selectedWord.isSelected = false;
+                text.isSelected = false;
+                selectedWord = null;
+                layer.draw();
+              }
+            } else {
+              // Reset the previously selected word if needed
+              if (selectedWord) {
+                selectedWord.fill('black');
+              }
+
+              selectedWord = text;
+              selectedWord.fill('red');
+              selectedWord.isSelected = true;
+            }
+            layer.draw();
+          };
+
+          const init = () => {
+            stage = new Konva.Stage({
+              container: 'container',
+              width: window.innerWidth,
+              height: window.innerHeight,
+            });
+
+            layer = new Konva.Layer();
+            stage.add(layer);
+
+            window.addEventListener('resize', () => {
+              stage.width(window.innerWidth);
+              stage.height(window.innerHeight);
+              if ($('.modal').hasClass('show') === false) {
+                const selectedCategory = document.getElementById('vocabSelect').value;
+                const selectedNum = document.getElementById('vocabNum').value;
+                createObjects(selectedCategory, selectedNum); // Initialize with selected category
+              }
+            });
+
+            $('#startButton').on('click', () => {
+              const selectedCategory = document.getElementById('vocabSelect').value;
+              const selectedNum = document.getElementById('vocabNum').value;
+              createObjects(selectedCategory, selectedNum);
+              $('#vocabModal').modal('hide'); // Close modal
+            });
+
+
+            // Handle voice selection change
+            voiceSelect.addEventListener('change', () => {
+                selectedVoiceIndex = voiceSelect.value;
+            });
+
+            // Handle voice selection change
+            rateSelect.addEventListener('change', () => {
+                rate = rateSelect.value;
+            });
+
+            settingsButton.addEventListener('click', () => {
+              
+              $('#vocabModal').modal('show'); 
+            });
+
+          };
+
+  $(function() {
+
+                  // Populate the dropdown with voices
+                  const populateVoiceList = () => {
+                    voices = speechSynthesis.getVoices();
+                    voices.forEach((voice, index) => {
+                      if (voice.name.includes('English')) {
+                          const option = document.createElement('option');
+                          option.value = index;
+                          option.textContent = "Giọng " + voice.name;
+                          voiceSelect.appendChild(option);
+    
+                          // Set default to US English
+                          if (voice.name.includes('US English')) {
+                            voiceSelect.value = index;
+                            selectedVoiceIndex = index;
+                          }
+    
+                      }
+                    });
+    
+                  };
+
+    // Wait for voices to be loaded
+    speechSynthesis.onvoiceschanged = populateVoiceList;
+
+    $('#vocabModal').modal('show'); // Show modal on page load
 
     init();
+  }); // end of $(function() {
+    
   </script>
 </body>
 </html>
