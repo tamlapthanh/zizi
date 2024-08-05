@@ -38,9 +38,10 @@ document.addEventListener('DOMContentLoaded', function () {
         x: Math.random() * (stage.width() - 100), // Vị trí ngẫu nhiên
         y: Math.random() * (stage.height() - 30), // Vị trí ngẫu nhiên
         text: word,
-        fontSize: 24,
+        fontSize: 46,
         fontFamily: 'Calibri',
         fill: 'black',
+        draggable: true,
         id: word
       });
 
@@ -228,37 +229,69 @@ document.addEventListener('DOMContentLoaded', function () {
     }, 1000);
   }
 
-  // Hiển thị pháo hoa chúc mừng
-  function showFireworks() {
+
+  const showFireworks = () => {
     const fireworksLayer = new Konva.Layer();
     stage.add(fireworksLayer);
-
-    for (let i = 0; i < 50; i++) {
-      const circle = new Konva.Circle({
-        x: Math.random() * stage.width(),
-        y: Math.random() * stage.height(),
-        radius: Math.random() * 5 + 2,
-        fill: Konva.Util.getRandomColor(),
-        opacity: 1
-      });
-
-      fireworksLayer.add(circle);
-      circle.to({
-        x: Math.random() * stage.width(),
-        y: Math.random() * stage.height(),
-        radius: 0,
-        duration: 1,
-        onFinish: () => {
-          circle.destroy();
-        }
-      });
+  
+    const createExplosion = (x, y) => {
+      const particles = [];
+      const numParticles = 50;
+  
+      for (let i = 0; i < numParticles; i++) {
+        const angle = (Math.PI * 2 * i) / numParticles;
+        const speed = Math.random() * 2 + 2;
+        const particle = new Konva.Circle({
+          x: x,
+          y: y,
+          radius: Math.random() * 3 + 2,
+          fill: `hsl(${Math.random() * 360}, 100%, 50%)`,
+          opacity: 1,
+        });
+        fireworksLayer.add(particle);
+        particles.push({ particle, angle, speed });
+      }
+  
+      const anim = new Konva.Animation((frame) => {
+        particles.forEach(({ particle, angle, speed }) => {
+          const velocityX = Math.cos(angle) * speed;
+          const velocityY = Math.sin(angle) * speed;
+          particle.x(particle.x() + velocityX);
+          particle.y(particle.y() + velocityY);
+          particle.opacity(particle.opacity() - 0.02);
+          if (particle.opacity() <= 0) {
+            particle.destroy();
+          }
+        });
+        fireworksLayer.batchDraw();
+      }, fireworksLayer);
+  
+      anim.start();
+  
+      setTimeout(() => {
+        anim.stop();
+        particles.forEach(({ particle }) => particle.destroy());
+        fireworksLayer.draw();
+      }, 1000);
+    };
+  
+    const numFireworks = 10;
+    for (let i = 0; i < numFireworks; i++) {
+      setTimeout(() => {
+        const x = Math.random() * stage.width();
+        const y = Math.random() * stage.height();
+        createExplosion(x, y);
+      }, i * 200);
     }
-
-    fireworksLayer.draw();
+  
+    // Reset the game after the fireworks effect
     setTimeout(() => {
-      fireworksLayer.destroy();
-    }, 1000);
-  }
+      const selectedCategory = document.getElementById('vocabSelect').value;
+      const selectedNum = document.getElementById('vocabNum').value;
+  
+      createObjects(); // Reset with the same category
+    }, 3000); // Wait for fireworks to finish before resetting
+  };
 
   // Phát âm thanh tự động khi trang tải và khi từ đúng được chọn
   addWordsToCanvas();
