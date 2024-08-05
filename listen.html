@@ -24,7 +24,7 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="text-center">Listen and choose words</h1>
+        <h3 class="text-center">Listen and choose words</h3>
         <div id="canvasContainer" style="position: relative;">
             <div id="container"></div>
             <button class="btn btn-primary" id="playSoundAgainBtn"><i class="fa fa-play"></i></button>
@@ -148,6 +148,7 @@
                 if (anyVoice) {
                     utterance.voice = anyVoice;
                 }*/
+                utterance.lang =  'en-US';
                 speechSynthesis.speak(utterance);
             }
 
@@ -155,10 +156,13 @@
             function replaySound() {
                 if (!currentWord) return;
                 const utterance = new SpeechSynthesisUtterance(currentWord);
+                utterance.lang =  'en-US';
+                /*
                 const anyVoice = getAnyVoice();
                 if (anyVoice) {
                     utterance.voice = anyVoice;
                 }
+                */
                 speechSynthesis.speak(utterance);
             }
 
