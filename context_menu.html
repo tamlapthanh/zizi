@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KonvaJS Context Menu with Bootstrap Modal</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        #canvasContainer {
+            border: 1px solid #ccc;
+            margin: 20px;
+            height: 50vh;
+        }
+    </style>
+</head>
+<body>
+    <div id="canvasContainer"></div>
+
+    <!-- Bootstrap Modal -->
+    <div class="modal fade" id="contextMenuModal" tabindex="-1" aria-labelledby="contextMenuModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="contextMenuModalLabel">Context Menu</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <ul class="list-group">
+                        <li class="list-group-item" id="menuItem1">Menu Item 1</li>
+                        <li class="list-group-item" id="menuItem2">Menu Item 2</li>
+                        <li class="list-group-item" id="menuItem3">Menu Item 3</li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/konva/8.3.3/konva.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const stage = new Konva.Stage({
+                container: 'canvasContainer',
+                width: document.getElementById('canvasContainer').clientWidth,
+                height: document.getElementById('canvasContainer').clientHeight
+            });
+
+            const layer = new Konva.Layer();
+            stage.add(layer);
+
+            const text = new Konva.Text({
+                x: stage.width() / 2,
+                y: stage.height() / 2,
+                text: 'Double-click to see the context menu',
+                fontSize: 24,
+                fontFamily: 'Calibri',
+                fill: 'black',
+            });
+
+            text.offsetX(text.width() / 2);
+            text.offsetY(text.height() / 2);
+            layer.add(text);
+            layer.draw();
+
+            function showContextMenu(event) {
+                event.evt.preventDefault();
+                $('#contextMenuModal').modal('show');
+            }
+
+            stage.on('dblclick', function (event) {
+                showContextMenu(event);
+            });
+
+            // Add event listeners for menu items
+            $('#menuItem1').on('click', function () {
+                alert('Menu Item 1 clicked');
+                $('#contextMenuModal').modal('hide');
+            });
+
+            $('#menuItem2').on('click', function () {
+                alert('Menu Item 2 clicked');
+                $('#contextMenuModal').modal('hide');
+            });
+
+            $('#menuItem3').on('click', function () {
+                alert('Menu Item 3 clicked');
+                $('#contextMenuModal').modal('hide');
+            });
+
+            // Adjust the stage size when window is resized
+            window.addEventListener('resize', () => {
+                stage.width(document.getElementById('canvasContainer').clientWidth);
+                stage.height(document.getElementById('canvasContainer').clientHeight);
+                layer.draw();
+            });
+        });
+    </script>
+</body>
+</html>

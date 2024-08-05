@@ -1,10 +1,13 @@
 document.addEventListener('DOMContentLoaded', function () {
-  const allWords = [
-    'cat', 'dog', 'bird', 'fish', 'horse', 'cow', 'sheep', 'goat',
-    'duck', 'chicken', 'rabbit', 'pig', 'elephant', 'tiger', 'lion',
-    'bear', 'monkey', 'kangaroo', 'penguin', 'giraffe', 'zebra', 'deer'
-  ];
-  const numWordsToShow = 6;
+  // const allWords = [
+  //   'cat', 'dog', 'bird', 'fish', 'horse', 'cow', 'sheep', 'goat',
+  //   'duck', 'chicken', 'rabbit', 'pig', 'elephant', 'tiger', 'lion',
+  //   'bear', 'monkey', 'kangaroo', 'penguin', 'giraffe', 'zebra', 'deer'
+  // ];
+
+  const allWords = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+
+  const numWordsToShow = allWords.length/2;
   let remainingWords = [...allWords];
   let currentWord = '';
 
@@ -38,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function () {
         x: Math.random() * (stage.width() - 100), // Vị trí ngẫu nhiên
         y: Math.random() * (stage.height() - 30), // Vị trí ngẫu nhiên
         text: word,
-        fontSize: 46,
+        fontSize: 66,
         fontFamily: 'Calibri',
         fill: 'black',
         draggable: true,
@@ -47,10 +50,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
       text.on('mouseover', () => {
         document.body.style.cursor = 'pointer';
+        text.fill('green');
+        layer.draw();
       });
 
       text.on('mouseout', () => {
         document.body.style.cursor = 'default';
+        text.fill('black');
+        layer.draw();
       });
 
       function handleWordClick() {
@@ -195,6 +202,8 @@ document.addEventListener('DOMContentLoaded', function () {
         });
       }
     });
+
+    replaySound();
   }
 
   // Tạo hiệu ứng nổ khi chọn đúng từ
