@@ -101,10 +101,9 @@
           let selectedWord = null;
           let texts = [];
 
-        
           let voices = [];
           let selectedVoiceIndex = null;
-          let rate = 1.0;
+
 
           const vocab = {
             animals: [
@@ -370,12 +369,14 @@
             }
             else {
               utterance.lang =  'en-US';
-              const selectedVoice = voices[selectedVoiceIndex];
-              if (selectedVoice) {
-                utterance.voice = selectedVoice;
+              if (voices && selectedVoiceIndex) {
+                  const selectedVoice = voices[selectedVoiceIndex];
+                  if (selectedVoice) {
+                    utterance.voice = selectedVoice;
+                  }
+                }
               }
-              utterance.rate = rate;
-            }
+
 
             
             speechSynthesis.speak(utterance);
@@ -475,11 +476,6 @@
             // Handle voice selection change
             voiceSelect.addEventListener('change', () => {
                 selectedVoiceIndex = voiceSelect.value;
-            });
-
-            // Handle voice selection change
-            rateSelect.addEventListener('change', () => {
-                rate = rateSelect.value;
             });
 
             settingsButton.addEventListener('click', () => {
