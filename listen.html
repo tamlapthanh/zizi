@@ -34,6 +34,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/konva/8.3.4/konva.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+
             const allWords = [
                 'cat', 'dog', 'bird', 'fish', 'horse', 'cow', 'sheep', 'goat',
                 'duck', 'chicken', 'rabbit', 'pig', 'elephant', 'tiger', 'lion',
@@ -93,7 +94,7 @@
 
                 layer.draw();
 
-                playSound();
+                // playSound();
             }
 
             function handleWordClick() {
@@ -130,24 +131,12 @@
                 }
             }
 
-            // Lấy giọng nói đầu tiên từ danh sách giọng nói có sẵn
-            function getAnyVoice() {
-                const voices = speechSynthesis.getVoices();
-                return voices.length ? voices[0] : null;
-            }
-
             // Phát âm thanh bằng speechSynthesis
             function playSound() {
                 if (remainingWords.length === 0) return;
                 const randomWord = remainingWords[Math.floor(Math.random() * remainingWords.length)];
                 currentWord = randomWord;
-
                 const utterance = new SpeechSynthesisUtterance(randomWord);
-                /*
-                const anyVoice = getAnyVoice();
-                if (anyVoice) {
-                    utterance.voice = anyVoice;
-                }*/
                 utterance.lang =  'en-US';
                 speechSynthesis.speak(utterance);
             }
@@ -157,12 +146,6 @@
                 if (!currentWord) return;
                 const utterance = new SpeechSynthesisUtterance(currentWord);
                 utterance.lang =  'en-US';
-                /*
-                const anyVoice = getAnyVoice();
-                if (anyVoice) {
-                    utterance.voice = anyVoice;
-                }
-                */
                 speechSynthesis.speak(utterance);
             }
 
