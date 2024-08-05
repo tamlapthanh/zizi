@@ -302,8 +302,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Đảm bảo canvas phản hồi khi thay đổi kích thước cửa sổ
   window.addEventListener('resize', () => {
-    stage.width(document.getElementById('canvasContainer').clientWidth);
-    stage.height(window.innerHeight / 2);
+    stage.width(window.innerWidth);
+    stage.height(window.innerHeight);
     layer.destroyChildren();
     messageLayer.destroyChildren();
     addWordsToCanvas();
