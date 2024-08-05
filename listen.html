@@ -24,7 +24,7 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="text-center">Word Selection Game</h1>
+        <h1 class="text-center">Listen and choose words</h1>
         <div id="canvasContainer" style="position: relative;">
             <div id="container"></div>
             <button class="btn btn-primary" id="playSoundAgainBtn"><i class="fa fa-play"></i></button>
@@ -92,6 +92,8 @@
                 });
 
                 layer.draw();
+
+                playSound();
             }
 
             function handleWordClick() {
@@ -294,7 +296,8 @@
 
             // Phát âm thanh tự động khi trang tải và khi từ đúng được chọn
             addWordsToCanvas();
-            setTimeout(playSound, 1000); // Thêm một chút delay để chờ lấy giọng nói
+            // playSound();
+            // setTimeout(playSound, 1000); // Thêm một chút delay để chờ lấy giọng nói
 
             // Thêm sự kiện cho nút "Play Sound Again"
             document.getElementById('playSoundAgainBtn').addEventListener('click', replaySound);
