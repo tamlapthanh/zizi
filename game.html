@@ -489,27 +489,24 @@
             });
           };
 
-
-      // Populate the dropdown with voices
-      window.speechSynthesis.onvoiceschanged = () => {
-        voices = window.speechSynthesis.getVoices();
-        voices.forEach((voice, index) => {
-          if (voice.name.includes('English')) {
-              const option = document.createElement('option');
-              option.value = index;
-              option.textContent = "Giọng " + voice.name;
-              voiceSelect.appendChild(option);
-
-              // Set default to US English
-              if (voice.name.includes('US English')) {
-                voiceSelect.value = index;
-                selectedVoiceIndex = index;
+          function loadVoices() {
+            return new Promise((resolve, reject) => {
+              let voices = speechSynthesis.getVoices();
+              if (voices.length) {
+                resolve(voices);
+                return;
               }
-
+              
+              speechSynthesis.onvoiceschanged = () => {
+                voices = speechSynthesis.getVoices();
+                if (voices.length) {
+                  resolve(voices);
+                } else {
+                  reject('No voices available.');
+                }
+              };
+            });
           }
-        });
-
-      };
 
 
   $(function() {
@@ -519,6 +516,28 @@
     init();
 
     createObjects();
+
+    loadVoices().then(voices => {
+        console.log(voices);
+          voices.forEach((voice, index) => {
+            if (voice.name.includes('English')) {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = "Giọng " + voice.name;
+                voiceSelect.appendChild(option);
+
+                // Set default to US English
+                if (voice.name.includes('US English')) {
+                  voiceSelect.value = index;
+                  selectedVoiceIndex = index;
+                }
+
+            }
+          });
+  })
+  .catch(error => {
+    console.error(error);
+  });
 
   }); // end of $(function() {
     
