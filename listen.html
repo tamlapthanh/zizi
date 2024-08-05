@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Selection Game</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        #container {
+            border: 1px solid #ddd;
+            margin-top: 20px;
+        }
+        #playSoundAgainBtn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 10;
+            border: none;
+            font-size: 14px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">Word Selection Game</h1>
+        <div id="canvasContainer" style="position: relative;">
+            <div id="container"></div>
+            <button class="btn btn-primary" id="playSoundAgainBtn"><i class="fa fa-play"></i></button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/konva/8.3.4/konva.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const allWords = [
+                'cat', 'dog', 'bird', 'fish', 'horse', 'cow', 'sheep', 'goat',
+                'duck', 'chicken', 'rabbit', 'pig', 'elephant', 'tiger', 'lion',
+                'bear', 'monkey', 'kangaroo', 'penguin', 'giraffe', 'zebra', 'deer'
+            ];
+            const numWordsToShow = 6;
+            let remainingWords = [];
+            let currentWord = '';
+
+            // Thiết lập Konva stage và layer
+            const stage = new Konva.Stage({
+                container: 'container',
+                width: document.getElementById('canvasContainer').clientWidth,
+                height: window.innerHeight / 2
+            });
+
+            const layer = new Konva.Layer();
+            stage.add(layer);
+
+            // Thêm một layer cho thông báo
+            const messageLayer = new Konva.Layer();
+            stage.add(messageLayer);
+
+            // Hàm để chọn từ ngẫu nhiên từ danh sách lớn và thêm vào canvas
+            function getRandomWords() {
+                const shuffled = allWords.sort(() => 0.5 - Math.random());
+                return shuffled.slice(0, numWordsToShow);
+            }
+
+            function addWordsToCanvas() {
+                layer.destroyChildren(); // Xóa tất cả các từ hiện có trên canvas
+                remainingWords = getRandomWords();
+                remainingWords.forEach((word) => {
+                    const text = new Konva.Text({
+                        x: Math.random() * (stage.width() - 100), // Vị trí ngẫu nhiên
+                        y: Math.random() * (stage.height() - 30), // Vị trí ngẫu nhiên
+                        text: word,
+                        fontSize: 24,
+                        fontFamily: 'Calibri',
+                        fill: 'black',
+                        id: word
+                    });
+
+                    text.on('mouseover', () => {
+                        document.body.style.cursor = 'pointer';
+                    });
+
+                    text.on('mouseout', () => {
+                        document.body.style.cursor = 'default';
+                    });
+
+                    text.on('click', handleWordClick);
+                    text.on('tap', handleWordClick); // Xử lý sự kiện touch
+
+                    layer.add(text);
+                });
+
+                layer.draw();
+            }
+
+            function handleWordClick() {
+                const word = this.id();
+                if (currentWord === word) {
+                    createCorrectMessage(this.x() + this.width() / 2, this.y() + this.height() / 2);
+                    createExplosion(this.x() + this.width() / 2, this.y() + this.height() / 2);
+
+                    // Hiệu ứng mờ dần và xóa từ
+                    this.to({
+                        scaleX: 1.5,
+                        scaleY: 1.5,
+                        opacity: 0,
+                        duration: 0.5,
+                        onFinish: () => {
+                            this.destroy(); // Xóa từ khỏi layer
+                            layer.draw();
+                            remainingWords = remainingWords.filter(w => w !== word); // Cập nhật danh sách từ còn lại
+                            if (remainingWords.length > 0) {
+                                setTimeout(() => {
+                                    playSound();
+                                }, 1000); // Phát âm từ mới sau khi thông báo
+                            } else {
+                                setTimeout(() => {
+                                    showFireworks();
+                                    addWordsToCanvas();
+                                    playSound();
+                                }, 1000);
+                            }
+                        }
+                    });
+                } else {
+                    createWrongMessage(this.x() + this.width() / 2, this.y() + this.height() / 2);
+                }
+            }
+
+            // Lấy giọng nói đầu tiên từ danh sách giọng nói có sẵn
+            function getAnyVoice() {
+                const voices = speechSynthesis.getVoices();
+                return voices.length ? voices[0] : null;
+            }
+
+            // Phát âm thanh bằng speechSynthesis
+            function playSound() {
+                if (remainingWords.length === 0) return;
+                const randomWord = remainingWords[Math.floor(Math.random() * remainingWords.length)];
+                currentWord = randomWord;
+
+                const utterance = new SpeechSynthesisUtterance(randomWord);
+                /*
+                const anyVoice = getAnyVoice();
+                if (anyVoice) {
+                    utterance.voice = anyVoice;
+                }*/
+                speechSynthesis.speak(utterance);
+            }
+
+            // Phát lại âm thanh hiện tại
+            function replaySound() {
+                if (!currentWord) return;
+                const utterance = new SpeechSynthesisUtterance(currentWord);
+                const anyVoice = getAnyVoice();
+                if (anyVoice) {
+                    utterance.voice = anyVoice;
+                }
+                speechSynthesis.speak(utterance);
+            }
+
+            // Tạo thông báo "Correct!" trên canvas
+            function createCorrectMessage(x, y) {
+                const correctMessage = new Konva.Text({
+                    x: x,
+                    y: y,
+                    text: 'Correct!',
+                    fontSize: 36,
+                    fontFamily: 'Calibri',
+                    fill: 'green',
+                    opacity: 0,
+                    listening: false
+                });
+
+                messageLayer.add(correctMessage);
+                correctMessage.to({
+                    opacity: 1,
+                    scaleX: 1.2,
+                    scaleY: 1.2,
+                    duration: 0.5,
+                    onFinish: () => {
+                        correctMessage.to({
+                            opacity: 0,
+                            scaleX: 1,
+                            scaleY: 1,
+                            duration: 0.5,
+                            onFinish: () => {
+                                correctMessage.destroy();
+                                messageLayer.draw();
+                            }
+                        });
+                    }
+                });
+            }
+
+            // Tạo thông báo "Try again!" trên canvas
+            function createWrongMessage(x, y) {
+                const wrongMessage = new Konva.Text({
+                    x: x,
+                    y: y,
+                    text: 'Try again!',
+                    fontSize: 36,
+                    fontFamily: 'Calibri',
+                    fill: 'red',
+                    opacity: 0,
+                    listening: false
+                });
+
+                messageLayer.add(wrongMessage);
+                wrongMessage.to({
+                    opacity: 1,
+                    scaleX: 1.2,
+                    scaleY: 1.2,
+                    duration: 0.5,
+                    onFinish: () => {
+                        wrongMessage.to({
+                            opacity: 0,
+                            scaleX: 1,
+                            scaleY: 1,
+                            duration: 0.5,
+                            onFinish: () => {
+                                wrongMessage.destroy();
+                                messageLayer.draw();
+                            }
+                        });
+                    }
+                });
+            }
+
+            // Tạo hiệu ứng nổ khi chọn đúng từ
+            function createExplosion(x, y) {
+                const explosionLayer = new Konva.Layer();
+                stage.add(explosionLayer);
+
+                for (let i = 0; i < 20; i++) {
+                    const circle = new Konva.Circle({
+                        x: x,
+                        y: y,
+                        radius: Math.random() * 5 + 2,
+                        fill: Konva.Util.getRandomColor(),
+                        opacity: 1
+                    });
+
+                    explosionLayer.add(circle);
+                    circle.to({
+                        x: x + Math.random() * 50 - 25,
+                        y: y + Math.random() * 50 - 25,
+                        radius: 0,
+                        duration: 0.5,
+                        onFinish: () => {
+                            circle.destroy();
+                        }
+                    });
+                }
+
+                explosionLayer.draw();
+                setTimeout(() => {
+                    explosionLayer.destroy();
+                }, 1000);
+            }
+
+            // Hiển thị pháo hoa chúc mừng
+            function showFireworks() {
+                const fireworksLayer = new Konva.Layer();
+                stage.add(fireworksLayer);
+
+                for (let i = 0; i < 50; i++) {
+                    const circle = new Konva.Circle({
+                        x: Math.random() * stage.width(),
+                        y: Math.random() * stage.height(),
+                        radius: Math.random() * 5 + 2,
+                        fill: Konva.Util.getRandomColor(),
+                        opacity: 1
+                    });
+
+                    fireworksLayer.add(circle);
+                    circle.to({
+                        x: Math.random() * stage.width(),
+                        y: Math.random() * stage.height(),
+                        radius: 0,
+                        duration: 1,
+                        onFinish: () => {
+                            circle.destroy();
+                        }
+                    });
+                }
+
+                fireworksLayer.draw();
+                setTimeout(() => {
+                    fireworksLayer.destroy();
+                }, 1000);
+            }
+
+            // Phát âm thanh tự động khi trang tải và khi từ đúng được chọn
+            addWordsToCanvas();
+            setTimeout(playSound, 1000); // Thêm một chút delay để chờ lấy giọng nói
+
+            // Thêm sự kiện cho nút "Play Sound Again"
+            document.getElementById('playSoundAgainBtn').addEventListener('click', replaySound);
+
+            // Đảm bảo canvas phản hồi khi thay đổi kích thước cửa sổ
+            window.addEventListener('resize', () => {
+                stage.width(document.getElementById('canvasContainer').clientWidth);
+                stage.height(window.innerHeight / 2);
+                layer.destroyChildren();
+                messageLayer.destroyChildren();
+                addWordsToCanvas();
+            });
+        });
+    </script>
+</body>
+</html>
