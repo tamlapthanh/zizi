@@ -328,43 +328,68 @@
           const createFireworks = () => {
             const fireworksLayer = new Konva.Layer();
             stage.add(fireworksLayer);
-
-            const fireworks = [];
-            for (let i = 0; i < 30; i++) {
-              const firework = new Konva.Circle({
-                x: Math.random() * stage.width(),
-                y: Math.random() * stage.height(),
-                radius: Math.random() * 5 + 5,
-                fill: `hsl(${Math.random() * 360}, 100%, 50%)`,
-                opacity: 1,
-              });
-              fireworksLayer.add(firework);
-              fireworks.push(firework);
-
-              const tween = new Konva.Tween({
-                node: firework,
-                duration: 1,
-                scaleX: 0.5,
-                scaleY: 0.5,
-                opacity: 0,
-                onFinish: () => {
-                  firework.destroy();
-                  fireworksLayer.draw();
-                }
-              });
-              tween.play();
+          
+            const createExplosion = (x, y) => {
+              const particles = [];
+              const numParticles = 50;
+          
+              for (let i = 0; i < numParticles; i++) {
+                const angle = (Math.PI * 2 * i) / numParticles;
+                const speed = Math.random() * 2 + 2;
+                const particle = new Konva.Circle({
+                  x: x,
+                  y: y,
+                  radius: Math.random() * 3 + 2,
+                  fill: `hsl(${Math.random() * 360}, 100%, 50%)`,
+                  opacity: 1,
+                });
+                fireworksLayer.add(particle);
+                particles.push({ particle, angle, speed });
+              }
+          
+              const anim = new Konva.Animation((frame) => {
+                particles.forEach(({ particle, angle, speed }) => {
+                  const velocityX = Math.cos(angle) * speed;
+                  const velocityY = Math.sin(angle) * speed;
+                  particle.x(particle.x() + velocityX);
+                  particle.y(particle.y() + velocityY);
+                  particle.opacity(particle.opacity() - 0.02);
+                  if (particle.opacity() <= 0) {
+                    particle.destroy();
+                  }
+                });
+                fireworksLayer.batchDraw();
+              }, fireworksLayer);
+          
+              anim.start();
+          
+              setTimeout(() => {
+                anim.stop();
+                particles.forEach(({ particle }) => particle.destroy());
+                fireworksLayer.draw();
+              }, 1000);
+            };
+          
+            const numFireworks = 10;
+            for (let i = 0; i < numFireworks; i++) {
+              setTimeout(() => {
+                const x = Math.random() * stage.width();
+                const y = Math.random() * stage.height();
+                createExplosion(x, y);
+              }, i * 200);
             }
-
-            fireworksLayer.draw();
-
+          
             // Reset the game after the fireworks effect
             setTimeout(() => {
               const selectedCategory = document.getElementById('vocabSelect').value;
               const selectedNum = document.getElementById('vocabNum').value;
-
+          
               createObjects(); // Reset with the same category
-            }, 2000); // Wait for fireworks to finish before resetting
+            }, 3000); // Wait for fireworks to finish before resetting
           };
+
+          
+        
 
           const playTextSound = (text) => {
             let utterance = new SpeechSynthesisUtterance(text);
@@ -510,12 +535,9 @@
 
 
   $(function() {
-
-
-
     init();
-
     createObjects();
+    //createFireworks();
 
     loadVoices().then(voices => {
         console.log(voices);
