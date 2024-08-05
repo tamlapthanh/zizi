@@ -494,6 +494,7 @@
                   // Populate the dropdown with voices
                   const populateVoiceList = () => {
                     voices = speechSynthesis.getVoices();
+                    alert(voices);
                     voices.forEach((voice, index) => {
                       if (voice.name.includes('English')) {
                           const option = document.createElement('option');
