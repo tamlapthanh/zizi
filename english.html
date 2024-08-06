@@ -36,251 +36,278 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/konva/8.3.3/konva.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            const stage = new Konva.Stage({
-                container: 'canvasContainer',
-                width: document.getElementById('canvasContainer').clientWidth,
-                height: document.getElementById('canvasContainer').clientHeight
-            });
-
-            const layer = new Konva.Layer();
-            stage.add(layer);
-
-            const sentences = [
-                "I __________ (go) to the store yesterday.",
-                "She __________ (be) studying for her exams.",
-                "They __________ (finish) their homework by 6 PM.",
-                "We __________ (eat) dinner when the phone rang.",
-                "I __________ (visit) my grandmother next weekend."
-            ];
-
-            const words = ["went", "is", "will have finished", "were eating", "will visit"];
-
-            const answers = ["went", "is", "will have finished", "were eating", "will visit"];
-
-            let initialPositions = [];
-            let questionTexts = [];
-            let numberTexts = [];
-
-            function loadExercise() {
-                layer.destroyChildren();
-                initialPositions = [];
-                questionTexts = [];
-                numberTexts = [];
-
-                sentences.forEach((sentence, index) => {
-                    const y = index * 80 + 100;
-
-                    // Insert the number and question text
-                    const numberText = new Konva.Text({
-                        x: 100,
-                        y: y,
-                        text: `(${index + 1})`,
-                        fontSize: 24, // Increased font size
-                        fontFamily: 'Calibri',
-                        fill: 'black',
-                        draggable: false,
-                        id: `number-${index}`
-                    });
-
-                    const questionText = new Konva.Text({
-                        x: 180,
-                        y: y,
-                        text: sentence.replace("__________", '______'),
-                        fontSize: 24, // Increased font size
-                        fontFamily: 'Calibri',
-                        fill: 'black',
-                        draggable: false,
-                        id: `question-${index}`
-                    });
-
-                    numberTexts.push(numberText);
-                    layer.add(numberText);
-
-                    questionTexts.push(questionText);
-                    layer.add(questionText);
-                });
-
-                // Calculate spacing to avoid overlap
-                const baseX = 10;
-                const spacing = 200; // Increased spacing for larger font
-
-                words.forEach((word, index) => {
-                    const answerText = new Konva.Text({
-                        x: baseX + index * spacing, // Calculate x based on index
-                        y: 20,
-                        text: word,
-                        fontSize: 24, // Increased font size
-                        fontFamily: 'Calibri',
-                        fill: 'blue',
-                        draggable: true,
-                        id: `answer-${index}`
-                    });
-
-                    initialPositions.push({ id: `answer-${index}`, x: baseX + index * spacing, y: 20 });
-
-                    answerText.on('dragmove', function () {
-                        highlightNumbers(answerText);
-                    });
-
-                    answerText.on('dragend', function () {
-                        numberTexts.forEach(number => {
-                            number.fontSize(24).fontStyle('normal').fill('black').opacity(1); // Adjusted font size
-                        });
-                        layer.draw();
-                    });
-
-                    layer.add(answerText);
-                });
-
-                layer.draw();
-            }
-
-            function highlightNumbers(answerText) {
-                const threshold = 50; // Adjusted threshold for closer proximity
-
-                numberTexts.forEach(numberText => {
-                    const numberIndex = parseInt(numberText.text().replace(/[()]/g, '')) - 1;
-                    const blankY = numberText.y(); // Use y position for comparison
-
-                    const distanceY = Math.abs(answerText.y() - blankY);
-
-                    if (distanceY < threshold) {
-                        numberText.fontSize(30).fontStyle('bold').fill('red').opacity(0.7);
-                    } else {
-                        numberText.fontSize(24).fontStyle('normal').fill('black').opacity(1);
-                    }
-                });
-
-                layer.draw();
-            }
-
-            // Check Answers
-            $('#checkAnswersBtn').on('click', function () {
-                let correct = true;
-
-                answers.forEach((answer, index) => {
-                    const answerText = layer.find(`#answer-${index}`)[0];
-                    const numberText = numberTexts[index];
-                    const blankY = numberText.y(); // Use y position for comparison
-
-                    const distanceY = Math.abs(answerText.y() - blankY);
-
-                    if (answerText && distanceY > 50) {  // Adjusted threshold for correctness
-                        answerText.fill('red');
-                        correct = false;
-                    } else {
-                        answerText.position({ x: answerText.x(), y: blankY });  // Snap to correct position
-                        answerText.fill('green');
-                    }
-                });
-
-                layer.draw();
-
-                if (correct) {
-                    showFireworks(); // Show fireworks effect
-                } else {
-                    alert('Some answers are incorrect. Try again!');
-                }
-            });
-
-            // Reset positions
-            $('#resetBtn').on('click', function () {
-                initialPositions.forEach(pos => {
-                    const answerText = layer.find(`#${pos.id}`)[0];
-                    if (answerText) {
-                        answerText.position({ x: pos.x, y: pos.y });
-                        answerText.fill('blue');
-                    }
-                });
-                layer.draw();
-            });
-
-            // Auto Answer
-            $('#autoAnswerBtn').on('click', function () {
-                answers.forEach((answer, index) => {
-                    const answerText = layer.find(`#answer-${index}`)[0];
-                    const numberText = numberTexts[index];
-
-                    // Move the answer text to the position of the number index
-                    answerText.position({ x: numberText.x() + 25, y: numberText.y() });
-
-                    answerText.fill('green');
-                });
-
-                layer.draw();
-            });
-
-            const showFireworks = () => {
-                const fireworksLayer = new Konva.Layer();
-                stage.add(fireworksLayer);
-              
-                const createExplosion = (x, y) => {
-                  const particles = [];
-                  const numParticles = 50;
-              
-                  for (let i = 0; i < numParticles; i++) {
-                    const angle = (Math.PI * 2 * i) / numParticles;
-                    const speed = Math.random() * 2 + 2;
-                    const particle = new Konva.Circle({
-                      x: x,
-                      y: y,
-                      radius: Math.random() * 3 + 2,
-                      fill: `hsl(${Math.random() * 360}, 100%, 50%)`,
-                      opacity: 1,
-                    });
-                    fireworksLayer.add(particle);
-                    particles.push({ particle, angle, speed });
-                  }
-              
-                  const anim = new Konva.Animation((frame) => {
-                    particles.forEach(({ particle, angle, speed }) => {
-                      const velocityX = Math.cos(angle) * speed;
-                      const velocityY = Math.sin(angle) * speed;
-                      particle.x(particle.x() + velocityX);
-                      particle.y(particle.y() + velocityY);
-                      particle.opacity(particle.opacity() - 0.02);
-                      if (particle.opacity() <= 0) {
-                        particle.destroy();
-                      }
-                    });
-                    fireworksLayer.batchDraw();
-                  }, fireworksLayer);
-              
-                  anim.start();
-              
-                  setTimeout(() => {
-                    anim.stop();
-                    particles.forEach(({ particle }) => particle.destroy());
-                    fireworksLayer.draw();
-                  }, 1000);
-                };
-              
-                const numFireworks = 10;
-                for (let i = 0; i < numFireworks; i++) {
-                  setTimeout(() => {
-                    const x = Math.random() * stage.width();
-                    const y = Math.random() * stage.height();
-                    createExplosion(x, y);
-                  }, i * 200);
-                }
-              
-                // Reset the game after the fireworks effect
-                setTimeout(() => {
-                  loadExercise(); // Reset with the same category
-                }, 3000); // Wait for fireworks to finish before resetting
-              };
-
-            loadExercise();
-
-            // Adjust the stage size when window is resized
-            window.addEventListener('resize', () => {
-                stage.width(document.getElementById('canvasContainer').clientWidth);
-                stage.height(document.getElementById('canvasContainer').clientHeight);
-                layer.draw();
-            });
+<script>
+    $(document).ready(function () {
+        const stage = new Konva.Stage({
+            container: 'canvasContainer',
+            width: document.getElementById('canvasContainer').clientWidth,
+            height: document.getElementById('canvasContainer').clientHeight
         });
-    </script>
+
+        const layer = new Konva.Layer();
+        stage.add(layer);
+
+        const sentences = [
+            "I __________ (go) to the store yesterday.",
+            "She __________ (be) studying for her exams.",
+            "They __________ (finish) their homework by 6 PM.",
+            "We __________ (eat) dinner when the phone rang.",
+            "I __________ (visit) my grandmother next weekend."
+        ];
+
+        let initialPositions = [];
+        let questionTexts = [];
+        let numberTexts = [];
+
+        function shuffleArray(array) {
+            return array.sort(() => Math.random() - 0.5);
+        }
+
+        const araryWord = ["were eating", "will visit", "went", "is", "will have finished" ];
+        const words = shuffleArray(araryWord);
+        const answers = ["went", "is", "will have finished", "were eating", "will visit"];
+
+        function getRandomColor() {
+            // Generate a random color in hexadecimal format
+            return `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+        }
+        
+        function loadExercise() {
+            layer.destroyChildren();
+            initialPositions = [];
+            questionTexts = [];
+            numberTexts = [];
+
+            sentences.forEach((sentence, index) => {
+                const y = index * 80 + 100;
+
+                // Insert the number and question text
+                const numberText = new Konva.Text({
+                    x: 100,
+                    y: y,
+                    text: `(${index + 1})`,
+                    fontSize: 24, // Increased font size
+                    fontFamily: 'Calibri',
+                    fill: 'black',
+                    draggable: false,
+                    id: `number-${index}`
+                });
+
+                const questionText = new Konva.Text({
+                    x: 180,
+                    y: y,
+                    text: sentence.replace("___", '______'),
+                    fontSize: 24, // Increased font size
+                    fontFamily: 'Calibri',
+                    fill: 'black',
+                    draggable: false,
+                    id: `question-${index}`
+                });
+
+                numberTexts.push(numberText);
+                layer.add(numberText);
+
+                questionTexts.push(questionText);
+                layer.add(questionText);
+            });
+
+            // Calculate spacing to avoid overlap
+            const baseX = 10;
+            const spacing = 200; // Increased spacing for larger font
+
+            words.forEach((word, index) => {
+                const answerText = new Konva.Text({
+                    x: baseX + index * spacing, // Calculate x based on index
+                    y: 20,
+                    text: word,
+                    fontSize: 24, // Increased font size
+                    fontFamily: 'Calibri',
+                    fill:  getRandomColor(), // Apply random color
+                    draggable: true,
+                    id: `answer-${index}`
+                });
+
+                initialPositions.push({ id: `answer-${index}`, x: baseX + index * spacing, y: 20 });
+
+                answerText.on('dragmove', function () {
+                    highlightNumbers(answerText);
+                });
+
+                answerText.on('dragend', function () {
+                    numberTexts.forEach(number => {
+                        number.fontSize(24).fontStyle('normal').fill('black').opacity(1); // Adjusted font size
+                    });
+                    layer.draw();
+                });
+
+                layer.add(answerText);
+            });
+
+            layer.draw();
+        }
+
+        function highlightNumbers(answerText) {
+            const threshold = 50; // Adjusted threshold for closer proximity
+
+            numberTexts.forEach(numberText => {
+                const numberIndex = parseInt(numberText.text().replace(/[()]/g, '')) - 1;
+                const blankY = numberText.y(); // Use y position for comparison
+
+                const distanceY = Math.abs(answerText.y() - blankY);
+
+                if (distanceY < threshold) {
+                    numberText.fontSize(30).fontStyle('bold').fill('red').opacity(0.7);
+                } else {
+                    numberText.fontSize(24).fontStyle('normal').fill('black').opacity(1);
+                }
+            });
+
+            layer.draw();
+        }
+
+        function blinkEffect(text) {
+            const originalColor = text.fill();
+            let isOriginalColor = true;
+
+            const blink = () => {
+                text.fill(isOriginalColor ? 'red' : originalColor);
+                layer.draw();
+                isOriginalColor = !isOriginalColor;
+
+                setTimeout(() => {
+                    if (isOriginalColor) {
+                        clearInterval(blinkInterval);
+                        text.fill(originalColor);
+                        layer.draw();
+                    }
+                }, 500);
+            };
+
+            const blinkInterval = setInterval(blink, 300);
+        }
+
+        // Check Answers
+        $('#checkAnswersBtn').on('click', function () {
+            let correct = true;
+
+            answers.forEach((answer, index) => {
+                const answerText = layer.find(`#answer-${index}`)[0];
+                const numberText = numberTexts[index];
+                const blankY = numberText.y(); // Use y position for comparison
+
+                const distanceY = Math.abs(answerText.y() - blankY);
+
+                if (answerText && distanceY > 50) {  // Adjusted threshold for correctness
+                    answerText.fill('red');
+                    correct = false;
+                    blinkEffect(questionTexts[index]); // Apply blink effect for incorrect questions
+                } else {
+                    answerText.position({ x: answerText.x(), y: blankY });  // Snap to correct position
+                    answerText.fill('green');
+                }
+            });
+
+            layer.draw();
+
+            if (correct) {
+                showFireworks(); // Show fireworks effect
+            } else {
+                alert('Some answers are incorrect. Try again!');
+            }
+        });
+
+        // Reset positions
+        $('#resetBtn').on('click', function () {
+           
+            loadExercise();
+            
+        });
+
+        // Auto Answer
+        $('#autoAnswerBtn').on('click', function () {
+            answers.forEach((answer, index) => {
+                const answerText = layer.find(`#answer-${index}`)[0];
+                const numberText = numberTexts[index];
+
+                // Move the answer text to the position of the number index
+                answerText.position({ x: numberText.x() + 25, y: numberText.y() });
+
+                answerText.fill('green');
+            });
+
+            layer.draw();
+        });
+
+        const showFireworks = () => {
+            const fireworksLayer = new Konva.Layer();
+            stage.add(fireworksLayer);
+          
+            const createExplosion = (x, y) => {
+              const particles = [];
+              const numParticles = 50;
+          
+              for (let i = 0; i < numParticles; i++) {
+                const angle = (Math.PI * 2 * i) / numParticles;
+                const speed = Math.random() * 2 + 2;
+                const particle = new Konva.Circle({
+                  x: x,
+                  y: y,
+                  radius: Math.random() * 3 + 2,
+                  fill: `hsl(${Math.random() * 360}, 100%, 50%)`,
+                  opacity: 1,
+                });
+                fireworksLayer.add(particle);
+                particles.push({ particle, angle, speed });
+              }
+          
+              const anim = new Konva.Animation((frame) => {
+                particles.forEach(({ particle, angle, speed }) => {
+                  const velocityX = Math.cos(angle) * speed;
+                  const velocityY = Math.sin(angle) * speed;
+                  particle.x(particle.x() + velocityX);
+                  particle.y(particle.y() + velocityY);
+                  particle.opacity(particle.opacity() - 0.02);
+                  if (particle.opacity() <= 0) {
+                    particle.destroy();
+                  }
+                });
+                fireworksLayer.batchDraw();
+              }, fireworksLayer);
+          
+              anim.start();
+          
+              setTimeout(() => {
+                anim.stop();
+                particles.forEach(({ particle }) => particle.destroy());
+                fireworksLayer.draw();
+              }, 1000);
+            };
+          
+            const numFireworks = 10;
+            for (let i = 0; i < numFireworks; i++) {
+              setTimeout(() => {
+                const x = Math.random() * stage.width();
+                const y = Math.random() * stage.height();
+                createExplosion(x, y);
+              }, i * 200);
+            }
+          
+            // Reset the game after the fireworks effect
+            setTimeout(() => {
+              loadExercise(); // Reset with the same category
+            }, 3000); // Wait for fireworks to finish before resetting
+          };
+
+        loadExercise();
+
+        // Adjust the stage size when window is resized
+        window.addEventListener('resize', () => {
+            stage.width(document.getElementById('canvasContainer').clientWidth);
+            stage.height(document.getElementById('canvasContainer').clientHeight);
+            layer.draw();
+        });
+    });
+</script>
+
 </body>
 </html>
