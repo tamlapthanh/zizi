@@ -77,7 +77,7 @@
                         x: 100,
                         y: y,
                         text: `(${index + 1})`,
-                        fontSize: 16,
+                        fontSize: 24, // Increased font size
                         fontFamily: 'Calibri',
                         fill: 'black',
                         draggable: false,
@@ -88,7 +88,7 @@
                         x: 180,
                         y: y,
                         text: sentence.replace("__________", '______'),
-                        fontSize: 16,
+                        fontSize: 24, // Increased font size
                         fontFamily: 'Calibri',
                         fill: 'black',
                         draggable: false,
@@ -104,14 +104,14 @@
 
                 // Calculate spacing to avoid overlap
                 const baseX = 10;
-                const spacing = 150; // Adjust spacing as needed
+                const spacing = 200; // Increased spacing for larger font
 
                 words.forEach((word, index) => {
                     const answerText = new Konva.Text({
                         x: baseX + index * spacing, // Calculate x based on index
                         y: 20,
                         text: word,
-                        fontSize: 16,
+                        fontSize: 24, // Increased font size
                         fontFamily: 'Calibri',
                         fill: 'blue',
                         draggable: true,
@@ -126,7 +126,7 @@
 
                     answerText.on('dragend', function () {
                         numberTexts.forEach(number => {
-                            number.fontSize(16).fontStyle('normal').fill('black').opacity(1);
+                            number.fontSize(24).fontStyle('normal').fill('black').opacity(1); // Adjusted font size
                         });
                         layer.draw();
                     });
@@ -149,7 +149,7 @@
                     if (distanceY < threshold) {
                         numberText.fontSize(30).fontStyle('bold').fill('red').opacity(0.7);
                     } else {
-                        numberText.fontSize(16).fontStyle('normal').fill('black').opacity(1);
+                        numberText.fontSize(24).fontStyle('normal').fill('black').opacity(1);
                     }
                 });
 
