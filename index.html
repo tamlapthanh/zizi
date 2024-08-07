@@ -16,6 +16,20 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/apexcharts@3.37.1/dist/apexcharts.css" integrity="sha256-4MX+61mt9NVvvuPjUWdUdyfZfxSB1/Rf9WtqRHgG5S0=" crossorigin="anonymous"><!-- jsvectormap -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/css/jsvectormap.min.css" integrity="sha256-+uGLJmmTKOqBr+2E6KDYs/NRsHxSkONXFHUL0fy2O/4=" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <style>
+        .modal-footer {
+            display: flex;
+            justify-content: center;
+            padding: 0;
+            margin: 0;
+        }
+        .modal-footer .btn {
+            margin: 0;
+            padding: 0.375rem 0.75rem; /* Bootstrap's default button padding */
+        }
+    </style>
+
 </head> <!--end::Head--> <!--begin::Body-->
 
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary"> <!--begin::App Wrapper-->
@@ -24,11 +38,11 @@
         <div class="modal-dialog modal-dialog-centered" style="width: 65%;" role="document">
         <div class="modal-content" >
             <div class="modal-body"  >
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" style="color: red;">&times;</span></button>
             <iframe width="100%" height="450" src="" frameborder="1"  allowfullscreen></iframe>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
               </div>
         </div>
         </div>
@@ -243,7 +257,6 @@
             loadDataToDiv(JSON_DATA, ".data_class",  "bai_hoc");
           }
 
-          
     </script> <!--end::OverlayScrollbars Configure--> <!-- OPTIONAL SCRIPTS --> 
 
 </body><!--end::Body-->
