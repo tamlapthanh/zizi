@@ -19,6 +19,21 @@
 </head> <!--end::Head--> <!--begin::Body-->
 
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary"> <!--begin::App Wrapper-->
+
+    <div class="modal fade" id="videoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
+        <div class="modal-dialog modal-dialog-centered" style="width: 65%;" role="document">
+        <div class="modal-content" >
+            <div class="modal-body"  >
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <iframe width="100%" height="450" src="" frameborder="1"  allowfullscreen></iframe>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" data-dismiss="modal">Close</button>
+              </div>
+        </div>
+        </div>
+    </div>
+
     <div class="app-wrapper"> <!--begin::Header-->
         <nav class="app-header navbar navbar-expand bg-body"> <!--begin::Container-->
             <div class="container-fluid"> <!--begin::Start Navbar Links-->
@@ -96,22 +111,16 @@
                 </div> <!--end::Container-->
             </div> <!--end::App Content Header--> <!--begin::App Content-->
             <div class="app-content"> <!--begin::Container-->
+
+
+
                 <div class="container-fluid"> <!--begin::Row-->
                     <div class="row  data_class" id="#data_class"> 
+
 
                         <div class="spinner-grow text-primary" role="status">
                             <span class="visually-hidden">Loading...</span>
                           </div>
-                        <div class="modal fade" id="videoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
-                            <div class="modal-dialog modal-dialog-centered" style="width: 80%;">
-                            <div class="modal-content" >
-                                <div class="modal-body"  >
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                <iframe width="100%" height="450" src="" frameborder="1"  allowfullscreen></iframe>
-                                </div>
-                            </div>
-                            </div>
-                        </div>
                     </div> 
 
      
