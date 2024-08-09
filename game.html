@@ -197,12 +197,8 @@
     
           const getFontSize = () => {
             const width = window.innerWidth;
-            if (width < 800) {
-              return 32; // Larger font size for mobile
-            } else {
-              return 24; // Default font size
-            }
-          };
+            return width < 800 ? 32 : 24; // Responsive font size
+        };
 
           const getRandomElements = (arr, count) => {
             if (count == 100) {
@@ -255,77 +251,129 @@
 
           const createText = (text, x, y, color) => {
             const fontSize = getFontSize();
-
             const txt = new Konva.Text({
-              x: x,
-              y: y,
-              text: text,
-              fontSize:  fontSize * (stage.width() / 800), // Responsive font size
-              fontFamily: 'Calibri',
-              fill: color,
-              padding: 10,
-              align: 'center',
-              verticalAlign: 'middle',
-              draggable: true,
-              isSelected: false
+                x: x,
+                y: y,
+                text: text,
+                fontSize: fontSize * (stage.width() / 800), // Responsive font size
+                fontFamily: 'Calibri',
+                fill: color,
+                padding: 10,
+                align: 'center',
+                verticalAlign: 'middle',
+                draggable: true,
+                isSelected: false
             });
-
+        
             txt.on('mouseover', () => {
-              document.body.style.cursor = 'pointer';
-              txt.fill('green');
-              layer.draw();
+                document.body.style.cursor = 'pointer';
+                txt.fill('green'); // Đổi màu khi hover
+                layer.draw();
             });
-
+        
             txt.on('mouseout', () => {
-              document.body.style.cursor = 'default';
-              if (!txt.isSelected) {
-                txt.fill('black');
-              }
-              layer.draw();
+                document.body.style.cursor = 'default';
+                if (!txt.isSelected) {
+                    txt.fill(color); // Trả lại màu ban đầu nếu không được chọn
+                }
+                layer.draw();
             });
-
-            txt.on('click', () => {
-              handleTextClick(txt);
-              playTextSound(txt.text());
+        
+            txt.on('dragstart touchstart', () => {
+                txt.moveToTop();
+                txt.startX = txt.x();
+                txt.startY = txt.y();
             });
-
-            txt.on('tap', () => {
-              handleTextClick(txt);
-              playTextSound(txt.text());
+        
+            txt.on('dragmove touchmove', () => {
+                texts.forEach(otherTxt => {
+                    if (txt !== otherTxt && checkCollision(txt, otherTxt)) {
+                        otherTxt.fill('orange'); // Đổi màu từ khác khi gần
+                    } else if (!otherTxt.isSelected) {
+                        otherTxt.fill(otherTxt.originalFill); // Trả lại màu ban đầu nếu không còn gần
+                    }
+                });
+                layer.draw();
             });
-
+        
+            txt.on('dragend touchend', () => {
+                let droppedOnText = null;
+                texts.forEach(otherTxt => {
+                    if (txt !== otherTxt && checkCollision(txt, otherTxt)) {
+                        droppedOnText = otherTxt;
+                    }
+                });
+        
+                if (droppedOnText) {
+                    handleDrop(txt, droppedOnText);
+                } else {
+                    txt.position({ x: txt.startX, y: txt.startY }); // Trả lại vị trí cũ nếu không có từ nào gần
+                }
+                layer.draw();
+            });
+        
+            txt.originalFill = color; // Lưu màu gốc
             return txt;
-          };
+        };
 
-          const createObjects = () => {
+        const checkCollision = (txt1, txt2) => {
+          const rect1 = txt1.getClientRect();
+          const rect2 = txt2.getClientRect();
+          return !(rect1.x > rect2.x + rect2.width ||
+                   rect1.x + rect1.width < rect2.x ||
+                   rect1.y > rect2.y + rect2.height ||
+                   rect1.y + rect1.height < rect2.y);
+      };
+      
+      const handleDrop = (txt1, txt2) => {
+          const word1 = txt1.text();
+          const word2 = txt2.text();
+      
+          if (correctMatches[word1] === word2 || correctMatches[word2] === word1) {
+              txt1.destroy(); // Xóa từ đầu tiên
+              txt2.destroy(); // Xóa từ thứ hai
+              layer.draw();
+      
+              if (texts.every(txt => !txt.getStage())) {
+                  createFireworks(); // Tất cả các từ đã được ghép chính xác
+              }
+          } else {
+              // Trả về vị trí ban đầu
+              txt1.position({ x: txt1.startX, y: txt1.startY });
+              //txt2.position({ x: txt2.startX, y: txt2.startY });
+              layer.draw();
+          }
+      };
 
-             var vocabCategory = document.getElementById('vocabSelect').value;
-            var selectedNum = document.getElementById('vocabNum').value;
-
-            layer.destroyChildren();
-            texts = [];
-            getRandomWordsAndMeanings(vocabCategory, selectedNum);
-
-            words.forEach(word => {
-              const fontSize = getFontSize();
-              const size = { width: 100 * (stage.width() / 800), height: fontSize }; // Responsive size
-              const pos = getRandomPosition(size);
-              const text = createText(word, pos.x, pos.y, 'black');
-              texts.push(text);
-              layer.add(text);
-            });
-
-            meanings.forEach(meaning => {
-              const fontSize = getFontSize();
-              const size = { width: 100 * (stage.width() / 800), height: fontSize }; // Responsive size
-              const pos = getRandomPosition(size);
-              const text = createText(meaning, pos.x, pos.y, 'blue');
-              texts.push(text);
-              layer.add(text);
-            });
-
-            layer.draw();
-          };
+          // Hàm khởi tạo các từ
+    const createObjects = () => {
+      var vocabCategory = document.getElementById('vocabSelect').value;
+      var selectedNum = document.getElementById('vocabNum').value;
+  
+      layer.destroyChildren();
+      texts = [];
+      getRandomWordsAndMeanings(vocabCategory, selectedNum);
+  
+      words.forEach(word => {
+          const fontSize = getFontSize();
+          const size = { width: 100 * (stage.width() / 800), height: fontSize };
+          const pos = getRandomPosition(size);
+          const text = createText(word, pos.x, pos.y, 'black');
+          texts.push(text);
+          layer.add(text);
+      });
+  
+      meanings.forEach(meaning => {
+          const fontSize = getFontSize();
+          const size = { width: 100 * (stage.width() / 800), height: fontSize };
+          const pos = getRandomPosition(size);
+          const text = createText(meaning, pos.x, pos.y, 'blue');
+          texts.push(text);
+          layer.add(text);
+      });
+  
+      layer.draw();
+  };
 
           const createFireworks = () => {
             const fireworksLayer = new Konva.Layer();
