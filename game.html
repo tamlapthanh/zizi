@@ -312,10 +312,33 @@
                 layer.draw();
             });
         
+            txt.on('click tap', () => {
+                handleTextSelection(txt);
+            });
+        
             txt.originalFill = color; // Lưu màu gốc
             return txt;
         };
 
+        const handleTextSelection = (txt) => {
+          if (selectedWord === null) {
+              selectedWord = txt;
+              txt.isSelected = true;
+              txt.fill('yellow'); // Đổi màu từ được chọn
+          } else if (selectedWord !== txt) {
+              if (correctMatches[selectedWord.text()] === txt.text() || correctMatches[txt.text()] === selectedWord.text()) {
+                  handleDrop(selectedWord, txt);
+              } else {
+                  selectedWord.fill(selectedWord.originalFill); // Trả lại màu ban đầu nếu không khớp
+                  selectedWord.isSelected = false;
+                  txt.fill(txt.originalFill); // Trả lại màu ban đầu nếu không khớp
+              }
+              selectedWord = null;
+          }
+          layer.draw();
+      };
+
+      
         const checkCollision = (txt1, txt2) => {
           const rect1 = txt1.getClientRect();
           const rect2 = txt2.getClientRect();
