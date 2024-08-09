@@ -307,6 +307,7 @@
                 if (droppedOnText) {
                     handleDrop(txt, droppedOnText);
                 } else {
+                   playTextSound(txt);
                     txt.position({ x: txt.startX, y: txt.startY }); // Trả lại vị trí cũ nếu không có từ nào gần
                 }
                 layer.draw();
@@ -321,6 +322,7 @@
         };
 
         const handleTextSelection = (txt) => {
+          
           if (selectedWord === null) {
               selectedWord = txt;
               txt.isSelected = true;
@@ -332,6 +334,7 @@
                   selectedWord.fill(selectedWord.originalFill); // Trả lại màu ban đầu nếu không khớp
                   selectedWord.isSelected = false;
                   txt.fill(txt.originalFill); // Trả lại màu ban đầu nếu không khớp
+                  playTextSound(txt);
               }
               selectedWord = null;
           }
@@ -352,11 +355,13 @@
           const word1 = txt1.text();
           const word2 = txt2.text();
       
+          playTextSound(word1);
+          playTextSound(word2);
+
           if (correctMatches[word1] === word2 || correctMatches[word2] === word1) {
               txt1.destroy(); // Xóa từ đầu tiên
               txt2.destroy(); // Xóa từ thứ hai
               layer.draw();
-      
               if (texts.every(txt => !txt.getStage())) {
                   createFireworks(); // Tất cả các từ đã được ghép chính xác
               }
@@ -461,25 +466,29 @@
             }, 3000); // Wait for fireworks to finish before resetting
           };
 
-          
+          function isEnglishWord(word) {
+            return /^[a-zA-Z]+$/.test(word);
+        }
         
 
           const playTextSound = (text) => {
+           
             let utterance = new SpeechSynthesisUtterance(text);
-            const isVietnamese = vocab.animals.some(pair => pair.meaning === text) || vocab.householdItems.some(pair => pair.meaning === text);
-            if (isVietnamese) {
-              utterance.lang = 'vi-VN' ;
-            }
-            else {
-              utterance.lang =  'en-US';
-              if (voices && selectedVoiceIndex) {
+            // const isVietnamese = vocab.animals.some(pair => pair.meaning === text) || vocab.householdItems.some(pair => pair.meaning === text);
+            const isEnglish = isEnglishWord(text);
+            
+            if (isEnglish) {
+                utterance.lang =  'en-US';
+                if (voices && selectedVoiceIndex) {
                   const selectedVoice = voices[selectedVoiceIndex];
                   if (selectedVoice) {
                     utterance.voice = selectedVoice;
                   }
                 }
-              }
-
+            }
+            else {
+              utterance.lang = 'vi-VN' ;
+            }
 
             
             speechSynthesis.speak(utterance);
