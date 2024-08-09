@@ -273,7 +273,7 @@
                 align: 'center',
                 verticalAlign: 'middle',
                 draggable: true,
-                isSelected: false
+                isSelected: true
             });
         
             txt.on('mouseover', () => {
@@ -318,7 +318,7 @@
                 if (droppedOnText) {
                     handleDrop(txt, droppedOnText);
                 } else {
-                    txt.position({ x: txt.startX, y: txt.startY }); // Trả lại vị trí cũ nếu không có từ nào gần
+                  //  txt.position({ x: txt.startX, y: txt.startY }); // Trả lại vị trí cũ nếu không có từ nào gần
                 }
                 layer.draw();
             });
