@@ -89,7 +89,7 @@
       </div>
     </div>
   </div>
-  
+  <script src="https://code.responsivevoice.org/responsivevoice.js?key=dJo8V3Xd"></script>
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -106,6 +106,8 @@
           let voices = [];
           let selectedVoiceIndex = null;
 
+          let playWord1 = "";
+          let playWord2 = "";
 
           const vocab = {
             animals: [
@@ -194,10 +196,19 @@
             ]
           };
 
+          function isMobile() {
+            return /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        }
     
           const getFontSize = () => {
-            const width = window.innerWidth;
-            return width < 800 ? 32 : 24; // Responsive font size
+            if (isMobile()) {
+              return 30;
+            } else {
+              return 28;
+            }
+           // const width = window.innerWidth;
+            // return width < 600 ? 30 : 22; // Responsive font size
+   
         };
 
           const getRandomElements = (arr, count) => {
@@ -255,7 +266,7 @@
                 x: x,
                 y: y,
                 text: text,
-                fontSize: fontSize * (stage.width() / 800), // Responsive font size
+                fontSize: fontSize, // Responsive font size
                 fontFamily: 'Calibri',
                 fill: color,
                 padding: 10,
@@ -307,7 +318,6 @@
                 if (droppedOnText) {
                     handleDrop(txt, droppedOnText);
                 } else {
-                   playTextSound(txt);
                     txt.position({ x: txt.startX, y: txt.startY }); // Trả lại vị trí cũ nếu không có từ nào gần
                 }
                 layer.draw();
@@ -334,7 +344,6 @@
                   selectedWord.fill(selectedWord.originalFill); // Trả lại màu ban đầu nếu không khớp
                   selectedWord.isSelected = false;
                   txt.fill(txt.originalFill); // Trả lại màu ban đầu nếu không khớp
-                  playTextSound(txt);
               }
               selectedWord = null;
           }
@@ -354,9 +363,9 @@
       const handleDrop = (txt1, txt2) => {
           const word1 = txt1.text();
           const word2 = txt2.text();
-      
-          playTextSound(word1);
-          playTextSound(word2);
+          
+          playWord1 = word1;
+          playWord2 = word2;
 
           if (correctMatches[word1] === word2 || correctMatches[word2] === word1) {
               txt1.destroy(); // Xóa từ đầu tiên
@@ -364,13 +373,15 @@
               layer.draw();
               if (texts.every(txt => !txt.getStage())) {
                   createFireworks(); // Tất cả các từ đã được ghép chính xác
-              }
+              } 
           } else {
               // Trả về vị trí ban đầu
               txt1.position({ x: txt1.startX, y: txt1.startY });
               //txt2.position({ x: txt2.startX, y: txt2.startY });
               layer.draw();
           }
+
+          
       };
 
           // Hàm khởi tạo các từ
@@ -467,32 +478,49 @@
           };
 
           function isEnglishWord(word) {
+            if ("" == word) {
+              return false;
+            }
             return /^[a-zA-Z]+$/.test(word);
         }
-        
 
-          const playTextSound = (text) => {
-           
-            let utterance = new SpeechSynthesisUtterance(text);
-            // const isVietnamese = vocab.animals.some(pair => pair.meaning === text) || vocab.householdItems.some(pair => pair.meaning === text);
-            const isEnglish = isEnglishWord(text);
-            
-            if (isEnglish) {
-                utterance.lang =  'en-US';
-                if (voices && selectedVoiceIndex) {
-                  const selectedVoice = voices[selectedVoiceIndex];
-                  if (selectedVoice) {
-                    utterance.voice = selectedVoice;
-                  }
-                }
-            }
-            else {
-              utterance.lang = 'vi-VN' ;
-            }
+      const playTextSound = () => {
+        const isEnglish1 = isEnglishWord(playWord1);
+        const isEnglish2 = isEnglishWord(playWord2);
+        if (isEnglish1) {
+          responsiveVoice.speak(playWord1);
+        } 
 
+        if (isEnglish2) {
+          responsiveVoice.speak(playWord2);
+        }
+        playWord1 = "";
+        playWord2 = "";
+
+      };
+
+        /*
+          const playTextSound = (text1, text2) => {
             
+            let utterance = new SpeechSynthesisUtterance(text1);
+            utterance.lang = 'vi-VN' ;
+            if (null == text2) {
+              speechSynthesis.speak(utterance);
+            } else {
+              const isEnglish = isEnglishWord(text1);
+              if (isEnglish == false) {
+                utterance = new SpeechSynthesisUtterance(text2);
+              } 
+              utterance.lang =  'en-US';
+              if (voices && selectedVoiceIndex) {
+                const selectedVoice = voices[selectedVoiceIndex];
+                utterance.voice = selectedVoice;
+              }
+            }
             speechSynthesis.speak(utterance);
+           
           };
+ */
 
           const handleTextClick = (text) => {
             if (text.isSelected) return;
@@ -567,6 +595,13 @@
             layer = new Konva.Layer();
             stage.add(layer);
 
+            // Đăng ký sự kiện draw
+            layer.on('draw', function() {
+              if (playWord1 != "" && playWord2 != "") {
+                  playTextSound();
+              }
+            });
+
             window.addEventListener('resize', () => {
               stage.width(window.innerWidth);
               stage.height(window.innerHeight);
@@ -598,7 +633,7 @@
 
           function loadVoices() {
             return new Promise((resolve, reject) => {
-              let voices = speechSynthesis.getVoices();
+              voices = speechSynthesis.getVoices();
               if (voices.length) {
                 resolve(voices);
                 return;
@@ -622,7 +657,7 @@
     //createFireworks();
 
     loadVoices().then(voices => {
-        console.log(voices);
+       // console.log(voices);
           voices.forEach((voice, index) => {
             if (voice.name.includes('English')) {
                 const option = document.createElement('option');
