@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Matching Game</title>
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-  <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.6.3.min.js"
+    integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
   <script src="https://unpkg.com/konva@9.3.14/konva.min.js"></script>
-  
+
 
   <style>
     body {
@@ -16,20 +18,27 @@
       margin: 0;
       overflow: hidden;
     }
+
     #container {
       width: 100vw;
       height: 100vh;
       position: relative;
     }
+
     .modal-content {
       text-align: center;
     }
-    .modal-header, .modal-body, .modal-footer {
+
+    .modal-header,
+    .modal-body,
+    .modal-footer {
       border: none;
     }
+
     .modal-body select {
       margin: 10px 0;
     }
+
     .modal-footer button {
       margin: 0 5px;
     }
@@ -40,18 +49,19 @@
       right: 10px;
       z-index: 100;
     }
-
   </style>
 </head>
+
 <body>
-  
+
   <div id="container">
-   
+
   </div>
-  <button id="settingsButton" class="btn btn-primary btn-sm" ><i class="bi bi-gear"></i></button>
-  
+  <button id="settingsButton" class="btn btn-primary btn-sm"><i class="bi bi-gear"></i></button>
+
   <!-- Modal -->
-  <div class="modal fade" id="vocabModal" tabindex="-1" role="dialog" aria-labelledby="vocabModalLabel" aria-hidden="true">
+  <div class="modal fade" id="vocabModal" tabindex="-1" role="dialog" aria-labelledby="vocabModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -64,14 +74,22 @@
           <select id="vocabSelect" class="form-control">
             <option value="animals">Tên con vật</option>
             <option value="householdItems">Vật dụng trong nhà</option>
+            <option value="Japanese">512 Kanji</option>
+            <option value="Zizi">Zizi</option>
           </select>
-         <select id="vocabNum" class="form-control">
+          <select id="vocabNum" class="form-control">
             <option value="5">5 câu</option>
             <option value="10">10 câu</option>
             <option value="15">15 câu</option>
             <option value="20">20 câu</option>
             <option value="100">Thôi chơi tất</option>
           </select>
+
+          <select id="playType" class="form-control">
+            <option value="1">Responsive Voice</option>
+            <option value="2">Speech SynthesisUtterance (Browser API)</option>
+          </select>
+
           <select id="voiceSelect" class="form-control">
           </select>
 
@@ -94,592 +112,1103 @@
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script>
-    
 
-          let stage, layer;
-          let words = [];
-          let meanings = [];
-          let correctMatches = {};
-          let selectedWord = null;
-          let texts = [];
 
-          let voices = [];
-          let selectedVoiceIndex = null;
+    let stage, layer;
+    let words = [];
+    let meanings = [];
+    let correctMatches = {};
+    let selectedWord = null;
+    let texts = [];
 
-          let playWord1 = "";
-          let playWord2 = "";
+    let voices = [];
+    let selectedVoiceIndex = null;
 
-          const vocab = {
-            animals: [
-            { "word": "Dog", "meaning": "Chó", "lang": "en" },
-            { "word": "Cat", "meaning": "Mèo", "lang": "en" },
-            { "word": "Bird", "meaning": "Chim", "lang": "en" },
-            { "word": "Fish", "meaning": "Cá", "lang": "en" },
-            { "word": "Elephant", "meaning": "Voi", "lang": "en" },
-            { "word": "Horse", "meaning": "Ngựa", "lang": "en" },
-            { "word": "Rabbit", "meaning": "Thỏ", "lang": "en" },
-            { "word": "Lion", "meaning": "Sư tử", "lang": "en" },
-            { "word": "Tiger", "meaning": "Hổ", "lang": "en" },
-            { "word": "Bear", "meaning": "Gấu", "lang": "en" },
-            { "word": "Giraffe", "meaning": "Hươu cao cổ", "lang": "en" },
-            { "word": "Kangaroo", "meaning": "Kangaroo", "lang": "en" },
-            { "word": "Zebra", "meaning": "Ngựa vằn", "lang": "en" },
-            { "word": "Penguin", "meaning": "Chim cánh cụt", "lang": "en" },
-            { "word": "Dolphin", "meaning": "Cá heo", "lang": "en" },
-            { "word": "Whale", "meaning": "Cá voi", "lang": "en" },
-            { "word": "Shark", "meaning": "Cá mập", "lang": "en" },
-            { "word": "Eagle", "meaning": "Đại bàng", "lang": "en" },
-            { "word": "Owl", "meaning": "Cú", "lang": "en" },
-            { "word": "Snake", "meaning": "Rắn", "lang": "en" },
-            { "word": "Frog", "meaning": "Ếch", "lang": "en" },
-            { "word": "Turtle", "meaning": "Rùa", "lang": "en" },
-            { "word": "Panda", "meaning": "Gấu trúc", "lang": "en" },
-            { "word": "Wolf", "meaning": "Sói", "lang": "en" },
-            { "word": "Fox", "meaning": "Cáo", "lang": "en" },
-            { "word": "Hippopotamus", "meaning": "Hà mã", "lang": "en" },
-            { "word": "Rhinoceros", "meaning": "Tê giác", "lang": "en" },
-            { "word": "Cheetah", "meaning": "Báo gấm", "lang": "en" },
-            { "word": "Leopard", "meaning": "Báo", "lang": "en" },
-            { "word": "Hyena", "meaning": "Linh cẩu", "lang": "en" },
-            { "word": "Koala", "meaning": "Koala", "lang": "en" },
-            { "word": "Sloth", "meaning": "Lười", "lang": "en" },
-            { "word": "Armadillo", "meaning": "Lợn biển", "lang": "en" },
-            { "word": "Bat", "meaning": "Dơi", "lang": "en" },
-            { "word": "Otter", "meaning": "Rái cá", "lang": "en" },
-            { "word": "Porcupine", "meaning": "Nhím", "lang": "en" },
-            { "word": "Meerkat", "meaning": "Chồn mangut", "lang": "en" },
-            { "word": "Kangaroo Rat", "meaning": "Chuột kangaroo", "lang": "en" },
-            { "word": "Bison", "meaning": "Bò rừng", "lang": "en" },
-            { "word": "Gorilla", "meaning": "Gorilla", "lang": "en" },
-            { "word": "Baboon", "meaning": "Khỉ đầu chó", "lang": "en" },
-            { "word": "Chimpanzee", "meaning": "Tinh tinh", "lang": "en" },
-            { "word": "Puma", "meaning": "Puma", "lang": "en" },
-            { "word": "Cougar", "meaning": "Cougar", "lang": "en" },
-            { "word": "Jaguar", "meaning": "Jaguar", "lang": "en" },
-            { "word": "Okapi", "meaning": "Okapi", "lang": "en" },
-            { "word": "Tapir", "meaning": "Tapir", "lang": "en" },
-            { "word": "Warthog", "meaning": "Lợn rừng", "lang": "en" },
-            { "word": "Pangolin", "meaning": "Tê tê", "lang": "en" },
-            { "word": "Anteater", "meaning": "Thú ăn kiến", "lang": "en" },
-            { "word": "Aardvark", "meaning": "Aardvark", "lang": "en" },
-            { "word": "Squirrel", "meaning": "Sóc", "lang": "en" },
-            { "word": "Hedgehog", "meaning": "Nhím", "lang": "en" },
-            { "word": "Mole", "meaning": "Chuột chũi", "lang": "en" },
-            { "word": "Weasel", "meaning": "Chồn", "lang": "en" },
-            { "word": "Skunk", "meaning": "Chồn hôi", "lang": "en" },
-            { "word": "Opossum", "meaning": "Opossum", "lang": "en" },
-            { "word": "Wombat", "meaning": "Wombat", "lang": "en" },
-            { "word": "Tasmanian Devil", "meaning": "Quỷ Tasmania", "lang": "en" },
-            { "word": "Dingo", "meaning": "Chó rừng Úc", "lang": "en" }
-            ],
-            householdItems: [
-              { word: 'Table', meaning: 'Bàn', lang: 'en' },
-              { word: 'Chair', meaning: 'Ghế', lang: 'en' },
-              { word: 'Lamp', meaning: 'Đèn', lang: 'en' },
-              { word: 'Sofa', meaning: 'Sofa', lang: 'en' },
-              { word: 'Bed', meaning: 'Giường', lang: 'en' },
-              { word: 'Refrigerator', meaning: 'Tủ lạnh', lang: 'en' },
-              { word: 'Oven', meaning: 'Lò nướng', lang: 'en' },
-              { word: 'Microwave', meaning: 'Lò vi sóng', lang: 'en' },
-              { word: 'Washing Machine', meaning: 'Máy giặt', lang: 'en' },
-              { word: 'Toaster', meaning: 'Máy nướng bánh', lang: 'en' },
-              { word: 'Cabinet', meaning: 'Tủ đựng đồ', lang: 'en' },
-              { word: 'Shelf', meaning: 'Kệ', lang: 'en' },
-              { word: 'Curtain', meaning: 'Rèm cửa', lang: 'en' },
-              { word: 'Mirror', meaning: 'Gương', lang: 'en' },
-              { word: 'Clock', meaning: 'Đồng hồ', lang: 'en' },
-              { word: 'Painting', meaning: 'Tranh', lang: 'en' },
-              { word: 'Carpet', meaning: 'Thảm', lang: 'en' },
-              { word: 'Pillow', meaning: 'Gối', lang: 'en' },
-              { word: 'Blanket', meaning: 'Chăn', lang: 'en' },
-              { word: 'Drawer', meaning: 'Ngăn kéo', lang: 'en' }
-            ]
-          };
+    let playWord1 = "";
+    let playWord2 = "";
 
-          function isMobile() {
-            return /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const vocab = {
+      Zizi: [
+        { "word": "What color is this crayon?", "meaning": "What color is this crayon ?", "lang": "en" },
+        { "word": "What color do you like?", "meaning": "What color do you like ?", "lang": "en" },
+      ],
+      animals: [
+        { "word": "Dog", "meaning": "Chó", "lang": "en" },
+        { "word": "Cat", "meaning": "Mèo", "lang": "en" },
+        { "word": "Bird", "meaning": "Chim", "lang": "en" },
+        { "word": "Fish", "meaning": "Cá", "lang": "en" },
+        { "word": "Elephant", "meaning": "Voi", "lang": "en" },
+        { "word": "Horse", "meaning": "Ngựa", "lang": "en" },
+        { "word": "Rabbit", "meaning": "Thỏ", "lang": "en" },
+        { "word": "Lion", "meaning": "Sư tử", "lang": "en" },
+        { "word": "Tiger", "meaning": "Hổ", "lang": "en" },
+        { "word": "Bear", "meaning": "Gấu", "lang": "en" },
+        { "word": "Giraffe", "meaning": "Hươu cao cổ", "lang": "en" },
+        { "word": "Kangaroo", "meaning": "Kangaroo", "lang": "en" },
+        { "word": "Zebra", "meaning": "Ngựa vằn", "lang": "en" },
+        { "word": "Penguin", "meaning": "Chim cánh cụt", "lang": "en" },
+        { "word": "Dolphin", "meaning": "Cá heo", "lang": "en" },
+        { "word": "Whale", "meaning": "Cá voi", "lang": "en" },
+        { "word": "Shark", "meaning": "Cá mập", "lang": "en" },
+        { "word": "Eagle", "meaning": "Đại bàng", "lang": "en" },
+        { "word": "Owl", "meaning": "Cú", "lang": "en" },
+        { "word": "Snake", "meaning": "Rắn", "lang": "en" },
+        { "word": "Frog", "meaning": "Ếch", "lang": "en" },
+        { "word": "Turtle", "meaning": "Rùa", "lang": "en" },
+        { "word": "Panda", "meaning": "Gấu trúc", "lang": "en" },
+        { "word": "Wolf", "meaning": "Sói", "lang": "en" },
+        { "word": "Fox", "meaning": "Cáo", "lang": "en" },
+        { "word": "Hippopotamus", "meaning": "Hà mã", "lang": "en" },
+        { "word": "Rhinoceros", "meaning": "Tê giác", "lang": "en" },
+        { "word": "Cheetah", "meaning": "Báo gấm", "lang": "en" },
+        { "word": "Leopard", "meaning": "Báo", "lang": "en" },
+        { "word": "Hyena", "meaning": "Linh cẩu", "lang": "en" },
+        { "word": "Koala", "meaning": "Koala", "lang": "en" },
+        { "word": "Sloth", "meaning": "Lười", "lang": "en" },
+        { "word": "Armadillo", "meaning": "Lợn biển", "lang": "en" },
+        { "word": "Bat", "meaning": "Dơi", "lang": "en" },
+        { "word": "Otter", "meaning": "Rái cá", "lang": "en" },
+        { "word": "Porcupine", "meaning": "Nhím", "lang": "en" },
+        { "word": "Meerkat", "meaning": "Chồn mangut", "lang": "en" },
+        { "word": "Kangaroo Rat", "meaning": "Chuột kangaroo", "lang": "en" },
+        { "word": "Bison", "meaning": "Bò rừng", "lang": "en" },
+        { "word": "Gorilla", "meaning": "Gorilla", "lang": "en" },
+        { "word": "Baboon", "meaning": "Khỉ đầu chó", "lang": "en" },
+        { "word": "Chimpanzee", "meaning": "Tinh tinh", "lang": "en" },
+        { "word": "Puma", "meaning": "Puma", "lang": "en" },
+        { "word": "Cougar", "meaning": "Cougar", "lang": "en" },
+        { "word": "Jaguar", "meaning": "Jaguar", "lang": "en" },
+        { "word": "Okapi", "meaning": "Okapi", "lang": "en" },
+        { "word": "Tapir", "meaning": "Tapir", "lang": "en" },
+        { "word": "Warthog", "meaning": "Lợn rừng", "lang": "en" },
+        { "word": "Pangolin", "meaning": "Tê tê", "lang": "en" },
+        { "word": "Anteater", "meaning": "Thú ăn kiến", "lang": "en" },
+        { "word": "Aardvark", "meaning": "Aardvark", "lang": "en" },
+        { "word": "Squirrel", "meaning": "Sóc", "lang": "en" },
+        { "word": "Hedgehog", "meaning": "Nhím", "lang": "en" },
+        { "word": "Mole", "meaning": "Chuột chũi", "lang": "en" },
+        { "word": "Weasel", "meaning": "Chồn", "lang": "en" },
+        { "word": "Skunk", "meaning": "Chồn hôi", "lang": "en" },
+        { "word": "Opossum", "meaning": "Opossum", "lang": "en" },
+        { "word": "Wombat", "meaning": "Wombat", "lang": "en" },
+        { "word": "Tasmanian Devil", "meaning": "Quỷ Tasmania", "lang": "en" },
+        { "word": "Dingo", "meaning": "Chó rừng Úc", "lang": "en" }
+      ],
+      householdItems: [
+        { word: 'Table', meaning: 'Bàn', lang: 'en' },
+        { word: 'Chair', meaning: 'Ghế', lang: 'en' },
+        { word: 'Lamp', meaning: 'Đèn', lang: 'en' },
+        { word: 'Sofa', meaning: 'Sofa', lang: 'en' },
+        { word: 'Bed', meaning: 'Giường', lang: 'en' },
+        { word: 'Refrigerator', meaning: 'Tủ lạnh', lang: 'en' },
+        { word: 'Oven', meaning: 'Lò nướng', lang: 'en' },
+        { word: 'Microwave', meaning: 'Lò vi sóng', lang: 'en' },
+        { word: 'Washing Machine', meaning: 'Máy giặt', lang: 'en' },
+        { word: 'Toaster', meaning: 'Máy nướng bánh', lang: 'en' },
+        { word: 'Cabinet', meaning: 'Tủ đựng đồ', lang: 'en' },
+        { word: 'Shelf', meaning: 'Kệ', lang: 'en' },
+        { word: 'Curtain', meaning: 'Rèm cửa', lang: 'en' },
+        { word: 'Mirror', meaning: 'Gương', lang: 'en' },
+        { word: 'Clock', meaning: 'Đồng hồ', lang: 'en' },
+        { word: 'Painting', meaning: 'Tranh', lang: 'en' },
+        { word: 'Carpet', meaning: 'Thảm', lang: 'en' },
+        { word: 'Pillow', meaning: 'Gối', lang: 'en' },
+        { word: 'Blanket', meaning: 'Chăn', lang: 'en' },
+        { word: 'Drawer', meaning: 'Ngăn kéo', lang: 'en' }
+      ],
+      Japanese: [
+        { "word": "一", "meaning": "NHẤT", "lang": "en" },
+        { "word": "二", "meaning": "NHỊ", "lang": "en" },
+        { "word": "四", "meaning": "TỨ", "lang": "en" },
+        { "word": "五", "meaning": "NGŨ", "lang": "en" },
+        { "word": "六", "meaning": "LỤC", "lang": "en" },
+        { "word": "七", "meaning": "THẤT", "lang": "en" },
+        { "word": "八", "meaning": "BÁT", "lang": "en" },
+        { "word": "九", "meaning": "CỬU", "lang": "en" },
+        { "word": "十", "meaning": "THẬP", "lang": "en" },
+        { "word": "百", "meaning": "BÁCH", "lang": "en" },
+        { "word": "千", "meaning": "THIÊN", "lang": "en" },
+        { "word": "万", "meaning": "VẠN", "lang": "en" },
+        { "word": "円", "meaning": "VIÊN", "lang": "en" },
+        { "word": "口", "meaning": "KHẨU", "lang": "en" },
+        { "word": "目", "meaning": "MỤC", "lang": "en" },
+        { "word": "三", "meaning": "TAM", "lang": "en" },
+        { "word": "日", "meaning": "NHẬT", "lang": "en" },
+        { "word": "月", "meaning": "NGUYỆT", "lang": "en" },
+        { "word": "火", "meaning": "HỎA", "lang": "en" },
+        { "word": "水", "meaning": "THỦY", "lang": "en" },
+        { "word": "木", "meaning": "MỘC", "lang": "en" },
+        { "word": "金", "meaning": "KIM", "lang": "en" },
+        { "word": "土", "meaning": "THỔ", "lang": "en" },
+        { "word": "曜", "meaning": "DiỆU", "lang": "en" },
+        { "word": "本", "meaning": "BẢN", "lang": "en" },
+        { "word": "人", "meaning": "NHÂN", "lang": "en" },
+        { "word": "今", "meaning": "KIM", "lang": "en" },
+        { "word": "寺", "meaning": "TỰ", "lang": "en" },
+        { "word": "時", "meaning": "THỜI, THÌ", "lang": "en" },
+        { "word": "半", "meaning": "BÁN", "lang": "en" },
+        { "word": "刀", "meaning": "ĐAO", "lang": "en" },
+        { "word": "分", "meaning": "PHÂN", "lang": "en" },
+        { "word": "上", "meaning": "THƯỢNG", "lang": "en" },
+        { "word": "下", "meaning": "HẠ", "lang": "en" },
+        { "word": "中", "meaning": "TRUNG, TRÚNG", "lang": "en" },
+        { "word": "外", "meaning": "NGOẠI", "lang": "en" },
+        { "word": "右", "meaning": "HỮU", "lang": "en" },
+        { "word": "工", "meaning": "CÔNG", "lang": "en" },
+        { "word": "左", "meaning": "TẢ", "lang": "en" },
+        { "word": "前", "meaning": "TIỀN", "lang": "en" },
+        { "word": "後", "meaning": "HẬU", "lang": "en" },
+        { "word": "午", "meaning": "NGỌ", "lang": "en" },
+        { "word": "門", "meaning": "MÔN", "lang": "en" },
+        { "word": "間", "meaning": "GIAN, GIÁN", "lang": "en" },
+        { "word": "東", "meaning": "ĐÔNG", "lang": "en" },
+        { "word": "西", "meaning": "TÂY", "lang": "en" },
+        { "word": "南", "meaning": "NAM", "lang": "en" },
+        { "word": "北", "meaning": "BẮC", "lang": "en" },
+        { "word": "田", "meaning": "ĐiỀN", "lang": "en" },
+        { "word": "力", "meaning": "LỰC", "lang": "en" },
+        { "word": "男", "meaning": "NAM", "lang": "en" },
+        { "word": "女", "meaning": "NỮ", "lang": "en" },
+        { "word": "子", "meaning": "TỬ, TÝ", "lang": "en" },
+        { "word": "学", "meaning": "HỌC", "lang": "en" },
+        { "word": "生", "meaning": "SINH", "lang": "en" },
+        { "word": "先", "meaning": "TIÊN", "lang": "en" },
+        { "word": "何", "meaning": "HÀ", "lang": "en" },
+        { "word": "父", "meaning": "PHỤ", "lang": "en" },
+        { "word": "母", "meaning": "MẪU", "lang": "en" },
+        { "word": "年", "meaning": "NIÊN", "lang": "en" },
+        { "word": "去", "meaning": "KHỬ, KHỨ", "lang": "en" },
+        { "word": "毎", "meaning": "MỖI", "lang": "en" },
+        { "word": "王", "meaning": "VƯƠNG", "lang": "en" },
+        { "word": "国", "meaning": "QUỐC", "lang": "en" },
+        { "word": "見", "meaning": "KIẾN", "lang": "en" },
+        { "word": "行", "meaning": "HÀNH, HÀNG, HẠNH", "lang": "en" },
+        { "word": "米", "meaning": "MỄ", "lang": "en" },
+        { "word": "北", "meaning": "BẮC", "lang": "en" },
+        { "word": "良", "meaning": "LƯƠNG", "lang": "en" },
+        { "word": "食", "meaning": "THỰC", "lang": "en" },
+        { "word": "飲", "meaning": "Ẩm", "lang": "en" },
+        { "word": "会", "meaning": "HỘI", "lang": "en" },
+        { "word": "耳", "meaning": "NHĨ", "lang": "en" },
+        { "word": "聞", "meaning": "VĂN", "lang": "en" },
+        { "word": "言", "meaning": "NGÔN", "lang": "en" },
+        { "word": "話", "meaning": "THOẠI", "lang": "en" },
+        { "word": "立", "meaning": "LẬP", "lang": "en" },
+        { "word": "待", "meaning": "ĐÃI", "lang": "en" },
+        { "word": "周", "meaning": "CHU", "lang": "en" },
+        { "word": "週", "meaning": "CHU", "lang": "en" },
+        { "word": "大", "meaning": "ĐẠI", "lang": "en" },
+        { "word": "小", "meaning": "TIỂU", "lang": "en" },
+        { "word": "高", "meaning": "CAO", "lang": "en" },
+        { "word": "安", "meaning": "AN, YÊN", "lang": "en" },
+        { "word": "新", "meaning": "TÂN", "lang": "en" },
+        { "word": "古", "meaning": "CỔ", "lang": "en" },
+        { "word": "元", "meaning": "NGUYÊN", "lang": "en" },
+        { "word": "気", "meaning": "KHÍ", "lang": "en" },
+        { "word": "多", "meaning": "ĐA", "lang": "en" },
+        { "word": "少", "meaning": "THIỂU, THIẾU", "lang": "en" },
+        { "word": "広", "meaning": "QUẢNG", "lang": "en" },
+        { "word": "早", "meaning": "TẢO", "lang": "en" },
+        { "word": "長", "meaning": "TRƯỜNG, TRƯỞNG", "lang": "en" },
+        { "word": "明", "meaning": "MINH", "lang": "en" },
+        { "word": "好", "meaning": "HẢO, HIẾU", "lang": "en" },
+        { "word": "友", "meaning": "HỮU", "lang": "en" },
+        { "word": "入", "meaning": "NHẬP", "lang": "en" },
+        { "word": "出", "meaning": "XUẤT", "lang": "en" },
+        { "word": "市", "meaning": "THỊ", "lang": "en" },
+        { "word": "町", "meaning": "THĨNH", "lang": "en" },
+        { "word": "村", "meaning": "THÔN", "lang": "en" },
+        { "word": "雨", "meaning": "VŨ", "lang": "en" },
+        { "word": "電", "meaning": "ĐiỆN", "lang": "en" },
+        { "word": "車", "meaning": "XA", "lang": "en" },
+        { "word": "馬", "meaning": "MÃ", "lang": "en" },
+        { "word": "駅", "meaning": "DỊCH", "lang": "en" },
+        { "word": "社", "meaning": "XÃ", "lang": "en" },
+        { "word": "校", "meaning": "HIỆU", "lang": "en" },
+        { "word": "点", "meaning": "ĐiỂM", "lang": "en" },
+        { "word": "銀", "meaning": "NGÂN", "lang": "en" },
+        { "word": "病", "meaning": "BỆNH", "lang": "en" },
+        { "word": "院", "meaning": "VIỆN", "lang": "en" },
+        { "word": "休", "meaning": "HƯU", "lang": "en" },
+        { "word": "走", "meaning": "TẨU", "lang": "en" },
+        { "word": "起", "meaning": "KHỞI, KHỈ", "lang": "en" },
+        { "word": "貝", "meaning": "BỐ", "lang": "en" },
+        { "word": "買", "meaning": "MÃI", "lang": "en" },
+        { "word": "売", "meaning": "MẠI", "lang": "en" },
+        { "word": "読", "meaning": "ĐỘC", "lang": "en" },
+        { "word": "書", "meaning": "THƯ", "lang": "en" },
+        { "word": "帰", "meaning": "QUI", "lang": "en" },
+        { "word": "勉", "meaning": "MIỄN", "lang": "en" },
+        { "word": "弓", "meaning": "CUNG", "lang": "en" },
+        { "word": "虫", "meaning": "TRÙNG", "lang": "en" },
+        { "word": "強", "meaning": "MIỄN", "lang": "en" },
+        { "word": "持", "meaning": "TRÌ", "lang": "en" },
+        { "word": "名", "meaning": "DANH", "lang": "en" },
+        { "word": "語", "meaning": "NGỮ", "lang": "en" },
+        { "word": "春", "meaning": "XUÂN", "lang": "en" },
+        { "word": "夏", "meaning": "HẠ", "lang": "en" },
+        { "word": "秋", "meaning": "THU", "lang": "en" },
+        { "word": "冬", "meaning": "ĐÔNG", "lang": "en" },
+        { "word": "朝", "meaning": "TRIỀU", "lang": "en" },
+        { "word": "昼", "meaning": "TRÚ", "lang": "en" },
+        { "word": "夕", "meaning": "TỊCH", "lang": "en" },
+        { "word": "方", "meaning": "PHƯƠNG", "lang": "en" },
+        { "word": "晩", "meaning": "VÃN", "lang": "en" },
+        { "word": "夜", "meaning": "DẠ", "lang": "en" },
+        { "word": "心", "meaning": "TĂM", "lang": "en" },
+        { "word": "手", "meaning": "THỦ", "lang": "en" },
+        { "word": "足", "meaning": "TÚC", "lang": "en" },
+        { "word": "体", "meaning": "THỂ", "lang": "en" },
+        { "word": "首", "meaning": "THỦ", "lang": "en" },
+        { "word": "道", "meaning": "ĐẠO", "lang": "en" },
+        { "word": "山", "meaning": "SƠN", "lang": "en" },
+        { "word": "川", "meaning": "XUYÊN", "lang": "en" },
+        { "word": "林", "meaning": "LÂM", "lang": "en" },
+        { "word": "森", "meaning": "SÂM", "lang": "en" },
+        { "word": "空", "meaning": "KHÔNG", "lang": "en" },
+        { "word": "海", "meaning": "HẢI", "lang": "en" },
+        { "word": "化", "meaning": "HÓA", "lang": "en" },
+        { "word": "花", "meaning": "HOA", "lang": "en" },
+        { "word": "天", "meaning": "THIÊN", "lang": "en" },
+        { "word": "赤", "meaning": "XÍCH", "lang": "en" },
+        { "word": "青", "meaning": "THANH", "lang": "en" },
+        { "word": "白", "meaning": "BẠCH", "lang": "en" },
+        { "word": "黒", "meaning": "HẮC", "lang": "en" },
+        { "word": "色", "meaning": "SẮC", "lang": "en" },
+        { "word": "魚", "meaning": "NGƯ", "lang": "en" },
+        { "word": "犬", "meaning": "KHUYỂN", "lang": "en" },
+        { "word": "料", "meaning": "LIỆU", "lang": "en" },
+        { "word": "理", "meaning": "LÝ", "lang": "en" },
+        { "word": "反", "meaning": "PHẢN", "lang": "en" },
+        { "word": "飯", "meaning": "PHẠN", "lang": "en" },
+        { "word": "牛", "meaning": "NGƯU", "lang": "en" },
+        { "word": "豚", "meaning": "ĐỒN", "lang": "en" },
+        { "word": "鳥", "meaning": "ĐiỂU", "lang": "en" },
+        { "word": "肉", "meaning": "NHỤC", "lang": "en" },
+        { "word": "茶", "meaning": "TRÀ", "lang": "en" },
+        { "word": "予", "meaning": "DƯ", "lang": "en" },
+        { "word": "野", "meaning": "DÃ", "lang": "en" },
+        { "word": "菜", "meaning": "THÁI", "lang": "en" },
+        { "word": "切", "meaning": "THIẾT", "lang": "en" },
+        { "word": "作", "meaning": "TÁC", "lang": "en" },
+        { "word": "未", "meaning": "VỊ, MÙI", "lang": "en" },
+        { "word": "味", "meaning": "VỊ", "lang": "en" },
+        { "word": "音", "meaning": "ÂM", "lang": "en" },
+        { "word": "楽", "meaning": "NHẠC, LẠC", "lang": "en" },
+        { "word": "歌", "meaning": "CA", "lang": "en" },
+        { "word": "自", "meaning": "TỰ", "lang": "en" },
+        { "word": "転", "meaning": "CHUYỂN ", "lang": "en" },
+        { "word": "乗", "meaning": "THỪA, THẶNG", "lang": "en" },
+        { "word": "写", "meaning": "TẢ", "lang": "en" },
+        { "word": "真", "meaning": "CHÂN", "lang": "en" },
+        { "word": "台", "meaning": "ĐÀI", "lang": "en" },
+        { "word": "央", "meaning": "ƯƠNG", "lang": "en" },
+        { "word": "映", "meaning": "ÁNH", "lang": "en" },
+        { "word": "画", "meaning": "HỌA, HOẠCH", "lang": "en" },
+        { "word": "羊", "meaning": "DƯƠNG", "lang": "en" },
+        { "word": "洋", "meaning": "DƯƠNG", "lang": "en" },
+        { "word": "服", "meaning": "PHỤC", "lang": "en" },
+        { "word": "着", "meaning": "TRƯỚC", "lang": "en" },
+        { "word": "家", "meaning": "GIA", "lang": "en" },
+        { "word": "矢", "meaning": "THỈ", "lang": "en" },
+        { "word": "族", "meaning": "TỘC", "lang": "en" },
+        { "word": "親", "meaning": "THÂN", "lang": "en" },
+        { "word": "兄", "meaning": "HUYNH", "lang": "en" },
+        { "word": "姉", "meaning": "TỶ", "lang": "en" },
+        { "word": "弟", "meaning": "ĐỆ", "lang": "en" },
+        { "word": "妹", "meaning": "MUỘ", "lang": "en" },
+        { "word": "私", "meaning": "TƯ", "lang": "en" },
+        { "word": "夫", "meaning": "PHU", "lang": "en" },
+        { "word": "妻", "meaning": "THÊ", "lang": "en" },
+        { "word": "主", "meaning": "CHỦ", "lang": "en" },
+        { "word": "住", "meaning": "TRÚ", "lang": "en" },
+        { "word": "糸", "meaning": "MỊCH", "lang": "en" },
+        { "word": "氏", "meaning": "THỊ, CH", "lang": "en" },
+        { "word": "紙", "meaning": "CHỈ", "lang": "en" },
+        { "word": "教", "meaning": "GIÁO", "lang": "en" },
+        { "word": "室", "meaning": "THẤT", "lang": "en" },
+        { "word": "羽", "meaning": "VŨ", "lang": "en" },
+        { "word": "習", "meaning": "TẬP", "lang": "en" },
+        { "word": "漢", "meaning": "HÁN", "lang": "en" },
+        { "word": "字", "meaning": "TỰ", "lang": "en" },
+        { "word": "式", "meaning": "THỨC", "lang": "en" },
+        { "word": "試", "meaning": "THÍ", "lang": "en" },
+        { "word": "験", "meaning": "NGHIỆM", "lang": "en" },
+        { "word": "宿", "meaning": "TÚ, TÚC", "lang": "en" },
+        { "word": "題", "meaning": "ĐỀ", "lang": "en" },
+        { "word": "文", "meaning": "VĂN", "lang": "en" },
+        { "word": "英", "meaning": "ANH", "lang": "en" },
+        { "word": "質", "meaning": "CHẤT", "lang": "en" },
+        { "word": "問", "meaning": "VẤN", "lang": "en" },
+        { "word": "説", "meaning": "THUYẾT", "lang": "en" },
+        { "word": "遠", "meaning": "VIỄN", "lang": "en" },
+        { "word": "近", "meaning": "CÂ?N", "lang": "en" },
+        { "word": "者", "meaning": "GIẢ", "lang": "en" },
+        { "word": "暑", "meaning": "THỬ", "lang": "en" },
+        { "word": "寒", "meaning": "HÀN", "lang": "en" },
+        { "word": "重", "meaning": "TRỌNG, TRÙNG", "lang": "en" },
+        { "word": "軽", "meaning": "KHINH", "lang": "en" },
+        { "word": "低", "meaning": "ĐÊ", "lang": "en" },
+        { "word": "弱", "meaning": "NHƯỢC", "lang": "en" },
+        { "word": "悪", "meaning": "ÁC", "lang": "en" },
+        { "word": "暗", "meaning": "ÁM", "lang": "en" },
+        { "word": "太", "meaning": "THÁI", "lang": "en" },
+        { "word": "豆", "meaning": "ĐẬU", "lang": "en" },
+        { "word": "短", "meaning": "ĐỎAN ", "lang": "en" },
+        { "word": "光", "meaning": "QUANG", "lang": "en" },
+        { "word": "風", "meaning": "PHONG", "lang": "en" },
+        { "word": "運", "meaning": "VẬN", "lang": "en" },
+        { "word": "動", "meaning": "ĐỘNG", "lang": "en" },
+        { "word": "止", "meaning": "CHỈ", "lang": "en" },
+        { "word": "歩", "meaning": "BỘ", "lang": "en" },
+        { "word": "使", "meaning": "SỬ, SỨ", "lang": "en" },
+        { "word": "送", "meaning": "TỐNG", "lang": "en" },
+        { "word": "洗", "meaning": "TIỂN", "lang": "en" },
+        { "word": "急", "meaning": "CẤP", "lang": "en" },
+        { "word": "開", "meaning": "KHAI", "lang": "en" },
+        { "word": "閉", "meaning": "BẾ", "lang": "en" },
+        { "word": "押", "meaning": "ÁP", "lang": "en" },
+        { "word": "引", "meaning": "DẪN", "lang": "en" },
+        { "word": "思", "meaning": "TƯ", "lang": "en" },
+        { "word": "知", "meaning": "TRI, TRÍ", "lang": "en" },
+        { "word": "考", "meaning": "KHẢO", "lang": "en" },
+        { "word": "死", "meaning": "TỬ", "lang": "en" },
+        { "word": "医", "meaning": "Y", "lang": "en" },
+        { "word": "始", "meaning": "THỦY, THỈ", "lang": "en" },
+        { "word": "終", "meaning": "CHUNG", "lang": "en" },
+        { "word": "石", "meaning": "THẠCH", "lang": "en" },
+        { "word": "研", "meaning": "NGHIÊN", "lang": "en" },
+        { "word": "究", "meaning": "CỨU", "lang": "en" },
+        { "word": "留", "meaning": "LƯU", "lang": "en" },
+        { "word": "有", "meaning": "HỮU", "lang": "en" },
+        { "word": "産", "meaning": "SẢN", "lang": "en" },
+        { "word": "業", "meaning": "NGHIỆP", "lang": "en" },
+        { "word": "薬", "meaning": "DƯỢC", "lang": "en" },
+        { "word": "働", "meaning": "ĐỘNG", "lang": "en" },
+        { "word": "員", "meaning": "VIÊN", "lang": "en" },
+        { "word": "士", "meaning": "SĨ", "lang": "en" },
+        { "word": "仕", "meaning": "SĨ", "lang": "en" },
+        { "word": "事", "meaning": "SỰ", "lang": "en" },
+        { "word": "図", "meaning": "ĐỒ", "lang": "en" },
+        { "word": "官", "meaning": "QUAN", "lang": "en" },
+        { "word": "館", "meaning": "QUÁN", "lang": "en" },
+        { "word": "昔", "meaning": "TÍCH", "lang": "en" },
+        { "word": "借", "meaning": "TÁ ", "lang": "en" },
+        { "word": "代", "meaning": "ĐẠI", "lang": "en" },
+        { "word": "貸", "meaning": "THẢI", "lang": "en" },
+        { "word": "地", "meaning": "ĐỊA", "lang": "en" },
+        { "word": "世", "meaning": "THẾ", "lang": "en" },
+        { "word": "界", "meaning": "GIỚI", "lang": "en" },
+        { "word": "度", "meaning": "ĐỘ", "lang": "en" },
+        { "word": "回", "meaning": "HỒI", "lang": "en" },
+        { "word": "用", "meaning": "DỤNG", "lang": "en" },
+        { "word": "民", "meaning": "DÂN", "lang": "en" },
+        { "word": "注", "meaning": "CHÚ", "lang": "en" },
+        { "word": "意", "meaning": "Ý", "lang": "en" },
+        { "word": "頭", "meaning": "ĐẦU", "lang": "en" },
+        { "word": "顔", "meaning": "NHAN", "lang": "en" },
+        { "word": "声", "meaning": "THANH", "lang": "en" },
+        { "word": "特", "meaning": "ĐẶC", "lang": "en" },
+        { "word": "別", "meaning": "BIỆT", "lang": "en" },
+        { "word": "竹", "meaning": "TRÚC", "lang": "en" },
+        { "word": "合", "meaning": "HỢP", "lang": "en" },
+        { "word": "答", "meaning": "ĐÁP", "lang": "en" },
+        { "word": "正", "meaning": "CHÍNH", "lang": "en" },
+        { "word": "同", "meaning": "ĐỒNG", "lang": "en" },
+        { "word": "計", "meaning": "KẾ", "lang": "en" },
+        { "word": "京", "meaning": "KINH", "lang": "en" },
+        { "word": "集", "meaning": "TẬP", "lang": "en" },
+        { "word": "不", "meaning": "BẤT", "lang": "en" },
+        { "word": "便", "meaning": "TIỆN", "lang": "en" },
+        { "word": "以", "meaning": "DĨ", "lang": "en" },
+        { "word": "場", "meaning": "TRƯỜNG, TRÀNG", "lang": "en" },
+        { "word": "戸", "meaning": "HỘ", "lang": "en" },
+        { "word": "所", "meaning": "SỞ", "lang": "en" },
+        { "word": "屋", "meaning": "ỐC", "lang": "en" },
+        { "word": "堂", "meaning": "ĐƯỜNG", "lang": "en" },
+        { "word": "都", "meaning": "ĐÔNG", "lang": "en" },
+        { "word": "県", "meaning": "HUYỆN", "lang": "en" },
+        { "word": "区", "meaning": "KHU", "lang": "en" },
+        { "word": "池", "meaning": "TRÌ", "lang": "en" },
+        { "word": "発", "meaning": "PHÁT", "lang": "en" },
+        { "word": "建", "meaning": "KIẾN", "lang": "en" },
+        { "word": "物", "meaning": "VẬT", "lang": "en" },
+        { "word": "品", "meaning": "PHẨM", "lang": "en" },
+        { "word": "旅", "meaning": "LỮ", "lang": "en" },
+        { "word": "通", "meaning": "THÔNG", "lang": "en" },
+        { "word": "進", "meaning": "TẤN, TIẾN", "lang": "en" },
+        { "word": "丸", "meaning": "HÒAN", "lang": "en" },
+        { "word": "熱", "meaning": "NHIỆT", "lang": "en" },
+        { "word": "冷", "meaning": "LÃNH", "lang": "en" },
+        { "word": "甘", "meaning": "CAM", "lang": "en" },
+        { "word": "汚", "meaning": "Ô", "lang": "en" },
+        { "word": "果", "meaning": "QUẢ", "lang": "en" },
+        { "word": "卵", "meaning": "NÕAN", "lang": "en" },
+        { "word": "皿", "meaning": "MÀNH", "lang": "en" },
+        { "word": "酒", "meaning": "TỬU", "lang": "en" },
+        { "word": "塩", "meaning": "DIÊM", "lang": "en" },
+        { "word": "付", "meaning": "PHÓ", "lang": "en" },
+        { "word": "片", "meaning": "PHIẾN", "lang": "en" },
+        { "word": "焼", "meaning": "THIÊU", "lang": "en" },
+        { "word": "消", "meaning": "TIÊU", "lang": "en" },
+        { "word": "固", "meaning": "CỐ", "lang": "en" },
+        { "word": "個", "meaning": "CÁ", "lang": "en" },
+        { "word": "笑", "meaning": "TIẾU", "lang": "en" },
+        { "word": "泣", "meaning": "KHẤP", "lang": "en" },
+        { "word": "怒", "meaning": "NỘ", "lang": "en" },
+        { "word": "幸", "meaning": "HẠNH", "lang": "en" },
+        { "word": "悲", "meaning": "BI", "lang": "en" },
+        { "word": "苦", "meaning": "KHỔ", "lang": "en" },
+        { "word": "痛", "meaning": "THỐNG", "lang": "en" },
+        { "word": "恥", "meaning": "SỈ", "lang": "en" },
+        { "word": "配", "meaning": "PHỐI", "lang": "en" },
+        { "word": "困", "meaning": "KHỐN", "lang": "en" },
+        { "word": "辛", "meaning": "TÂN", "lang": "en" },
+        { "word": "眠", "meaning": "MIÊN", "lang": "en" },
+        { "word": "残", "meaning": "TÀN", "lang": "en" },
+        { "word": "念", "meaning": "NiỆM", "lang": "en" },
+        { "word": "感", "meaning": "CẢM", "lang": "en" },
+        { "word": "情", "meaning": "TÌNH", "lang": "en" },
+        { "word": "覚", "meaning": "GIÁC", "lang": "en" },
+        { "word": "忘", "meaning": "VONG", "lang": "en" },
+        { "word": "決", "meaning": "QUYẾT", "lang": "en" },
+        { "word": "定", "meaning": "ĐỊNH", "lang": "en" },
+        { "word": "比", "meaning": "TỶ", "lang": "en" },
+        { "word": "受", "meaning": "THỤ", "lang": "en" },
+        { "word": "授", "meaning": "THỤ", "lang": "en" },
+        { "word": "徒", "meaning": "ĐỒ", "lang": "en" },
+        { "word": "練", "meaning": "LUYỆN", "lang": "en" },
+        { "word": "復", "meaning": "PHỤC", "lang": "en" },
+        { "word": "表", "meaning": "BIỂU", "lang": "en" },
+        { "word": "卒", "meaning": "TỐT, THỐT", "lang": "en" },
+        { "word": "違", "meaning": "VĨ", "lang": "en" },
+        { "word": "役", "meaning": "DỊCH", "lang": "en" },
+        { "word": "皆", "meaning": "GIAI", "lang": "en" },
+        { "word": "彼", "meaning": "BỈ", "lang": "en" },
+        { "word": "全", "meaning": "TÒAN", "lang": "en" },
+        { "word": "部", "meaning": "BỘ", "lang": "en" },
+        { "word": "必", "meaning": "TẤT", "lang": "en" },
+        { "word": "要", "meaning": "YÊU, YẾU", "lang": "en" },
+        { "word": "荷", "meaning": "HÀ", "lang": "en" },
+        { "word": "由", "meaning": "DO", "lang": "en" },
+        { "word": "届", "meaning": "GIỚI", "lang": "en" },
+        { "word": "利", "meaning": "LỢI", "lang": "en" },
+        { "word": "払", "meaning": "PHẤT", "lang": "en" },
+        { "word": "濯", "meaning": "TRẠC", "lang": "en" },
+        { "word": "寝", "meaning": "TẨM", "lang": "en" },
+        { "word": "踊", "meaning": "DAO", "lang": "en" },
+        { "word": "活", "meaning": "HỌAT", "lang": "en" },
+        { "word": "末", "meaning": "MẠT", "lang": "en" },
+        { "word": "宅", "meaning": "TRẠCH", "lang": "en" },
+        { "word": "祭", "meaning": "TẾ", "lang": "en" },
+        { "word": "平", "meaning": "BÌNH", "lang": "en" },
+        { "word": "和", "meaning": "HÒA, HỌA", "lang": "en" },
+        { "word": "戦", "meaning": "CHIẾN", "lang": "en" },
+        { "word": "争", "meaning": "TRANH", "lang": "en" },
+        { "word": "政", "meaning": "CHÍNH", "lang": "en" },
+        { "word": "治", "meaning": "TRỊ", "lang": "en" },
+        { "word": "経", "meaning": "KINH", "lang": "en" },
+        { "word": "済", "meaning": "TẾ", "lang": "en" },
+        { "word": "法", "meaning": "PHÁP", "lang": "en" },
+        { "word": "律", "meaning": "LUẬT", "lang": "en" },
+        { "word": "際", "meaning": "TẾ", "lang": "en" },
+        { "word": "関", "meaning": "QUAN", "lang": "en" },
+        { "word": "係", "meaning": "HỆ", "lang": "en" },
+        { "word": "義", "meaning": "NGHĨA", "lang": "en" },
+        { "word": "議", "meaning": "NGHỊ", "lang": "en" },
+        { "word": "党", "meaning": "ĐẢNG", "lang": "en" },
+        { "word": "遊", "meaning": "DU", "lang": "en" },
+        { "word": "泳", "meaning": "VỊNH", "lang": "en" },
+        { "word": "疲", "meaning": "BÌ", "lang": "en" },
+        { "word": "暖", "meaning": "NÕAN", "lang": "en" },
+        { "word": "涼", "meaning": "LƯƠNG", "lang": "en" },
+        { "word": "静", "meaning": "TĨNH", "lang": "en" },
+        { "word": "公", "meaning": "CÔNG", "lang": "en" },
+        { "word": "園", "meaning": "VIÊN", "lang": "en" },
+        { "word": "込", "meaning": "VÀO", "lang": "en" },
+        { "word": "連", "meaning": "LIÊN", "lang": "en" },
+        { "word": "窓", "meaning": "SONG", "lang": "en" },
+        { "word": "側", "meaning": "TRẮC", "lang": "en" },
+        { "word": "葉", "meaning": "DIỆP", "lang": "en" },
+        { "word": "景", "meaning": "CẢNH", "lang": "en" },
+        { "word": "記", "meaning": "KÝ", "lang": "en" },
+        { "word": "形", "meaning": "HÌNH", "lang": "en" },
+        { "word": "吉", "meaning": "CÁT", "lang": "en" },
+        { "word": "結", "meaning": "KẾT", "lang": "en" },
+        { "word": "婚", "meaning": "HÔN", "lang": "en" },
+        { "word": "共", "meaning": "CỘNG", "lang": "en" },
+        { "word": "供", "meaning": "CUNG", "lang": "en" },
+        { "word": "両", "meaning": "LƯỠNG", "lang": "en" },
+        { "word": "若", "meaning": "NHƯỢC", "lang": "en" },
+        { "word": "老", "meaning": "LÃO", "lang": "en" },
+        { "word": "息", "meaning": "TỨC", "lang": "en" },
+        { "word": "娘", "meaning": "NƯƠNG", "lang": "en" },
+        { "word": "奥", "meaning": "ƯƠNG", "lang": "en" },
+        { "word": "将", "meaning": "TƯƠNG. TƯỚNG", "lang": "en" },
+        { "word": "祖", "meaning": "TỔ", "lang": "en" },
+        { "word": "育", "meaning": "DỤC", "lang": "en" },
+        { "word": "性", "meaning": "TÍNH", "lang": "en" },
+        { "word": "招", "meaning": "CHIÊU, TRIỀU", "lang": "en" },
+        { "word": "取", "meaning": "THỦ", "lang": "en" },
+        { "word": "最", "meaning": "TỐI", "lang": "en" },
+        { "word": "初", "meaning": "SƠ", "lang": "en" },
+        { "word": "番", "meaning": "PHIÊN", "lang": "en" },
+        { "word": "歳", "meaning": "TUẾ", "lang": "en" },
+        { "word": "枚", "meaning": "MAI", "lang": "en" },
+        { "word": "冊", "meaning": "SÁCH", "lang": "en" },
+        { "word": "億", "meaning": "ỨC", "lang": "en" },
+        { "word": "点", "meaning": "ĐiỂM", "lang": "en" },
+        { "word": "階", "meaning": "GIAI", "lang": "en" },
+        { "word": "談", "meaning": "ĐÀM", "lang": "en" },
+        { "word": "号", "meaning": "HIỆU", "lang": "en" },
+        { "word": "倍", "meaning": "BỘI", "lang": "en" },
+        { "word": "次", "meaning": "THỨ", "lang": "en" },
+        { "word": "々", "meaning": "ÁO", "lang": "en" },
+        { "word": "他", "meaning": "THA", "lang": "en" },
+        { "word": "勝", "meaning": "THẮNG", "lang": "en" },
+        { "word": "負", "meaning": "PHỤ", "lang": "en" },
+        { "word": "賛", "meaning": "TOAN", "lang": "en" },
+        { "word": "成", "meaning": "THÀNH", "lang": "en" },
+        { "word": "絶", "meaning": "TUYỆT", "lang": "en" },
+        { "word": "対", "meaning": "ĐỐI", "lang": "en" },
+        { "word": "続", "meaning": "TỤC", "lang": "en" },
+        { "word": "辞", "meaning": "TỪ", "lang": "en" },
+        { "word": "投", "meaning": "ĐẦU", "lang": "en" },
+        { "word": "選", "meaning": "TUYỂN", "lang": "en" },
+        { "word": "約", "meaning": "ƯỚC", "lang": "en" },
+        { "word": "束", "meaning": "THÚC", "lang": "en" },
+        { "word": "守", "meaning": "THỦ, THÚ", "lang": "en" },
+        { "word": "過", "meaning": "QUÁ", "lang": "en" },
+        { "word": "夢", "meaning": "MỘNG", "lang": "en" },
+        { "word": "的", "meaning": "ĐÍCH", "lang": "en" },
+        { "word": "飛", "meaning": "PHI", "lang": "en" },
+        { "word": "機", "meaning": "CƠ", "lang": "en" },
+        { "word": "失", "meaning": "THẤT", "lang": "en" },
+        { "word": "鉄", "meaning": "THIẾT", "lang": "en" },
+        { "word": "速", "meaning": "TỐC", "lang": "en" },
+        { "word": "遅", "meaning": "TRÌ", "lang": "en" },
+        { "word": "駐", "meaning": "TRÚ", "lang": "en" },
+        { "word": "泊", "meaning": "BẠC", "lang": "en" },
+        { "word": "船", "meaning": "THUYỀN", "lang": "en" },
+        { "word": "座", "meaning": "TỌA", "lang": "en" },
+        { "word": "席", "meaning": "TỊCH", "lang": "en" },
+        { "word": "島", "meaning": "ĐẢO", "lang": "en" },
+        { "word": "陸", "meaning": "LỤC", "lang": "en" },
+        { "word": "港", "meaning": "CẢNG ", "lang": "en" },
+        { "word": "橋", "meaning": "KIỀU", "lang": "en" },
+        { "word": "交", "meaning": "GIAO", "lang": "en" },
+        { "word": "申", "meaning": "THÂN", "lang": "en" },
+        { "word": "神", "meaning": "THẦN", "lang": "en" },
+        { "word": "様", "meaning": "DẠNG ", "lang": "en" },
+        { "word": "信", "meaning": "TÍN", "lang": "en" },
+        { "word": "調", "meaning": "ĐiỀU, ĐiỆU", "lang": "en" },
+        { "word": "査", "meaning": "TRA", "lang": "en" },
+        { "word": "相", "meaning": "TƯƠNG, TƯỚNG", "lang": "en" },
+        { "word": "談", "meaning": "ĐÀM", "lang": "en" },
+        { "word": "案", "meaning": "ÁN", "lang": "en" },
+        { "word": "内", "meaning": "NỘI", "lang": "en" },
+        { "word": "君", "meaning": "QUÂN", "lang": "en" },
+        { "word": "達", "meaning": "ĐẠT", "lang": "en" },
+        { "word": "星", "meaning": "TINH", "lang": "en" },
+        { "word": "雪", "meaning": "TUYẾT", "lang": "en" },
+        { "word": "降", "meaning": "GIÁNG, HÀNG", "lang": "en" },
+        { "word": "直", "meaning": "TRỰC", "lang": "en" },
+        { "word": "危", "meaning": "NGUY", "lang": "en" },
+        { "word": "険", "meaning": "HiỂM", "lang": "en" },
+        { "word": "拾", "meaning": "THẬP", "lang": "en" },
+        { "word": "捨", "meaning": "XẢ", "lang": "en" },
+        { "word": "戻", "meaning": "LỆ", "lang": "en" },
+        { "word": "吸", "meaning": "HẤP", "lang": "en" },
+        { "word": "放", "meaning": "PHÓNG", "lang": "en" },
+        { "word": "変", "meaning": "BiẾN", "lang": "en" },
+        { "word": "歯", "meaning": "XỈ", "lang": "en" },
+        { "word": "髪", "meaning": "PHÁT", "lang": "en" },
+        { "word": "絵", "meaning": "HỘI", "lang": "en" },
+        { "word": "横", "meaning": "HOẠNH, HOÀNH", "lang": "en" },
+        { "word": "当", "meaning": "ĐANG, ĐƯƠNG", "lang": "en" },
+        { "word": "伝", "meaning": "TRUYỀN, TRUYỆN", "lang": "en" },
+        { "word": "細", "meaning": "TẾ", "lang": "en" },
+        { "word": "無", "meaning": "VÔ", "lang": "en" }
+      ]
+    };
+
+    function isMobile() {
+      return /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    }
+
+    const getFontSize = () => {
+      if (isMobile()) {
+        return 30;
+      } else {
+        return 28;
+      }
+      // const width = window.innerWidth;
+      // return width < 600 ? 30 : 22; // Responsive font size
+
+    };
+
+    const getRandomElements = (arr, count) => {
+      if (count == 100) {
+        count = arr.length - 1;
+      }
+      const shuffled = arr.slice(0);
+      let i = shuffled.length, temp, index;
+      while (i--) {
+        index = Math.floor(Math.random() * (i + 1));
+        temp = shuffled[i];
+        shuffled[i] = shuffled[index];
+        shuffled[index] = temp;
+      }
+      return shuffled.slice(0, count);
+    };
+
+    const getRandomWordsAndMeanings = (vocabCategory, selectedNum) => {
+      const vocabList = vocab[vocabCategory];
+      const pairs = getRandomElements(vocabList, selectedNum); // Choose 5 pairs
+      words = pairs.map(pair => pair.word);
+      meanings = pairs.map(pair => pair.meaning);
+      correctMatches = {};
+      pairs.forEach(pair => {
+        correctMatches[pair.word] = pair.meaning;
+        correctMatches[pair.meaning] = pair.word; // Add reverse mapping
+      });
+    };
+
+    const isOverlapping = (pos, size) => {
+      const padding = 20;
+      return texts.some(txt => {
+        const txtPos = txt.getClientRect();
+        return !(pos.x + size.width < txtPos.x ||
+          pos.x > txtPos.x + txtPos.width ||
+          pos.y + size.height < txtPos.y ||
+          pos.y > txtPos.y + txtPos.height);
+      });
+    };
+
+    const getRandomPosition = (size) => {
+      let pos;
+      do {
+        pos = {
+          x: Math.random() * (stage.width() - size.width),
+          y: Math.random() * (stage.height() - size.height),
+        };
+      } while (isOverlapping(pos, size));
+      return pos;
+    };
+
+    const createText = (text, x, y, color) => {
+      const fontSize = getFontSize();
+      const txt = new Konva.Text({
+        x: x,
+        y: y,
+        text: text,
+        fontSize: fontSize, // Responsive font size
+        fontFamily: 'Calibri',
+        fill: color,
+        padding: 10,
+        align: 'center',
+        verticalAlign: 'middle',
+        draggable: true,
+        isSelected: true
+      });
+
+      txt.on('mouseover', () => {
+        document.body.style.cursor = 'pointer';
+        txt.fill('green'); // Đổi màu khi hover
+        layer.draw();
+      });
+
+      txt.on('mouseout', () => {
+        document.body.style.cursor = 'default';
+        if (!txt.isSelected) {
+          txt.fill(color); // Trả lại màu ban đầu nếu không được chọn
         }
-    
-          const getFontSize = () => {
-            if (isMobile()) {
-              return 30;
-            } else {
-              return 28;
-            }
-           // const width = window.innerWidth;
-            // return width < 600 ? 30 : 22; // Responsive font size
-   
-        };
+        layer.draw();
+      });
 
-          const getRandomElements = (arr, count) => {
-            if (count == 100) {
-              count = arr.length - 1  ;
-            }
-            const shuffled = arr.slice(0);
-            let i = shuffled.length, temp, index;
-            while (i--) {
-              index = Math.floor(Math.random() * (i + 1));
-              temp = shuffled[i];
-              shuffled[i] = shuffled[index];
-              shuffled[index] = temp;
-            }
-            return shuffled.slice(0, count);
-          };
+      txt.on('dragstart touchstart', () => {
+        txt.moveToTop();
+        txt.startX = txt.x();
+        txt.startY = txt.y();
+      });
 
-          const getRandomWordsAndMeanings = (vocabCategory, selectedNum) => {
-            const vocabList = vocab[vocabCategory];
-            const pairs = getRandomElements(vocabList, selectedNum); // Choose 5 pairs
-            words = pairs.map(pair => pair.word);
-            meanings = pairs.map(pair => pair.meaning);
-            correctMatches = {};
-            pairs.forEach(pair => {
-              correctMatches[pair.word] = pair.meaning;
-              correctMatches[pair.meaning] = pair.word; // Add reverse mapping
-            });
-          };
-
-          const isOverlapping = (pos, size) => {
-            const padding = 20;
-            return texts.some(txt => {
-              const txtPos = txt.getClientRect();
-              return !(pos.x + size.width < txtPos.x ||
-                      pos.x > txtPos.x + txtPos.width ||
-                      pos.y + size.height < txtPos.y ||
-                      pos.y > txtPos.y + txtPos.height);
-            });
-          };
-
-          const getRandomPosition = (size) => {
-            let pos;
-            do {
-              pos = {
-                x: Math.random() * (stage.width() - size.width),
-                y: Math.random() * (stage.height() - size.height),
-              };
-            } while (isOverlapping(pos, size));
-            return pos;
-          };
-
-          const createText = (text, x, y, color) => {
-            const fontSize = getFontSize();
-            const txt = new Konva.Text({
-                x: x,
-                y: y,
-                text: text,
-                fontSize: fontSize, // Responsive font size
-                fontFamily: 'Calibri',
-                fill: color,
-                padding: 10,
-                align: 'center',
-                verticalAlign: 'middle',
-                draggable: true,
-                isSelected: true
-            });
-        
-            txt.on('mouseover', () => {
-                document.body.style.cursor = 'pointer';
-                txt.fill('green'); // Đổi màu khi hover
-                layer.draw();
-            });
-        
-            txt.on('mouseout', () => {
-                document.body.style.cursor = 'default';
-                if (!txt.isSelected) {
-                    txt.fill(color); // Trả lại màu ban đầu nếu không được chọn
-                }
-                layer.draw();
-            });
-        
-            txt.on('dragstart touchstart', () => {
-                txt.moveToTop();
-                txt.startX = txt.x();
-                txt.startY = txt.y();
-            });
-        
-            txt.on('dragmove touchmove', () => {
-                texts.forEach(otherTxt => {
-                    if (txt !== otherTxt && checkCollision(txt, otherTxt)) {
-                        otherTxt.fill('orange'); // Đổi màu từ khác khi gần
-                    } else if (!otherTxt.isSelected) {
-                        otherTxt.fill(otherTxt.originalFill); // Trả lại màu ban đầu nếu không còn gần
-                    }
-                });
-                layer.draw();
-            });
-        
-            txt.on('dragend touchend', () => {
-                let droppedOnText = null;
-                texts.forEach(otherTxt => {
-                    if (txt !== otherTxt && checkCollision(txt, otherTxt)) {
-                        droppedOnText = otherTxt;
-                    }
-                });
-        
-                if (droppedOnText) {
-                    handleDrop(txt, droppedOnText);
-                } else {
-                  //  txt.position({ x: txt.startX, y: txt.startY }); // Trả lại vị trí cũ nếu không có từ nào gần
-                }
-                layer.draw();
-            });
-        
-            txt.on('click tap', () => {
-                handleTextSelection(txt);
-            });
-        
-            txt.originalFill = color; // Lưu màu gốc
-            return txt;
-        };
-
-        const handleTextSelection = (txt) => {
-          
-          if (selectedWord === null) {
-              selectedWord = txt;
-              txt.isSelected = true;
-              txt.fill('yellow'); // Đổi màu từ được chọn
-          } else if (selectedWord !== txt) {
-              if (correctMatches[selectedWord.text()] === txt.text() || correctMatches[txt.text()] === selectedWord.text()) {
-                  handleDrop(selectedWord, txt);
-              } else {
-                  selectedWord.fill(selectedWord.originalFill); // Trả lại màu ban đầu nếu không khớp
-                  selectedWord.isSelected = false;
-                  txt.fill(txt.originalFill); // Trả lại màu ban đầu nếu không khớp
-              }
-              selectedWord = null;
+      txt.on('dragmove touchmove', () => {
+        texts.forEach(otherTxt => {
+          if (txt !== otherTxt && checkCollision(txt, otherTxt)) {
+            otherTxt.fill('orange'); // Đổi màu từ khác khi gần
+          } else if (!otherTxt.isSelected) {
+            otherTxt.fill(otherTxt.originalFill); // Trả lại màu ban đầu nếu không còn gần
           }
-          layer.draw();
-      };
+        });
+        layer.draw();
+      });
 
-      
-        const checkCollision = (txt1, txt2) => {
-          const rect1 = txt1.getClientRect();
-          const rect2 = txt2.getClientRect();
-          return !(rect1.x > rect2.x + rect2.width ||
-                   rect1.x + rect1.width < rect2.x ||
-                   rect1.y > rect2.y + rect2.height ||
-                   rect1.y + rect1.height < rect2.y);
-      };
-      
-      const handleDrop = (txt1, txt2) => {
-          const word1 = txt1.text();
-          const word2 = txt2.text();
-          
-          playWord1 = word1;
-          playWord2 = word2;
-
-          if (correctMatches[word1] === word2 || correctMatches[word2] === word1) {
-              txt1.destroy(); // Xóa từ đầu tiên
-              txt2.destroy(); // Xóa từ thứ hai
-              layer.draw();
-              if (texts.every(txt => !txt.getStage())) {
-                  createFireworks(); // Tất cả các từ đã được ghép chính xác
-              } 
-          } else {
-              // Trả về vị trí ban đầu
-              txt1.position({ x: txt1.startX, y: txt1.startY });
-              //txt2.position({ x: txt2.startX, y: txt2.startY });
-              layer.draw();
+      txt.on('dragend touchend', () => {
+        let droppedOnText = null;
+        texts.forEach(otherTxt => {
+          if (txt !== otherTxt && checkCollision(txt, otherTxt)) {
+            droppedOnText = otherTxt;
           }
+        });
 
-          
-      };
+        if (droppedOnText) {
+          handleDrop(txt, droppedOnText);
+        } else {
+          //  txt.position({ x: txt.startX, y: txt.startY }); // Trả lại vị trí cũ nếu không có từ nào gần
+        }
+        layer.draw();
+      });
 
-          // Hàm khởi tạo các từ
+      txt.on('click tap', () => {
+        handleTextSelection(txt);
+       // playEnglishWord(txt.text());
+      });
+
+      txt.originalFill = color; // Lưu màu gốc
+      return txt;
+    };
+
+    const handleTextSelection = (txt) => {
+
+      if (selectedWord === null) {
+        selectedWord = txt;
+        txt.isSelected = true;
+        txt.fill('pink'); // Đổi màu từ được chọn
+      } else if (selectedWord !== txt) {
+        if (correctMatches[selectedWord.text()] === txt.text() || correctMatches[txt.text()] === selectedWord.text()) {
+          handleDrop(selectedWord, txt);
+        } else {
+          selectedWord.fill(selectedWord.originalFill); // Trả lại màu ban đầu nếu không khớp
+          selectedWord.isSelected = false;
+          txt.fill(txt.originalFill); // Trả lại màu ban đầu nếu không khớp
+        }
+        selectedWord = null;
+      }
+      layer.draw();
+    };
+
+
+    const checkCollision = (txt1, txt2) => {
+      const rect1 = txt1.getClientRect();
+      const rect2 = txt2.getClientRect();
+      return !(rect1.x > rect2.x + rect2.width ||
+        rect1.x + rect1.width < rect2.x ||
+        rect1.y > rect2.y + rect2.height ||
+        rect1.y + rect1.height < rect2.y);
+    };
+
+    const handleDrop = (txt1, txt2) => {
+      const word1 = txt1.text();
+      const word2 = txt2.text();
+
+      playWord1 = word1;
+      playWord2 = word2;
+
+      if (correctMatches[word1] === word2 || correctMatches[word2] === word1) {
+        txt1.destroy(); // Xóa từ đầu tiên
+        txt2.destroy(); // Xóa từ thứ hai
+        layer.draw();
+        if (texts.every(txt => !txt.getStage())) {
+          createFireworks(); // Tất cả các từ đã được ghép chính xác
+        }
+      } else {
+        // Trả về vị trí ban đầu
+        txt1.position({ x: txt1.startX, y: txt1.startY });
+        //txt2.position({ x: txt2.startX, y: txt2.startY });
+        layer.draw();
+      }
+
+
+    };
+
+    // Hàm khởi tạo các từ
     const createObjects = () => {
       var vocabCategory = document.getElementById('vocabSelect').value;
       var selectedNum = document.getElementById('vocabNum').value;
-  
+
       layer.destroyChildren();
       texts = [];
       getRandomWordsAndMeanings(vocabCategory, selectedNum);
-  
+
       words.forEach(word => {
-          const fontSize = getFontSize();
-          const size = { width: 100 * (stage.width() / 800), height: fontSize };
-          const pos = getRandomPosition(size);
-          const text = createText(word, pos.x, pos.y, 'black');
-          texts.push(text);
-          layer.add(text);
+        const fontSize = getFontSize();
+        const size = { width: 100 * (stage.width() / 800), height: fontSize };
+        const pos = getRandomPosition(size);
+        const text = createText(word, pos.x, pos.y, 'black');
+        texts.push(text);
+        layer.add(text);
       });
-  
+
       meanings.forEach(meaning => {
-          const fontSize = getFontSize();
-          const size = { width: 100 * (stage.width() / 800), height: fontSize };
-          const pos = getRandomPosition(size);
-          const text = createText(meaning, pos.x, pos.y, 'blue');
-          texts.push(text);
-          layer.add(text);
+        const fontSize = getFontSize();
+        const size = { width: 100 * (stage.width() / 800), height: fontSize };
+        const pos = getRandomPosition(size);
+        const text = createText(meaning, pos.x, pos.y, 'blue');
+        texts.push(text);
+        layer.add(text);
       });
-  
+
       layer.draw();
-  };
+    };
 
-          const createFireworks = () => {
-            const fireworksLayer = new Konva.Layer();
-            stage.add(fireworksLayer);
-          
-            const createExplosion = (x, y) => {
-              const particles = [];
-              const numParticles = 50;
-          
-              for (let i = 0; i < numParticles; i++) {
-                const angle = (Math.PI * 2 * i) / numParticles;
-                const speed = Math.random() * 2 + 2;
-                const particle = new Konva.Circle({
-                  x: x,
-                  y: y,
-                  radius: Math.random() * 3 + 2,
-                  fill: `hsl(${Math.random() * 360}, 100%, 50%)`,
-                  opacity: 1,
-                });
-                fireworksLayer.add(particle);
-                particles.push({ particle, angle, speed });
-              }
-          
-              const anim = new Konva.Animation((frame) => {
-                particles.forEach(({ particle, angle, speed }) => {
-                  const velocityX = Math.cos(angle) * speed;
-                  const velocityY = Math.sin(angle) * speed;
-                  particle.x(particle.x() + velocityX);
-                  particle.y(particle.y() + velocityY);
-                  particle.opacity(particle.opacity() - 0.02);
-                  if (particle.opacity() <= 0) {
-                    particle.destroy();
-                  }
-                });
-                fireworksLayer.batchDraw();
-              }, fireworksLayer);
-          
-              anim.start();
-          
-              setTimeout(() => {
-                anim.stop();
-                particles.forEach(({ particle }) => particle.destroy());
-                fireworksLayer.draw();
-              }, 1000);
-            };
-          
-            const numFireworks = 10;
-            for (let i = 0; i < numFireworks; i++) {
-              setTimeout(() => {
-                const x = Math.random() * stage.width();
-                const y = Math.random() * stage.height();
-                createExplosion(x, y);
-              }, i * 200);
-            }
-          
-            // Reset the game after the fireworks effect
-            setTimeout(() => {
-              const selectedCategory = document.getElementById('vocabSelect').value;
-              const selectedNum = document.getElementById('vocabNum').value;
-          
-              createObjects(); // Reset with the same category
-            }, 3000); // Wait for fireworks to finish before resetting
-          };
+    const createFireworks = () => {
+      const fireworksLayer = new Konva.Layer();
+      stage.add(fireworksLayer);
 
-          function isEnglishWord(word) {
-            if ("" == word) {
-              return false;
-            }
-            return /^[a-zA-Z]+$/.test(word);
+      const createExplosion = (x, y) => {
+        const particles = [];
+        const numParticles = 50;
+
+        for (let i = 0; i < numParticles; i++) {
+          const angle = (Math.PI * 2 * i) / numParticles;
+          const speed = Math.random() * 2 + 2;
+          const particle = new Konva.Circle({
+            x: x,
+            y: y,
+            radius: Math.random() * 3 + 2,
+            fill: `hsl(${Math.random() * 360}, 100%, 50%)`,
+            opacity: 1,
+          });
+          fireworksLayer.add(particle);
+          particles.push({ particle, angle, speed });
         }
 
-      const playTextSound = () => {
-        const isEnglish1 = isEnglishWord(playWord1);
-        const isEnglish2 = isEnglishWord(playWord2);
-        if (isEnglish1) {
-          responsiveVoice.speak(playWord1);
-        } 
-
-        if (isEnglish2) {
-          responsiveVoice.speak(playWord2);
-        }
-        playWord1 = "";
-        playWord2 = "";
-
-      };
-
-        /*
-          const playTextSound = (text1, text2) => {
-            
-            let utterance = new SpeechSynthesisUtterance(text1);
-            utterance.lang = 'vi-VN' ;
-            if (null == text2) {
-              speechSynthesis.speak(utterance);
-            } else {
-              const isEnglish = isEnglishWord(text1);
-              if (isEnglish == false) {
-                utterance = new SpeechSynthesisUtterance(text2);
-              } 
-              utterance.lang =  'en-US';
-              if (voices && selectedVoiceIndex) {
-                const selectedVoice = voices[selectedVoiceIndex];
-                utterance.voice = selectedVoice;
-              }
-            }
-            speechSynthesis.speak(utterance);
-           
-          };
- */
-
-          const handleTextClick = (text) => {
-            if (text.isSelected) return;
-
-            if (selectedWord) {
-              const word = selectedWord.text();
-              const meaning = text.text();
-              if (correctMatches[word] === meaning || correctMatches[meaning] === word) {
-                const matchedWord = selectedWord;
-                const matchedMeaning = text;
-
-                const tween1 = new Konva.Tween({
-                  node: matchedWord,
-                  duration: 0.5,
-                  scaleX: 0,
-                  scaleY: 0,
-                  opacity: 0,
-                  onFinish: () => {
-                    matchedWord.destroy();
-                    texts.splice(texts.indexOf(matchedWord), 1);
-                  },
-                });
-
-                const tween2 = new Konva.Tween({
-                  node: matchedMeaning,
-                  duration: 0.5,
-                  scaleX: 0,
-                  scaleY: 0,
-                  opacity: 0,
-                  onFinish: () => {
-                    matchedMeaning.destroy();
-                    texts.splice(texts.indexOf(matchedMeaning), 1);
-                    if (texts.length === 0) {
-                      createFireworks(); // Create fireworks effect when the game is completed
-                    }
-                  },
-                });
-
-                tween1.play();
-                tween2.play();
-                selectedWord = null;
-                layer.draw();
-              } else {
-                // Remove color of the selected words if they do not match
-                selectedWord.fill('black');
-                text.fill('black');
-                selectedWord.isSelected = false;
-                text.isSelected = false;
-                selectedWord = null;
-                layer.draw();
-              }
-            } else {
-              // Reset the previously selected word if needed
-              if (selectedWord) {
-                selectedWord.fill('black');
-              }
-
-              selectedWord = text;
-              selectedWord.fill('red');
-              selectedWord.isSelected = true;
-            }
-            layer.draw();
-          };
-
-          const init = () => {
-            stage = new Konva.Stage({
-              container: 'container',
-              width: window.innerWidth,
-              height: window.innerHeight,
-            });
-
-            layer = new Konva.Layer();
-            stage.add(layer);
-
-            // Đăng ký sự kiện draw
-            layer.on('draw', function() {
-              if (playWord1 != "" && playWord2 != "") {
-                  playTextSound();
-              }
-            });
-
-            window.addEventListener('resize', () => {
-              stage.width(window.innerWidth);
-              stage.height(window.innerHeight);
-              if ($('.modal').hasClass('show') === false) {
-                const selectedCategory = document.getElementById('vocabSelect').value;
-                const selectedNum = document.getElementById('vocabNum').value;
-                createObjects(); // Initialize with selected category
-              }
-            });
-
-            $('#startButton').on('click', () => {
-              const selectedCategory = document.getElementById('vocabSelect').value;
-              const selectedNum = document.getElementById('vocabNum').value;
-              createObjects();
-              $('#vocabModal').modal('hide'); // Close modal
-            });
-
-
-            // Handle voice selection change
-            voiceSelect.addEventListener('change', () => {
-                selectedVoiceIndex = voiceSelect.value;
-            });
-
-            settingsButton.addEventListener('click', () => {
-              
-              $('#vocabModal').modal('show'); 
-            });
-          };
-
-          function loadVoices() {
-            return new Promise((resolve, reject) => {
-              voices = speechSynthesis.getVoices();
-              if (voices.length) {
-                resolve(voices);
-                return;
-              }
-              
-              speechSynthesis.onvoiceschanged = () => {
-                voices = speechSynthesis.getVoices();
-                if (voices.length) {
-                  resolve(voices);
-                } else {
-                  reject('No voices available.');
-                }
-              };
-            });
-          }
-
-
-  $(function() {
-    init();
-    createObjects();
-    //createFireworks();
-
-    loadVoices().then(voices => {
-       // console.log(voices);
-          voices.forEach((voice, index) => {
-            if (voice.name.includes('English')) {
-                const option = document.createElement('option');
-                option.value = index;
-                option.textContent = "Giọng " + voice.name;
-                voiceSelect.appendChild(option);
-
-                // Set default to US English
-                if (voice.name.includes('US English') || voice.name.includes('Female')  || voice.name.includes('States') ) {
-                  voiceSelect.value = index;
-                  selectedVoiceIndex = index;
-                }
-
+        const anim = new Konva.Animation((frame) => {
+          particles.forEach(({ particle, angle, speed }) => {
+            const velocityX = Math.cos(angle) * speed;
+            const velocityY = Math.sin(angle) * speed;
+            particle.x(particle.x() + velocityX);
+            particle.y(particle.y() + velocityY);
+            particle.opacity(particle.opacity() - 0.02);
+            if (particle.opacity() <= 0) {
+              particle.destroy();
             }
           });
-  })
-  .catch(error => {
-    console.error(error);
-  });
+          fireworksLayer.batchDraw();
+        }, fireworksLayer);
 
-  }); // end of $(function() {
-    
+        anim.start();
+
+        setTimeout(() => {
+          anim.stop();
+          particles.forEach(({ particle }) => particle.destroy());
+          fireworksLayer.draw();
+        }, 1000);
+      };
+
+      const numFireworks = 10;
+      for (let i = 0; i < numFireworks; i++) {
+        setTimeout(() => {
+          const x = Math.random() * stage.width();
+          const y = Math.random() * stage.height();
+          createExplosion(x, y);
+        }, i * 200);
+      }
+
+      // Reset the game after the fireworks effect
+      setTimeout(() => {
+        createObjects(); // Reset with the same category
+      }, 3000); // Wait for fireworks to finish before resetting
+    };
+
+    function isEnglishWord(word) {
+      if (word === "") {
+        return false;
+      }
+      // Kiểm tra xem từ có chứa các ký tự chữ cái, ký hiệu tiếng Anh và khoảng trắng hay không
+      return /^[a-zA-Z!@#$%^&*()_+={}\[\]:;"'<>,.?/\\|`~\- ]+$/.test(word);
+    }
+
+   function playSound(word) {
+    var playType = document.getElementById('playType').value;
+    if (1 == playType) {
+      playResponsiveVoice(word) ;
+    } else {
+      playSynthesisVoice(word) ;
+    }
+   }
+
+    const playTextSound = () => {
+      playSound(playWord1);
+      playSound(playWord2);
+      playWord1 = "";
+      playWord2 = "";
+
+    };
+
+    function playResponsiveVoice(word) {
+      const isEnglish = isEnglishWord(word);
+      if (isEnglish) {
+        responsiveVoice.speak(word);
+      }
+    }
+      const playSynthesisVoice = (word) => {
+        const isEnglish = isEnglishWord(word);
+        if (isEnglish) {
+          let utterance = new SpeechSynthesisUtterance(word);
+          utterance.lang = 'en-US' ;
+          if (voices && selectedVoiceIndex) {
+            const selectedVoice = voices[selectedVoiceIndex];
+            utterance.voice = selectedVoice;
+          }
+          speechSynthesis.speak(utterance);
+        }
+      };
+
+
+    const handleTextClick = (text) => {
+      if (text.isSelected) return;
+
+      if (selectedWord) {
+        const word = selectedWord.text();
+        const meaning = text.text();
+        if (correctMatches[word] === meaning || correctMatches[meaning] === word) {
+          const matchedWord = selectedWord;
+          const matchedMeaning = text;
+
+          const tween1 = new Konva.Tween({
+            node: matchedWord,
+            duration: 0.5,
+            scaleX: 0,
+            scaleY: 0,
+            opacity: 0,
+            onFinish: () => {
+              matchedWord.destroy();
+              texts.splice(texts.indexOf(matchedWord), 1);
+            },
+          });
+
+          const tween2 = new Konva.Tween({
+            node: matchedMeaning,
+            duration: 0.5,
+            scaleX: 0,
+            scaleY: 0,
+            opacity: 0,
+            onFinish: () => {
+              matchedMeaning.destroy();
+              texts.splice(texts.indexOf(matchedMeaning), 1);
+              if (texts.length === 0) {
+                createFireworks(); // Create fireworks effect when the game is completed
+              }
+            },
+          });
+
+          tween1.play();
+          tween2.play();
+          selectedWord = null;
+          layer.draw();
+        } else {
+          // Remove color of the selected words if they do not match
+          selectedWord.fill('black');
+          text.fill('black');
+          selectedWord.isSelected = false;
+          text.isSelected = false;
+          selectedWord = null;
+          layer.draw();
+        }
+      } else {
+        // Reset the previously selected word if needed
+        if (selectedWord) {
+          selectedWord.fill('black');
+        }
+
+        selectedWord = text;
+        selectedWord.fill('red');
+        selectedWord.isSelected = true;
+      }
+      layer.draw();
+    };
+
+    const init = () => {
+      stage = new Konva.Stage({
+        container: 'container',
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+
+      layer = new Konva.Layer();
+      stage.add(layer);
+
+      // Đăng ký sự kiện draw
+      layer.on('draw', function () {
+        if (playWord1 != "" && playWord2 != "") {
+          playTextSound();
+        }
+      });
+
+      window.addEventListener('resize', () => {
+        stage.width(window.innerWidth);
+        stage.height(window.innerHeight);
+        if ($('.modal').hasClass('show') === false) {
+          createObjects(); // Initialize with selected category
+        }
+      });
+
+      $('#startButton').on('click', () => {
+        createObjects();
+        $('#vocabModal').modal('hide'); // Close modal
+      });
+
+
+      // Handle voice selection change
+      voiceSelect.addEventListener('change', () => {
+        selectedVoiceIndex = voiceSelect.value;
+      });
+
+      settingsButton.addEventListener('click', () => {
+        $('#vocabModal').modal('show');
+      });
+    };
+
+    function loadVoices() {
+      return new Promise((resolve, reject) => {
+        voices = speechSynthesis.getVoices();
+        if (voices.length) {
+          resolve(voices);
+          return;
+        }
+
+        speechSynthesis.onvoiceschanged = () => {
+          voices = speechSynthesis.getVoices();
+          if (voices.length) {
+            resolve(voices);
+          } else {
+            reject('No voices available.');
+          }
+        };
+      });
+    }
+
+
+    $(function () {
+      init();
+      createObjects();
+
+      loadVoices().then(voices => {
+        // console.log(voices);
+        voices.forEach((voice, index) => {
+          if (voice.name.includes('English')) {
+            const option = document.createElement('option');
+            option.value = index;
+            option.textContent = "Giọng " + voice.name;
+            voiceSelect.appendChild(option);
+
+            // Set default to US English
+            if (voice.name.includes('US English') || voice.name.includes('Female') || voice.name.includes('States')) {
+              voiceSelect.value = index;
+              selectedVoiceIndex = index;
+            }
+
+          }
+        });
+      })
+        .catch(error => {
+          console.error(error);
+        });
+
+    }); // end of $(function() {
+
   </script>
 </body>
+
 </html>
