@@ -8,7 +8,7 @@ if ('serviceWorker' in navigator) {
 }
 
 // Public VAPID key (phải khớp với server)
-const publicVapidKey = 'BK6OnF0jian9eA-qXys4XQIm3ULzeSYwt5wV3uYJVq4j9WsPJeqYrg84_mkKuFMxZ6WRE_cQ2mq1Jn2Yv-0Wo0Q';
+const publicVapidKey = 'BAZTAB3Qp6oFej3S-rOK2U_jh0On5kUmoBj8x4t7zoLLNKCTox-Q3plHcVlmH0zZtoRTF9eyZh-__vRQBpDXVMY';
 
 // Chuyển đổi VAPID key thành Uint8Array
 function urlBase64ToUint8Array(base64String) {
