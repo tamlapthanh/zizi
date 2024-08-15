@@ -5,7 +5,7 @@ navigator.serviceWorker.register('sw.js')
         // Đăng ký nhận thông báo đẩy
         return registration.pushManager.subscribe({
             userVisibleOnly: true,
-            applicationServerKey: urlBase64ToUint8Array('BO-2_J6Nt-PxHhigJofujeHJEcOK8O78Rw38PL-uWLBoPYg6M-exe1kQeYSQkAP73-JdAC3Th0rErw6fAkBJ9Z8')
+            applicationServerKey: urlBase64ToUint8Array('BMOF3429mw7S0IhEs9xFa-PubK4tgOpgKsQ1leZ-2BGm25cEal3hcUh0HCsZBqI3eHMKVbr2aOOK_UeHr-mXOag')
         });
     })
     .then(function(subscription) {
