@@ -1,4 +1,4 @@
-navigator.serviceWorker.register('/sw.js')
+navigator.serviceWorker.register('zizi/client/sw.js')
     .then(function(registration) {
         console.log('Service Worker registered with scope:', registration.scope);
 
