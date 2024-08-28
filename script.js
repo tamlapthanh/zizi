@@ -6,8 +6,38 @@ document.addEventListener('DOMContentLoaded', function () {
   // ];
 
   const allWords = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+  // Định nghĩa mảng với các giá trị start và end tương ứng cho từng chữ cái
+  const wordRanges = [
+    { letter: 'A', start: 2.337652, end: 4.393173 },
+    { letter: 'B', start: 4.393173, end: 6.166564 },
+    { letter: 'C', start: 6.166564, end: 7.899651 },
+    { letter: 'D', start: 7.899651, end: 9.914868 },
+    { letter: 'E', start: 9.914868, end: 11.567346 },
+    { letter: 'F', start: 11.567346, end: 13.74378 },
+    { letter: 'G', start: 13.74378, end: 15.87991 },
+    { letter: 'H', start: 15.87991, end: 17.653301 },
+    { letter: 'I', start: 17.653301, end: 19.789431 },
+    { letter: 'J', start: 19.789431, end: 21.401605 },
+    { letter: 'K', start: 21.401605, end: 23.255604 },
+    { letter: 'L', start: 23.255604, end: 24.988691 },
+    { letter: 'M', start: 24.988691, end: 26.963604 },
+    { letter: 'N', start: 26.963604, end: 28.575777 },
+    { letter: 'O', start: 28.575777, end: 30.711907 },
+    { letter: 'P', start: 30.711907, end: 32.727124 },
+    { letter: 'Q', start: 32.727124, end: 34.742341 },
+    { letter: 'R', start: 34.742341, end: 36.636645 },
+    { letter: 'S', start: 36.636645, end: 38.530949 },
+    { letter: 'T', start: 38.530949, end: 40.143123 },
+    { letter: 'U', start: 40.143123, end: 42.077731 },
+    { letter: 'V', start: 42.077731, end: 44.133253 },
+    { letter: 'W', start: 44.133253, end: 46.229078 },
+    { letter: 'X', start: 46.229078, end: 48.203991 },
+    { letter: 'Y', start: 48.203991, end: 50.178904 },
+    { letter: 'Z', start: 50.178904, end: 52.27473 },
+    
+  ];
 
-  const numWordsToShow = allWords.length/2;
+  const numWordsToShow = allWords.length/3;
   let remainingWords = [...allWords];
   let currentWord = '';
 
@@ -109,13 +139,38 @@ document.addEventListener('DOMContentLoaded', function () {
     return voices.find(voice => voice.name.toLowerCase().includes('female'));
   }
 
-  
+  function playAudioFromTo(startTime, endTime) {
+    const audio = new Audio('ocpd_01_the_alphabet.mp3');
+    audio.currentTime = startTime;
+    audio.playbackRate = 0.65;
+
+    audio.play().then(() => {
+        const stopPlayback = () => {
+            if (audio.currentTime >= endTime) {
+                audio.pause();
+                audio.removeEventListener('timeupdate', stopPlayback);
+            }
+        };
+
+        audio.addEventListener('timeupdate', stopPlayback);
+    }).catch(error => {
+        console.error("Failed to play audio:", error);
+    });
+}
+
 
   // Phát âm thanh bằng speechSynthesis
   function playSound() {
     const randomWord = remainingWords[Math.floor(Math.random() * remainingWords.length)];
     currentWord = randomWord;
 
+    const aRange = wordRanges.find(range => range.letter === currentWord);
+    console.log(aRange.letter); // { letter: 'A', start: 0, end: 10 }
+    console.log(aRange.start); // 0
+    console.log(aRange.end); // 10
+
+    playAudioFromTo(aRange.start, aRange.end);
+    /*
     const utterance = new SpeechSynthesisUtterance(randomWord);
     utterance.lang = "en-US";
     const femaleVoice = getFemaleVoice();
@@ -124,10 +179,18 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     utterance.rate = 0.75;
     speechSynthesis.speak(utterance);
+    */
   }
 
   // Phát lại âm thanh hiện tại
   function replaySound() {
+    const aRange = wordRanges.find(range => range.letter === currentWord);
+    console.log(aRange.letter); // { letter: 'A', start: 0, end: 10 }
+    console.log(aRange.start); // 0
+    console.log(aRange.end); // 10
+
+    playAudioFromTo(aRange.start, aRange.end);
+    /*
     const utterance = new SpeechSynthesisUtterance(currentWord);
     utterance.lang = "en-US";
     const femaleVoice = getFemaleVoice();
@@ -136,6 +199,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     utterance.rate = 0.75;
     speechSynthesis.speak(utterance);
+    */
   }
 
   // Tạo thông báo "Correct!" trên canvas
@@ -295,13 +359,7 @@ document.addEventListener('DOMContentLoaded', function () {
       }, i * 200);
     }
   
-    // Reset the game after the fireworks effect
-    setTimeout(() => {
-      const selectedCategory = document.getElementById('vocabSelect').value;
-      const selectedNum = document.getElementById('vocabNum').value;
-  
-      createObjects(); // Reset with the same category
-    }, 3000); // Wait for fireworks to finish before resetting
+
   };
 
   // Phát âm thanh tự động khi trang tải và khi từ đúng được chọn
