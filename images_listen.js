@@ -1,13 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
-  // const allWords = [
-  //   'cat', 'dog', 'bird', 'fish', 'horse', 'cow', 'sheep', 'goat',
-  //   'duck', 'chicken', 'rabbit', 'pig', 'elephant', 'tiger', 'lion',
-  //   'bear', 'monkey', 'kangaroo', 'penguin', 'giraffe', 'zebra', 'deer'
-  // ];
-
-  const allWords = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
-  // Định nghĩa mảng với các giá trị start và end tương ứng cho từng chữ cái
-  const wordRanges = [
+ // Định nghĩa mảng với các giá trị start và end tương ứng cho từng chữ cái
+  const WORD_LIST = [
     { letter: 'A', start: 2.337652, end: 4.393173 },
     { letter: 'B', start: 4.393173, end: 6.166564 },
     { letter: 'C', start: 6.166564, end: 7.899651 },
@@ -36,15 +29,12 @@ document.addEventListener('DOMContentLoaded', function () {
     { letter: 'Z', start: 50.178904, end: 52.27473 }
   ];
 
-  const numWordsToShow = allWords.length/3;
   let remainingWords;
   let currentWord;
+  let WORD_NUMBER = 12;
+  let addedImage = [];
+ 
 
-    // Hàm để chọn từ ngẫu nhiên từ danh sách lớn và thêm vào canvas
-    function getRandomWords() {
-      const shuffled = allWords.sort(() => 0.5 - Math.random());
-      return shuffled.slice(0, numWordsToShow);
-    }
 
   // Thiết lập Konva stage và layer
   const stage = new Konva.Stage({
@@ -60,121 +50,25 @@ document.addEventListener('DOMContentLoaded', function () {
   const messageLayer = new Konva.Layer();
   stage.add(messageLayer);
 
-  // Hàm để thêm từ vào canvas với vị trí ngẫu nhiên
-  function addWordsToCanvas() {
-    layer.destroyChildren(); // Xóa tất cả các từ hiện có trên canvas
-    remainingWords = getRandomWords();
-    
-
-
-    remainingWords.forEach((word) => {
-      addImagesToCanvas(word);
-
-      const text = new Konva.Text({
-        x: Math.random() * (stage.width() - 100), // Vị trí ngẫu nhiên
-        y: Math.random() * (stage.height() - 30), // Vị trí ngẫu nhiên
-        text: word,
-        fontSize: 66,
-        fontFamily: 'Calibri',
-        fill: 'black',
-        draggable: true,
-        id: word
-      });
-
-      text.on('mouseover', () => {
-        document.body.style.cursor = 'pointer';
-        text.fill('green');
-        layer.draw();
-      });
-
-      text.on('mouseout', () => {
-        document.body.style.cursor = 'default';
-        text.fill('black');
-        layer.draw();
-      });
-
-      function handleWordClick() {
-        if (currentWord === word) {
-          createCorrectMessage(text.x() + text.width() / 2, text.y() + text.height() / 2);
-          createExplosion(text.x() + text.width() / 2, text.y() + text.height() / 2);
-
-          // Hiệu ứng mờ dần và xóa từ
-          text.to({
-            scaleX: 1.5,
-            scaleY: 1.5,
-            opacity: 0,
-            duration: 0.5,
-            onFinish: () => {
-              text.destroy(); // Xóa từ khỏi layer
-              layer.draw();
-              remainingWords = remainingWords.filter(w => w !== word); // Cập nhật danh sách từ còn lại
-              if (remainingWords.length > 0) {
-                setTimeout(() => {
-                  playSound();
-                }, 1000); // Phát âm từ mới sau khi thông báo
-              } else {
-                setTimeout(() => {
-                  showFireworks();
-                  remainingWords = [...allWords]; // Đặt lại danh sách từ còn lại
-                  addWordsToCanvas();
-                  playSound();
-                }, 1000);
-              }
-            }
-          });
-        } else {
-          createWrongMessage(text.x() + text.width() / 2, text.y() + text.height() / 2);
-        }
-      }
-
-
-      text.on('click', handleWordClick);
-      text.on('tap', handleWordClick);
-
-      layer.add(text);
-    });
-
-    layer.draw();
-  }
-
-  function getFemaleVoice() {
-    const voices = speechSynthesis.getVoices();
-    return voices.find(voice => voice.name.toLowerCase().includes('female'));
-  }
-
   function playAudioFromTo(word) {
     if (word) {
-        const audio = new Audio('assets/ocpd_01_the_alphabet.mp3');
-        
-        audio.addEventListener('loadedmetadata', () => {
-            // Ensure the start time is within the duration
-            if (word.start >= 0 && word.start < audio.duration) {
-                audio.currentTime = word.start;
-            } else {
-                console.error("Start time is out of bounds");
-                return;
-            }
-            
-            audio.playbackRate = 0.65;
+      console.log("playAudioFromTo::" + word.letter);
+      const audio = new Audio('assets/ocpd_01_the_alphabet.mp3');
+      audio.playbackRate = 0.65;
+      // Cài đặt thời gian bắt đầu
+      audio.currentTime = word.start;
 
-            audio.play().then(() => {
-                const stopPlayback = () => {
-                    if (audio.currentTime >= word.end) {
-                        audio.pause();
-                        audio.removeEventListener('timeupdate', stopPlayback);
-                    }
-                };
-                
-                audio.addEventListener('timeupdate', stopPlayback);
-            }).catch(error => {
-                console.error("Failed to play audio:", error);
-            });
-        });
-        
-        audio.addEventListener('error', (e) => {
-            console.error("Error loading audio:", e);
-        });
+      // Phát âm thanh
+      audio.play();
+
+      // Theo dõi thời gian và dừng âm thanh khi đạt đến thời gian kết thúc
+      audio.addEventListener('timeupdate', () => {
+        if (audio.currentTime >= word.end) {
+          audio.pause();
+        }
+      });
     }
+
 }
 
   // Phát âm thanh bằng speechSynthesis
@@ -188,75 +82,6 @@ document.addEventListener('DOMContentLoaded', function () {
     playAudioFromTo(currentWord);
   }
 
-  // Tạo thông báo "Correct!" trên canvas
-  function createCorrectMessage(x, y) {
-    const correctMessage = new Konva.Text({
-      x: x,
-      y: y,
-      text: 'Correct!',
-      fontSize: 36,
-      fontFamily: 'Calibri',
-      fill: 'green',
-      opacity: 0,
-      listening: false
-    });
-
-    messageLayer.add(correctMessage);
-    correctMessage.to({
-      opacity: 1,
-      scaleX: 1.2,
-      scaleY: 1.2,
-      duration: 0.5,
-      onFinish: () => {
-        correctMessage.to({
-          opacity: 0,
-          scaleX: 1,
-          scaleY: 1,
-          duration: 0.5,
-          onFinish: () => {
-            correctMessage.destroy();
-            messageLayer.draw();
-          }
-        });
-      }
-    });
-  }
-
-  // Tạo thông báo "Try again!" trên canvas
-  function createWrongMessage(x, y) {
-    const wrongMessage = new Konva.Text({
-      x: x,
-      y: y,
-      text: 'Try again!',
-      fontSize: 36,
-      fontFamily: 'Calibri',
-      fill: 'red',
-      opacity: 0,
-      listening: false
-    });
-
-    messageLayer.add(wrongMessage);
-    wrongMessage.to({
-      opacity: 1,
-      scaleX: 1.2,
-      scaleY: 1.2,
-      duration: 0.5,
-      onFinish: () => {
-        wrongMessage.to({
-          opacity: 0,
-          scaleX: 1,
-          scaleY: 1,
-          duration: 0.5,
-          onFinish: () => {
-            wrongMessage.destroy();
-            messageLayer.draw();
-          }
-        });
-      }
-    });
-
-    replaySound();
-  }
 
   // Tạo hiệu ứng nổ khi chọn đúng từ
   function createExplosion(x, y) {
@@ -289,7 +114,6 @@ document.addEventListener('DOMContentLoaded', function () {
       explosionLayer.destroy();
     }, 1000);
   }
-
 
   const showFireworks = () => {
     const fireworksLayer = new Konva.Layer();
@@ -348,95 +172,250 @@ document.addEventListener('DOMContentLoaded', function () {
 
   };
 
-  // Hàm để tải hình ảnh vào canvas
-  function addImagesToCanvas(arrayWord) {
-    layer.destroyChildren(); // Xóa tất cả các từ hiện có trên canvas
-    arrayWord.forEach((word) => {
-   
-  
-   let  path =  "assets/image/XXX.webp";
-   path = path.replace("XXX", word.letter);
 
-      const imageObj = new Image();
-      imageObj.onload = function() {
-        const image = new Konva.Image({
-          x: Math.random() * (stage.width() - 100), // Vị trí ngẫu nhiên
-          y: Math.random() * (stage.height() - 100), // Vị trí ngẫu nhiên
-          image: imageObj,
-          width: 100,
-          height: 100,
-          draggable: true,
-          id: path // Sử dụng đường dẫn hình ảnh làm ID
-        });
-
-        image.on('mouseover', () => {
-          document.body.style.cursor = 'pointer';
-          image.stroke('green');
-          image.strokeWidth(2);
-          layer.draw();
-        });
-
-        image.on('mouseout', () => {
-          document.body.style.cursor = 'default';
-          image.stroke(null);
-          layer.draw();
-        });
-
-        image.on('click', () => {
-          handleImageClick(word);
-        });
-
-        image.on('tap', () => {
-          handleImageClick(word);
-        });
-
-        function handleImageClick(word) {
-          if (word.letter === currentWord.letter) {
-            image.destroy();
-            layer.draw();
-            remainingWords = remainingWords.filter(w => w !== word);             
-            if (remainingWords.length > 0) {
-              setTimeout(() => {
-                playSound();
-              }, 1000/2); // Phát âm từ mới sau khi thông báo
-            } else {
-              setTimeout(() => {
-                showFireworks();
-                remainingWords = wordRanges;
-                addImagesToCanvas(remainingWords);
-                playSound();
-              }, 1000/2);
+      // Hàm kiểm tra nếu hai hình ảnh bị chồng lên nhau
+      function isOverlapping(x, y, padding, imageSize, images) {
+        for (let img of images) {
+            if (x < img.x + imageSize + padding && x + imageSize > img.x - padding &&
+                y < img.y + imageSize + padding && y + imageSize > img.y - padding) {
+                return true;
             }
-          } else {
-            replaySound();
-          }
         }
+        return false;
+    }
 
-        layer.add(image);
-        layer.draw();
-      };
-      imageObj.src = path;
-    });
+  // Hàm để tải hình ảnh vào canvas
+    function addImagesToCanvas(resize=false) {
+      if (resize==false) {
+        remainingWords = getRandomSubset(WORD_LIST, WORD_NUMBER);
+      }
+      layer.destroyChildren(); // Xóa tất cả các từ hiện có trên canvas
+      const imageSize = 50; // Kích thước của hình ảnh (giả định tất cả hình ảnh có cùng kích thước)
+      const padding = 5; // Khoảng cách tối thiểu giữa các hình ảnh
+
+      remainingWords.forEach((word) => {
+
+            // let x = Math.random() * (stage.width() - imageSize);
+            // let y = Math.random() * (stage.height() - imageSize);
+
+          let x, y;
+          do {
+              x = Math.random() * (stage.width() - imageSize);
+              y = Math.random() * (stage.height() - imageSize);
+          } while (isOverlapping(x, y, padding, imageSize,  addedImage));
+
+            addedImage.push({x:x, y:y});
+          let path = `assets/image/${word.letter}.webp`;
+
+          const imageObj = new Image();
+          imageObj.onload = function() {
+            //console.log('Image loaded:', imageObj.src); // Kiểm tra xem hình ảnh có được tải không
+
+              const image = new Konva.Image({
+                  x: x, // Sử dụng tọa độ đã tính toán
+                  y: y, // Sử dụng tọa độ đã tính toán
+                  image: imageObj,
+                  width: imageSize,
+                  height: imageSize,
+                  draggable: true,
+                  id: path // Sử dụng đường dẫn hình ảnh làm ID
+              });
+
+              // Thêm hình ảnh vào layer và vẽ lại canvas
+              layer.add(image);
+            // layer.draw();
+
+              image.on('mouseover', () => {
+                  document.body.style.cursor = 'pointer';
+                  image.width(imageSize * 2);
+                  image.height(imageSize * 2);
+                  layer.draw();
+              });
+
+              image.on('mouseout', () => {
+                  document.body.style.cursor = 'default';
+                  image.width(imageSize);
+                  image.height(imageSize);
+                  layer.draw();
+              });
+
+              image.on('click', () => {
+                  handleImageClick(image, word);
+              });
+
+              image.on('tap', () => {
+              
+                  handleImageClick(image, word);
+              });
+
+              function handleImageClick(image, word) {
+                  if (word.letter === currentWord.letter) {
+                      // image.destroy();
+                      // layer.draw();
+                      shrinkAndDisappear(image);
+                      remainingWords = remainingWords.filter(w => w !== word);             
+                      if (remainingWords.length > 0) {
+                          setTimeout(() => {
+                              playSound();
+                          }, 1000 / 2); // Phát âm từ mới sau khi thông báo
+                      } else {
+                          setTimeout(() => {
+                              showFireworks();
+                            
+                              addImagesToCanvas();
+                              playSound();
+                          }, 1000 / 2);
+                      }
+                  } else {
+                      replaySound();
+                      shakeImage(image);
+                  }
+              }
+
+              // Thêm hình ảnh vào layer và vẽ lại canvas
+              // layer.add(image);
+              // layer.draw();
+
+              // Điều chỉnh vị trí của hình ảnh sau khi tất cả đã được thêm vào
+            //  setTimeout(() => adjustPositionForOverlapping(), 1000);
+
+          };
+          imageObj.src = path;
+      });
+
+      layer.draw();
   }
 
+  // Function to apply the shrinking and disappearing effect
+  // Function to apply the shrinking and disappearing effect
+  function shrinkAndDisappear(imageNode) {
+    console.log("shrinkAndDisappear");
+    const anim = new Konva.Animation((frame) => {
+      const scale = imageNode.scaleX() - frame.timeDiff / 500; // Tính tỷ lệ thu nhỏ
+      if (scale <= 0) {
+        imageNode.scale({ x: 0, y: 0 });
+        imageNode.opacity(0);
+        anim.stop();
+        imageNode.destroy(); // Xóa hình ảnh khỏi lớp
+        layer.batchDraw(); // Vẽ lại lớp
+      } else {
+        imageNode.scale({ x: scale, y: scale });
+        imageNode.opacity(scale);
+        layer.batchDraw(); // Vẽ lại lớp
+      }
+    }, layer);
+    anim.start();
+  }
+  
+
+function shakeImage(image) {
+  const amplitude = 10; // Tăng biên độ rung
+  const duration = 0.1; // Thời gian rung (tăng có thể tạo hiệu ứng mạnh hơn)
+
+  const originalX = image.x();
+  const originalY = image.y();
+
+  // Tạo tween di chuyển sang phải
+  const tweenRight = new Konva.Tween({
+      node: image,
+      duration: duration,
+      x: originalX + amplitude,
+      y: originalY,
+      easing: Konva.Easings.EaseInOut,
+      onFinish: () => {
+          // Tạo tween di chuyển sang trái
+          const tweenLeft = new Konva.Tween({
+              node: image,
+              duration: duration,
+              x: originalX - amplitude,
+              y: originalY,
+              easing: Konva.Easings.EaseInOut,
+              onFinish: () => {
+                  // Tạo tween quay lại vị trí ban đầu
+                  const tweenBack = new Konva.Tween({
+                      node: image,
+                      duration: duration,
+                      x: originalX,
+                      y: originalY,
+                      easing: Konva.Easings.EaseInOut,
+                  });
+                  tweenBack.play();
+              },
+          });
+          tweenLeft.play();
+      },
+  });
+
+  tweenRight.play();
+}
+
+  function startMesssage() {
+    var modalCenter = new bootstrap.Modal(document.getElementById('modalCenter'));
+    modalCenter.show();
+  }
+
+  function getRandomSubset(array, numItems) {
+    const shuffled = array.slice(0); // Tạo bản sao của array
+    let i = array.length, temp, index;
+    
+    // Shuffling array
+    while (i--) {
+      index = Math.floor((i + 1) * Math.random());
+      temp = shuffled[index];
+      shuffled[index] = shuffled[i];
+      shuffled[i] = temp;
+    }
+    
+    // Lấy một số lượng phần tử
+    return shuffled.slice(0, numItems);
+  }
+
+  function restartGame () {
+    addImagesToCanvas();
+    playSound();
+  }
+
+  document.getElementById('refreshBtn').addEventListener('click', function() {
+    var button = this;
+    button.disabled = true; // Disable the button
+    button.classList.add('btn-warning');
+    restartGame () ;
+    // Simulate an action with a timeout (e.g., AJAX request)
+    setTimeout(function() {
+      button.disabled = false; // Enable the button after 3 seconds (for demo purposes)
+      button.classList.remove('btn-warning');
+    }, 1000);
+  });
 
 
-
-  // Phát âm thanh tự động khi trang tải và khi từ đúng được chọn
-  //addWordsToCanvas();
-  remainingWords = wordRanges;
-  addImagesToCanvas(remainingWords);
-  playSound();
+  document.getElementById('playSoundAgainBtn').addEventListener('click', function() {
+    var button = this;
+    button.disabled = true; // Disable the button
+    replaySound () ;
+    button.classList.add('btn-warning');
+    // Simulate an action with a timeout (e.g., AJAX request)
+    setTimeout(function() {
+      button.disabled = false; // Enable the button after 3 seconds (for demo purposes)
+      button.classList.remove('btn-warning');
+    }, 1000);
+  });
 
   // Thêm sự kiện cho nút "Play Sound Again"
-  document.getElementById('playSoundAgainBtn').addEventListener('click', replaySound);
-
+  // document.getElementById('playSoundAgainBtn').addEventListener('click', replaySound);
+  //document.getElementById('refreshBtn').addEventListener('click', restartGame);
+  document.getElementById('startBtn').addEventListener('click', restartGame);
+  
   // Đảm bảo canvas phản hồi khi thay đổi kích thước cửa sổ
   window.addEventListener('resize', () => {
     stage.width(window.innerWidth);
     stage.height(window.innerHeight);
     layer.destroyChildren();
     messageLayer.destroyChildren();
-    addImagesToCanvas(remainingWords);
+    addImagesToCanvas(true);
   });
+
+  // Phát âm thanh tự động khi trang tải và khi từ đúng được chọn
+  //restartGame ();
+  startMesssage();
+
 });
