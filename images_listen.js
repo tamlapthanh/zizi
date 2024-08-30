@@ -400,10 +400,14 @@ function shakeImage(image) {
     }, 1000);
   });
 
+  document.getElementById('modalCenter').addEventListener('hide.bs.modal', function (event) {
+    restartGame();
+  });
+
   // Thêm sự kiện cho nút "Play Sound Again"
   // document.getElementById('playSoundAgainBtn').addEventListener('click', replaySound);
   //document.getElementById('refreshBtn').addEventListener('click', restartGame);
-  document.getElementById('startBtn').addEventListener('click', restartGame);
+ // document.getElementById('startBtn').addEventListener('click', restartGame);
   
   // Đảm bảo canvas phản hồi khi thay đổi kích thước cửa sổ
   window.addEventListener('resize', () => {
